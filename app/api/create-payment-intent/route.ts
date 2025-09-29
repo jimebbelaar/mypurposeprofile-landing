@@ -3,6 +3,13 @@ import { stripe } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if stripe is initialized
+    if (!stripe) {
+      throw new Error(
+        "Stripe is not configured. Please check your environment variables."
+      );
+    }
+
     const body = await request.json();
     const { amount } = body;
 
