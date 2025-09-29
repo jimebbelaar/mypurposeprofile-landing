@@ -6,6 +6,7 @@ import {
   Elements,
   useStripe,
   useElements,
+  ExpressCheckoutElement,
 } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { trackEvent } from "@/lib/meta-pixel";
@@ -51,6 +52,7 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isApple] = useState(isAppleDevice());
+  const [useExpressCheckout, setUseExpressCheckout] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -103,6 +105,26 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
     setIsProcessing(false);
   };
 
+  const handleExpressCheckout = (event: any) => {
+    if (!stripe) return;
+
+    const { resolve } = event;
+
+    // Track express checkout
+    trackEvent("Purchase", {
+      value: 27.0,
+      currency: "USD",
+      content_name: "ADHD Identity Method",
+      content_type: "product",
+      payment_method: "express",
+    });
+
+    resolve({
+      emailAddress: email || undefined,
+      name: name || undefined,
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Customer Info */}
@@ -144,60 +166,66 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       </div>
 
-      {/* Apple Pay Notice for Apple Users */}
-      {isApple && (
-        <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-lg p-4 border border-white/20">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/10 rounded-lg">
-              <Smartphone className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-white">
-                Apple Pay Available
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Fast checkout with Face ID or Touch ID
-              </p>
-            </div>
+      {/* Express Checkout (Apple Pay, Google Pay) - Always Show First */}
+      <div className="space-y-4">
+        <div className="express-checkout-wrapper bg-white/5 rounded-lg p-6 border border-white/10">
+          <div className="flex items-center gap-2 mb-4">
+            <Smartphone className="w-5 h-5 text-adhd-yellow" />
+            <span className="text-sm font-medium text-gray-300">
+              Express Checkout
+            </span>
           </div>
-        </div>
-      )}
 
-      {/* Payment Element with Enhanced Styling */}
-      <div className="bg-white/5 rounded-lg p-6 border border-white/10">
-        <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-5 h-5 text-adhd-yellow" />
-          <span className="text-sm font-medium text-gray-300">
-            Payment Details
-          </span>
-        </div>
-
-        {/* Custom wrapper for better Apple Pay visibility */}
-        <div className="payment-element-wrapper">
-          <PaymentElement
+          <ExpressCheckoutElement
+            onConfirm={handleExpressCheckout}
             options={{
-              layout: {
-                type: "accordion",
-                defaultCollapsed: false,
-                radios: true,
-                spacedAccordionItems: true,
-              },
-              defaultValues: {
-                billingDetails: {
-                  email: email,
-                  name: name,
-                },
-              },
               wallets: {
                 applePay: "auto",
                 googlePay: "auto",
               },
-              // Prioritize wallet payments for Apple devices
-              ...(isApple && {
-                paymentMethodOrder: ["applePay", "card"],
-              }),
+              buttonHeight: 48,
             }}
           />
+        </div>
+
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-700"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-black text-gray-400">
+              Or pay with card
+            </span>
+          </div>
+        </div>
+
+        {/* Regular Payment Element */}
+        <div className="bg-white/5 rounded-lg p-6 border border-white/10">
+          <div className="flex items-center gap-2 mb-4">
+            <CreditCard className="w-5 h-5 text-adhd-yellow" />
+            <span className="text-sm font-medium text-gray-300">
+              Card Payment
+            </span>
+          </div>
+
+          <div className="payment-element-wrapper">
+            <PaymentElement
+              options={{
+                layout: "tabs",
+                defaultValues: {
+                  billingDetails: {
+                    email: email,
+                    name: name,
+                  },
+                },
+                wallets: {
+                  applePay: "never",
+                  googlePay: "never",
+                },
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -259,7 +287,8 @@ export default function StripePaymentForm() {
   const [showPayment, setShowPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const modalContentRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<Element | null>(null);
 
   // Register this instance as the shared one
   useEffect(() => {
@@ -274,6 +303,9 @@ export default function StripePaymentForm() {
 
   const handleOpenPayment = async () => {
     setLoading(true);
+
+    // Store the currently focused element
+    previousActiveElement.current = document.activeElement;
 
     // Track checkout initiation
     trackEvent("InitiateCheckout", {
@@ -305,28 +337,99 @@ export default function StripePaymentForm() {
     }
   };
 
+  const closeModal = () => {
+    setShowPayment(false);
+
+    // Restore focus to the element that opened the modal
+    if (previousActiveElement.current instanceof HTMLElement) {
+      previousActiveElement.current.focus();
+    }
+  };
+
   // Emit payment modal state changes
   useEffect(() => {
     paymentModalEvents.emit(showPayment);
   }, [showPayment]);
 
-  // Reset scroll position when modal opens
+  // Lock body scroll and handle escape key
   useEffect(() => {
-    if (showPayment && modalContentRef.current) {
-      modalContentRef.current.scrollTop = 0;
-    }
+    if (!showPayment) return;
+
+    // Save current scroll position
+    const scrollY = window.scrollY;
+
+    // Lock body scroll with proper iOS support
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    // Handle escape key
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+
+      // Restore body scroll
+      document.body.style.overflow = originalStyle;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+    };
   }, [showPayment]);
 
-  // Prevent body scroll when modal is open
+  // Focus trap for accessibility
   useEffect(() => {
-    if (showPayment) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (!showPayment || !modalRef.current) return;
+
+    const focusableElements = modalRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[
+      focusableElements.length - 1
+    ] as HTMLElement;
+
+    // Focus the close button initially
+    const closeButton = modalRef.current.querySelector(
+      '[aria-label="Close modal"]'
+    ) as HTMLElement;
+    if (closeButton) {
+      closeButton.focus();
     }
 
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleTabKey);
+
     return () => {
-      document.body.style.overflow = "unset";
+      document.removeEventListener("keydown", handleTabKey);
     };
   }, [showPayment]);
 
@@ -340,38 +443,37 @@ export default function StripePaymentForm() {
         colorText: "#ffffff",
         colorDanger: "#EF4444",
         fontFamily: "Inter, system-ui, sans-serif",
-        borderRadius: "8px",
+        borderRadius: "12px",
         spacingUnit: "6px",
-        // Enhanced sizing for better Apple Pay visibility
-        spacingAccordionItem: "14px",
         fontSizeBase: "16px",
         fontWeightMedium: "600",
       },
       rules: {
-        // Make wallet buttons more prominent
-        ".WalletButton": {
-          backgroundColor: "#ffffff",
-          color: "#000000",
-          padding: "14px",
-          borderRadius: "12px",
-          fontSize: "16px",
-          fontWeight: "600",
-          minHeight: "56px",
-        },
-        ".WalletButton--applePay": {
-          backgroundColor: "#000000",
-          color: "#ffffff",
-          border: "1px solid #ffffff",
-        },
-        ".AccordionItem": {
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          borderRadius: "12px",
-          marginBottom: "12px",
+        ".Tab": {
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "12px",
+          padding: "12px",
         },
-        ".AccordionItem--selected": {
+        ".Tab--selected": {
           backgroundColor: "rgba(255, 215, 0, 0.05)",
           borderColor: "rgba(255, 215, 0, 0.3)",
+        },
+        ".Input": {
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "8px",
+          fontSize: "16px",
+          padding: "12px",
+        },
+        ".Input:focus": {
+          borderColor: "rgba(255, 215, 0, 0.5)",
+          outline: "none",
+        },
+        ".Label": {
+          fontSize: "14px",
+          fontWeight: "500",
+          marginBottom: "6px",
         },
       },
     },
@@ -379,21 +481,35 @@ export default function StripePaymentForm() {
 
   return (
     <>
-      {/* Add custom CSS for payment element */}
+      {/* Add custom CSS for better modal handling */}
       <style jsx global>{`
-        .payment-element-wrapper {
-          min-height: 300px;
+        .express-checkout-wrapper iframe {
+          min-height: 60px;
+          width: 100%;
         }
 
-        /* Enhance Apple Pay button visibility */
         .payment-element-wrapper iframe {
-          min-height: 400px !important;
+          min-height: 300px;
+          width: 100%;
         }
 
-        /* Make wallet buttons more prominent on mobile */
-        @media (max-width: 640px) {
-          .payment-element-wrapper {
-            min-height: 350px;
+        /* Ensure modal content is scrollable on mobile */
+        .modal-scroll-container {
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+        }
+
+        /* Prevent iOS bounce effect */
+        .modal-backdrop {
+          position: fixed;
+          overscroll-behavior: contain;
+        }
+
+        /* Fix for iOS Safari */
+        @supports (-webkit-touch-callout: none) {
+          .modal-content {
+            /* iOS specific fixes */
+            transform: translateZ(0);
           }
         }
       `}</style>
@@ -444,46 +560,58 @@ export default function StripePaymentForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-start justify-center p-0 bg-black/80 backdrop-blur-sm overflow-y-auto"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowPayment(false);
-              }
-            }}
+            className="modal-backdrop fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm"
+            onClick={closeModal}
+            aria-modal="true"
+            role="dialog"
+            aria-labelledby="modal-title"
           >
-            <div className="min-h-screen w-full flex items-center justify-center p-4 py-20 sm:py-8">
-              <motion.div
-                ref={modalContentRef}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                className="relative w-full max-w-lg bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl my-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header */}
-                <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10 rounded-t-2xl">
-                  <button
-                    onClick={() => setShowPayment(false)}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    <X className="w-6 h-6 text-white" />
-                  </button>
-                  <h2 className="text-2xl font-bold gradient-text">
-                    Secure Checkout
-                  </h2>
-                  <p className="text-gray-400 mt-1">
-                    Complete your purchase to get instant access
-                  </p>
-                </div>
+            {/* Modal Container - Full height with proper scroll containment */}
+            <div
+              className="fixed inset-0 overflow-y-auto modal-scroll-container"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Centering wrapper with padding */}
+              <div className="min-h-full flex items-center justify-center p-4">
+                <motion.div
+                  ref={modalRef}
+                  initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  className="modal-content relative w-full max-w-lg bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Fixed Header */}
+                  <div className="sticky top-0 z-20 bg-black border-b border-white/10">
+                    <div className="p-6 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10">
+                      <button
+                        onClick={closeModal}
+                        className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-adhd-yellow/50"
+                        aria-label="Close modal"
+                      >
+                        <X className="w-6 h-6 text-white" />
+                      </button>
+                      <h2
+                        id="modal-title"
+                        className="text-2xl font-bold gradient-text pr-10"
+                      >
+                        Secure Checkout
+                      </h2>
+                      <p className="text-gray-400 mt-1">
+                        Complete your purchase to get instant access
+                      </p>
+                    </div>
+                  </div>
 
-                {/* Payment Form - Scrollable Content */}
-                <div className="p-6 max-h-[calc(100vh-240px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto">
-                  <Elements stripe={stripePromise} options={options}>
-                    <PaymentForm onSuccess={() => setShowPayment(false)} />
-                  </Elements>
-                </div>
-              </motion.div>
+                  {/* Scrollable Content */}
+                  <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+                    <Elements stripe={stripePromise} options={options}>
+                      <PaymentForm onSuccess={closeModal} />
+                    </Elements>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         )}
