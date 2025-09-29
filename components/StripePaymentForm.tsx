@@ -17,7 +17,7 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-// Create a global event emitter for payment modal state
+// Create a global event emitter for payment modal states
 export const paymentModalEvents = {
   listeners: [] as Array<(isOpen: boolean) => void>,
   subscribe(listener: (isOpen: boolean) => void) {
