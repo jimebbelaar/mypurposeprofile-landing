@@ -42,7 +42,7 @@ export default function Testimonials() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-4xl lg:text-5xl font-black text-center mb-16"
+          className="text-3xl lg:text-5xl font-black text-center mb-16"
         >
           <span className="gradient-text">ADHD Entrepreneurs</span> Who Broke
           Their Pattern

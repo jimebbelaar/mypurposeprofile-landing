@@ -33,7 +33,7 @@ export default function Hero() {
                 <span className="gradient-text">$10K/Month</span> Business
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
-                Discover in 3 minutes why you always quit halfway - and get a
+                Discover in 4 minutes why you always quit halfway - and get a
                 personal roadmap that actually works for your ADHD brain
               </p>
             </div>

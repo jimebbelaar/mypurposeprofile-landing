@@ -38,7 +38,7 @@ export default function FinalCTA() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-4xl lg:text-5xl font-black mb-8"
+            className="text-3xl lg:text-5xl font-black mb-8"
           >
             You Have <span className="gradient-text">2 Choices.</span>
           </motion.h2>
