@@ -1,10 +1,15 @@
+// components/Hero.tsx
+"use client";
+
 import { motion } from "framer-motion";
 import StripePaymentForm from "./StripePaymentForm";
 import { CheckCircle } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center pt-20 pb-10 relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center pt-32 lg:pt-20 pb-10 relative overflow-hidden">
+      {/* Added more padding-top on mobile (pt-32) to account for sticky countdown */}
+      
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-adhd-yellow/20 rounded-full blur-3xl" />
@@ -12,23 +17,25 @@ export default function Hero() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-12 items-center">
+          {/* Mobile: Video First (flex-col-reverse) */}
+          
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="space-y-8 order-2 lg:order-1"
           >
             <div>
               <p className="text-adhd-yellow font-semibold mb-4 text-lg">
                 For (aspiring) ADHD Entrepreneurs
               </p>
-              <h1 className="text-5xl lg:text-7xl font-black mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6">
                 Stop Self-Sabotaging And Finally Build That
                 <span className="gradient-text"> $10K/Month</span> Business
               </h1>
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
                 Discover in 3 minutes why you always quit halfway - and get a
                 personal roadmap that actually works for your ADHD brain
               </p>
@@ -45,15 +52,18 @@ export default function Hero() {
               </div>
             </div>
 
-            <StripePaymentForm />
+            {/* Hide payment form on mobile, show on desktop */}
+            <div className="hidden lg:block">
+              <StripePaymentForm />
+            </div>
           </motion.div>
 
-          {/* Right Content - Loom Video */}
+          {/* Right Content - Loom Video (shows first on mobile) */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative order-1 lg:order-2 w-full"
           >
             <div className="glass-effect rounded-2xl p-2 glow-yellow">
               <div className="relative aspect-[1080/1350] bg-gray-900 rounded-xl overflow-hidden">
@@ -66,6 +76,11 @@ export default function Hero() {
               </div>
             </div>
           </motion.div>
+
+          {/* Show payment form after video on mobile */}
+          <div className="lg:hidden order-3 w-full">
+            <StripePaymentForm />
+          </div>
         </div>
       </div>
     </section>

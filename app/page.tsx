@@ -9,6 +9,7 @@ import ValueStack from "@/components/ValueStack";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import CountdownTimer from "@/components/CountdownTimer";
+import StickyBottomCTA from "@/components/StickyBottomCTA";
 import { trackEvent, initTracking } from "@/lib/meta-pixel";
 
 export default function Home() {
@@ -90,6 +91,7 @@ export default function Home() {
   return (
     <>
       <CountdownTimer />
+       <StickyBottomCTA />
       <main className="min-h-screen">
         <Hero />
         <Testimonials />
