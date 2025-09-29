@@ -1,7 +1,7 @@
 // components/StripePaymentForm.tsx
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import {
   PaymentElement,
   Elements,
@@ -187,6 +187,7 @@ export default function StripePaymentForm() {
   const [showPayment, setShowPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const modalContentRef = useRef<HTMLDivElement>(null);
 
   const handleOpenPayment = async () => {
     setLoading(true);
@@ -220,6 +221,26 @@ export default function StripePaymentForm() {
       setLoading(false);
     }
   };
+
+  // Reset scroll position when modal opens
+  useEffect(() => {
+    if (showPayment && modalContentRef.current) {
+      modalContentRef.current.scrollTop = 0;
+    }
+  }, [showPayment]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showPayment) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showPayment]);
 
   const options: StripeElementsOptions = {
     clientSecret: clientSecret!,
@@ -284,43 +305,47 @@ export default function StripePaymentForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-start justify-center p-0 bg-black/80 backdrop-blur-sm overflow-y-auto"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setShowPayment(false);
               }
             }}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className="relative w-full max-w-lg bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl overflow-hidden"
-            >
-              {/* Header */}
-              <div className="relative p-6 border-b border-white/10 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10">
-                <button
-                  onClick={() => setShowPayment(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
-                >
-                  <X className="w-6 h-6 text-white" />
-                </button>
-                <h2 className="text-2xl font-bold gradient-text">
-                  Secure Checkout
-                </h2>
-                <p className="text-gray-400 mt-1">
-                  Complete your purchase to get instant access
-                </p>
-              </div>
+            <div className="min-h-screen w-full flex items-center justify-center p-4 py-8">
+              <motion.div
+                ref={modalContentRef}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                className="relative w-full max-w-lg bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl my-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10 rounded-t-2xl">
+                  <button
+                    onClick={() => setShowPayment(false)}
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
+                  >
+                    <X className="w-6 h-6 text-white" />
+                  </button>
+                  <h2 className="text-2xl font-bold gradient-text">
+                    Secure Checkout
+                  </h2>
+                  <p className="text-gray-400 mt-1">
+                    Complete your purchase to get instant access
+                  </p>
+                </div>
 
-              {/* Payment Form */}
-              <div className="p-6">
-                <Elements stripe={stripePromise} options={options}>
-                  <PaymentForm onSuccess={() => setShowPayment(false)} />
-                </Elements>
-              </div>
-            </motion.div>
+                {/* Payment Form - Scrollable Content */}
+                <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                  <Elements stripe={stripePromise} options={options}>
+                    <PaymentForm onSuccess={() => setShowPayment(false)} />
+                  </Elements>
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
