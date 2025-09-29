@@ -99,7 +99,7 @@ export default function Solution() {
                 <div className="w-20 h-20 bg-gradient-to-br from-adhd-yellow to-adhd-orange rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl font-bold text-black">
                   {step.number}
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
+                <h3 className="text-2xl font-black mb-2">{step.title}</h3>
                 <p className="text-gray-400">{step.description}</p>
                 <div className="text-adhd-yellow font-semibold mt-4">
                   {step.duration}
@@ -228,7 +228,7 @@ export default function Solution() {
           >
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-6">
+                <h3 className="text-3xl font-black mb-6">
                   From burnout to 7-figure digital agency
                 </h3>
                 <p className="text-gray-300 mb-4">

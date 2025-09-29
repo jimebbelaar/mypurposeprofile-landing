@@ -62,13 +62,13 @@ export default function Hero() {
               className="space-y-4"
             >
               <div className="flex flex-wrap gap-3">
-                <div className="indicator-red px-4 py-2 rounded-full flex items-center gap-2">
-                  <X className="w-5 h-5" />
-                  <span className="font-medium">No discipline BS</span>
+                <div className="indicator-red px-3 py-2 rounded-full flex items-center gap-1">
+                  <X className="w-4 h-4" />
+                  <span className="font-medium text-xs">No discipline BS</span>
                 </div>
-                <div className="indicator-green px-4 py-2 rounded-full flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="font-medium">ADHD-proof system</span>
+                <div className="indicator-green px-3 py-2 rounded-full flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="font-medium text-xs">ADHD-proof system</span>
                 </div>
               </div>
 
