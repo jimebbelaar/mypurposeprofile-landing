@@ -44,7 +44,13 @@ function isAppleDevice() {
   return isIOS || (isMacOS && isSafari);
 }
 
-function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
+function PaymentForm({
+  onSuccess,
+  clientSecret,
+}: {
+  onSuccess: () => void;
+  clientSecret: string;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -105,24 +111,43 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
     setIsProcessing(false);
   };
 
-  const handleExpressCheckout = (event: any) => {
+  const handleExpressCheckout = async (event: any) => {
     if (!stripe) return;
 
-    const { resolve } = event;
+    setIsProcessing(true);
+    setMessage(null);
 
-    // Track express checkout
+    // Track express checkout attempt
+    trackEvent("AddPaymentInfo", {
+      value: 27.0,
+      currency: "USD",
+      content_name: "ADHD Identity Method",
+      payment_method: "express",
+    });
+
+    // ExpressCheckoutElement handles its own payment confirmation
+    // The event contains the expressPaymentType
+    const { expressPaymentType } = event;
+
+    // The payment confirmation is handled by the ExpressCheckoutElement itself
+    // We just need to handle the result
+    event.resolve({
+      business: {
+        name: "ADHD Identity Method",
+      },
+    });
+
+    // Track successful purchase
     trackEvent("Purchase", {
       value: 27.0,
       currency: "USD",
       content_name: "ADHD Identity Method",
       content_type: "product",
-      payment_method: "express",
+      payment_method: expressPaymentType || "express",
     });
 
-    resolve({
-      emailAddress: email || undefined,
-      name: name || undefined,
-    });
+    // Success callback will be triggered by Stripe redirect
+    setIsProcessing(false);
   };
 
   return (
@@ -185,7 +210,24 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
               },
               buttonHeight: 48,
             }}
+            onLoadError={(error) => {
+              console.error("Express Checkout load error:", error);
+              // Hide the express checkout section if it fails to load
+              const wrapper = document.querySelector(
+                ".express-checkout-wrapper"
+              );
+              if (wrapper) {
+                wrapper.classList.add("hidden");
+              }
+            }}
           />
+
+          {/* Show a message if Apple Pay should be available but isn't showing */}
+          {isApple && (
+            <p className="text-xs text-gray-500 mt-3">
+              Apple Pay requires Safari and a configured payment method
+            </p>
+          )}
         </div>
 
         {/* Divider */}
@@ -607,7 +649,10 @@ export default function StripePaymentForm() {
                   {/* Scrollable Content */}
                   <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
                     <Elements stripe={stripePromise} options={options}>
-                      <PaymentForm onSuccess={closeModal} />
+                      <PaymentForm
+                        onSuccess={closeModal}
+                        clientSecret={clientSecret}
+                      />
                     </Elements>
                   </div>
                 </motion.div>
