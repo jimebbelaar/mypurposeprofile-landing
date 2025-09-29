@@ -352,7 +352,6 @@ export default function EmbeddedCheckoutForm() {
               onClick={closeModal}
               style={{
                 // Use CSS variables for dynamic viewport height (better mobile support)
-                height: "100vh",
                 height: "100dvh", // Dynamic viewport height for mobile
               }}
             >
