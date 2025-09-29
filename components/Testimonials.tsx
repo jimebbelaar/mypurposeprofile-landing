@@ -56,10 +56,10 @@ export default function Testimonials() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.2 }}
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="bg-gradient-to-br from-adhd-yellow/5 to-black/50 rounded-2xl p-8 border border-adhd-yellow/20 hover:shadow-[0_20px_40px_rgba(255,215,0,0.2)] transition-all"
+              className="glass-effect rounded-2xl p-8 border border-adhd-yellow/20 hover:shadow-[0_20px_40px_rgba(255,215,0,0.2)] transition-all"
             >
               <div className="mb-6">
-                <div className="text-3xl font-bold text-adhd-yellow mb-2">
+                <div className="text-3xl font-black text-adhd-yellow mb-2">
                   {testimonial.title}
                 </div>
               </div>

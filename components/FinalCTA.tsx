@@ -2,6 +2,12 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import StripePaymentForm from "./StripePaymentForm";
 import { useState, useEffect } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  AlertTriangle,
+  CheckCircle2,
+} from "lucide-react";
 
 export default function FinalCTA() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -25,14 +31,19 @@ export default function FinalCTA() {
     setSpotsLeft(calculateSpotsLeft());
     const timer = setInterval(() => {
       setSpotsLeft(calculateSpotsLeft());
-    }, 30 * 60 * 1000); // Update every 30 minutes
+    }, 30 * 60 * 1000);
 
     return () => clearInterval(timer);
   }, []);
 
   return (
     <section ref={ref} className="py-20 relative">
-      <div className="container mx-auto px-4">
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-adhd-red/5 via-adhd-yellow/5 to-adhd-green/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -48,10 +59,17 @@ export default function FinalCTA() {
               initial={{ opacity: 0, x: -30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="glass-effect p-8 rounded-2xl border border-adhd-red/20"
+              className="glass-effect p-8 rounded-2xl border-2 border-adhd-red/20 relative"
             >
+              <div className="absolute top-4 right-4">
+                <ArrowLeft className="w-6 h-6 text-adhd-red/50" />
+              </div>
+              <div className="indicator-red px-3 py-1 rounded-full inline-flex items-center gap-2 mb-4">
+                <AlertTriangle className="w-4 h-4" />
+                <span className="text-sm font-semibold">Option 1</span>
+              </div>
               <h3 className="text-2xl font-bold mb-4 text-adhd-red">
-                Option 1: Keep Struggling
+                Keep Struggling
               </h3>
               <p className="text-gray-300">
                 Keep fighting your ADHD. Start more projects you won't finish.
@@ -63,10 +81,17 @@ export default function FinalCTA() {
               initial={{ opacity: 0, x: 30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="glass-effect p-8 rounded-2xl border border-adhd-green/20 glow-yellow"
+              className="glass-effect p-8 rounded-2xl border-2 border-adhd-green/20 glow-green relative"
             >
+              <div className="absolute top-4 right-4">
+                <ArrowRight className="w-6 h-6 text-adhd-green" />
+              </div>
+              <div className="indicator-green px-3 py-1 rounded-full inline-flex items-center gap-2 mb-4">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-sm font-semibold">Option 2</span>
+              </div>
               <h3 className="text-2xl font-bold mb-4 text-adhd-green">
-                Option 2: Break The Pattern
+                Break The Pattern
               </h3>
               <p className="text-gray-300">
                 Invest $27 (less than an Uber Eats order). Discover who you are
@@ -103,9 +128,16 @@ export default function FinalCTA() {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-6 text-gray-400"
+            className="mt-6"
           >
-            <div>Only {spotsLeft} spots available today • 30-day guarantee</div>
+            <div className="inline-flex items-center gap-4 text-sm text-gray-400">
+              <span className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-adhd-red rounded-full animate-pulse" />
+                Only {spotsLeft} spots available today
+              </span>
+              <span>•</span>
+              <span>30-day guarantee</span>
+            </div>
           </motion.div>
         </div>
       </div>
