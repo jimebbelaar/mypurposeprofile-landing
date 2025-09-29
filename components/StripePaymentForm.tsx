@@ -580,7 +580,9 @@ export default function EmbeddedCheckoutForm() {
           );
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           padding: 1.5rem;
-          padding-top: calc(1.5rem + var(--safe-area-inset-top));
+          padding-top: calc(
+            4rem + var(--safe-area-inset-top)
+          ); /* DOUBLED spacing for mobile */
         }
 
         @media (min-width: 640px) {
@@ -592,7 +594,9 @@ export default function EmbeddedCheckoutForm() {
 
         .close-button {
           position: absolute;
-          top: calc(1rem + var(--safe-area-inset-top));
+          top: calc(
+            3rem + var(--safe-area-inset-top)
+          ); /* DOUBLED spacing for mobile */
           right: 1rem;
           padding: 0.5rem;
           border-radius: 50%;
