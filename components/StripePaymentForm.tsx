@@ -246,7 +246,9 @@ export default function EmbeddedCheckoutForm() {
     // Restore focus
     if (previousActiveElement.current instanceof HTMLElement) {
       setTimeout(() => {
-        previousActiveElement.current?.focus();
+        if (previousActiveElement.current instanceof HTMLElement) {
+          previousActiveElement.current.focus();
+        }
       }, 100);
     }
   };
