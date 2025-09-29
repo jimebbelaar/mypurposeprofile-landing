@@ -1,35 +1,97 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { trackEvent } from "@/lib/meta-pixel";
 import { motion } from "framer-motion";
-import { CheckCircle, Mail, Inbox, ArrowRight } from "lucide-react";
+import { CheckCircle, Mail, Inbox, Loader2 } from "lucide-react";
 import Link from "next/link";
+
+interface SessionData {
+  status: string;
+  payment_status: string;
+  customer_email?: string;
+  customer_name?: string;
+  amount_total?: number;
+  currency?: string;
+}
 
 function SuccessContent() {
   const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
   const paymentIntent = searchParams.get("payment_intent");
   const redirectStatus = searchParams.get("redirect_status");
 
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState<string | null>(null);
+
   useEffect(() => {
-    // Track successful purchase when page loads with succeeded status
-    if (redirectStatus === "succeeded" && paymentIntent) {
+    // Handle embedded checkout session (NEW - for Apple Pay email fix)
+    if (sessionId) {
+      setLoading(true);
+      fetch(`/api/session-status?session_id=${sessionId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setSessionData(data);
+
+          // Store customer email if available
+          if (data.customer_email) {
+            setCustomerEmail(data.customer_email);
+          }
+
+          // Track purchase with session data
+          if (data.payment_status === "paid") {
+            trackEvent("Purchase", {
+              value: data.amount_total ? data.amount_total / 100 : 27.0,
+              currency: data.currency?.toUpperCase() || "USD",
+              content_name: "ADHD Identity Method",
+              content_type: "product",
+              session_id: sessionId,
+              customer_email: data.customer_email,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching session:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+          // Clear URL parameters for cleaner URL
+          window.history.replaceState({}, "", "/success");
+        });
+    }
+    // Handle PaymentIntent redirect (LEGACY - still supported)
+    else if (redirectStatus === "succeeded" && paymentIntent) {
       trackEvent("Purchase", {
-        value: 27.0, // You can make this dynamic if needed
+        value: 27.0,
         currency: "USD",
         content_name: "ADHD Identity Method",
         content_type: "product",
         payment_intent: paymentIntent,
       });
-
       // Clear URL parameters for cleaner URL
       window.history.replaceState({}, "", "/success");
     }
-  }, [redirectStatus, paymentIntent]);
+  }, [sessionId, redirectStatus, paymentIntent]);
 
-  // If payment wasn't successful, show error
-  if (redirectStatus && redirectStatus !== "succeeded") {
+  // Show loading state while fetching session data
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-adhd-yellow mx-auto mb-4" />
+          <p className="text-gray-400">Verifying your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check for failed payment (works for both session and payment intent)
+  if (
+    (redirectStatus && redirectStatus !== "succeeded") ||
+    (sessionData && sessionData.payment_status !== "paid")
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <motion.div
@@ -94,6 +156,20 @@ function SuccessContent() {
           <p className="text-2xl text-gray-300 mb-8">
             Your purchase was completed successfully 🎉
           </p>
+
+          {/* Show amount and product if we have session data */}
+          {sessionData && sessionData.amount_total && (
+            <p className="text-lg text-gray-400 mb-8">
+              <span className="text-adhd-yellow font-semibold">
+                ADHD Identity Method
+              </span>
+              {" • "}
+              <span className="text-adhd-green font-semibold">
+                ${(sessionData.amount_total / 100).toFixed(2)}{" "}
+                {sessionData.currency?.toUpperCase()}
+              </span>
+            </p>
+          )}
         </motion.div>
 
         {/* Check Email Card */}
@@ -111,13 +187,31 @@ function SuccessContent() {
             Check Your Email!
           </h2>
 
-          <p className="text-lg text-gray-300 mb-6">
-            We've sent everything you need to get started to your email address.
-            <br />
-            <span className="text-sm text-gray-400">
-              (The email you used for payment)
-            </span>
+          <p className="text-lg text-gray-300 mb-4">
+            We've sent everything you need to get started to:
           </p>
+
+          {customerEmail ? (
+            <div className="bg-black/50 rounded-lg px-4 py-3 mb-6">
+              <p className="text-xl font-mono font-semibold text-white">
+                {customerEmail}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 mb-6">
+              (The email you used for payment)
+            </p>
+          )}
+
+          {sessionData?.customer_name && (
+            <p className="text-gray-400 mb-4">
+              Thank you for your purchase,{" "}
+              <span className="text-adhd-yellow">
+                {sessionData.customer_name}
+              </span>
+              !
+            </p>
+          )}
 
           <div className="bg-adhd-green/10 border border-adhd-green/30 rounded-lg p-3">
             <p className="text-sm text-adhd-green">
@@ -136,53 +230,55 @@ function SuccessContent() {
           <p className="text-gray-400 mb-4">Open your email provider:</p>
 
           <div className="flex justify-center gap-4 flex-wrap">
-            <motion.a
-              href="https://mail.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition flex items-center gap-2"
-            >
-              <Inbox className="w-5 h-5" />
-              Gmail
-            </motion.a>
+            {/* Highlight the user's email provider if we can detect it */}
+            {[
+              {
+                name: "Gmail",
+                url: "https://mail.google.com",
+                domains: ["gmail.com", "googlemail.com"],
+              },
+              {
+                name: "Outlook",
+                url: "https://outlook.com",
+                domains: ["outlook.com", "hotmail.com", "live.com"],
+              },
+              {
+                name: "Yahoo",
+                url: "https://mail.yahoo.com",
+                domains: ["yahoo.com", "ymail.com"],
+              },
+              {
+                name: "iCloud",
+                url: "https://mail.icloud.com",
+                domains: ["icloud.com", "me.com", "mac.com"],
+              },
+            ].map((provider) => {
+              const isUserProvider =
+                customerEmail &&
+                provider.domains.some((domain) =>
+                  customerEmail.toLowerCase().includes(domain)
+                );
 
-            <motion.a
-              href="https://outlook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition flex items-center gap-2"
-            >
-              <Inbox className="w-5 h-5" />
-              Outlook
-            </motion.a>
-
-            <motion.a
-              href="https://mail.yahoo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition flex items-center gap-2"
-            >
-              <Inbox className="w-5 h-5" />
-              Yahoo
-            </motion.a>
-
-            <motion.a
-              href="https://mail.icloud.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition flex items-center gap-2"
-            >
-              <Inbox className="w-5 h-5" />
-              iCloud
-            </motion.a>
+              return (
+                <motion.a
+                  key={provider.name}
+                  href={provider.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-6 py-3 rounded-lg transition flex items-center gap-2 ${
+                    isUserProvider
+                      ? "bg-adhd-yellow/20 border border-adhd-yellow/50 text-adhd-yellow"
+                      : "bg-white/10 hover:bg-white/20 text-white"
+                  }`}
+                >
+                  <Inbox className="w-5 h-5" />
+                  {provider.name}
+                  {isUserProvider && " →"}
+                </motion.a>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -201,9 +297,10 @@ function SuccessContent() {
             </p>
           </div>
 
-          {paymentIntent && (
+          {(sessionId || paymentIntent) && (
             <p className="text-xs text-gray-500">
-              Order reference: {paymentIntent.substring(0, 20)}...
+              Order reference:{" "}
+              {(sessionId || paymentIntent || "").substring(0, 20)}...
             </p>
           )}
 
