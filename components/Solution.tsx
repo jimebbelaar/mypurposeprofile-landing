@@ -135,7 +135,7 @@ export default function Solution() {
                 className="glass-effect p-8 rounded-2xl border border-adhd-yellow/20"
               >
                 <div className="text-3xl mb-4">{item.icon}</div>
-                <h3 className="text-2xl font-bold mb-4 text-adhd-yellow">
+                <h3 className="text-2xl font-black mb-4 text-adhd-yellow">
                   {item.title}
                 </h3>
                 <p className="text-gray-300">{item.description}</p>
@@ -164,7 +164,7 @@ export default function Solution() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-2xl font-bold mb-8 text-adhd-red">
+              <h3 className="text-2xl font-black mb-8 text-adhd-red">
                 ❌ What You've Tried So Far
               </h3>
               <div className="space-y-4">
@@ -193,7 +193,7 @@ export default function Solution() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-2xl font-bold mb-8 text-adhd-green">
+              <h3 className="text-2xl font-black mb-8 text-adhd-green">
                 ✅ The ADHD Identity Method™
               </h3>
               <div className="space-y-4">

@@ -265,7 +265,7 @@ export default function EmbeddedCheckoutForm() {
   return (
     <>
       {/* Main CTA Button */}
-      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow z-50">
+      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
         {priceLoading ? (
           <div className="animate-pulse">
             <div className="h-12 bg-gray-700 rounded mb-4"></div>
@@ -295,9 +295,7 @@ export default function EmbeddedCheckoutForm() {
                 {/* Original Price */}
                 {priceInfo.originalPrice && (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-sm">
-                      Total value:
-                    </span>
+                    <span className="text-gray-400 text-sm">Total value:</span>
                     <span className="text-gray-400 line-through text-xl font-medium">
                       ${priceInfo.originalPrice}
                     </span>
@@ -307,7 +305,9 @@ export default function EmbeddedCheckoutForm() {
                 {/* Current Price */}
                 <div className="flex items-center gap-3">
                   <div className="text-adhd-yellow">
-                    <span className="text-6xl gradient-text font-black ">$</span>
+                    <span className="text-6xl gradient-text font-black ">
+                      $
+                    </span>
                     <span className="text-6xl gradient-text font-black ">
                       {priceInfo.price}
                     </span>
@@ -371,10 +371,11 @@ export default function EmbeddedCheckoutForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-backdrop fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="modal-backdrop fixed inset-0 bg-blue-950/90 backdrop-blur-md flex items-center justify-center p-4"
             aria-modal="true"
             role="dialog"
             aria-labelledby="modal-title"
+            style={{ zIndex: 100 }}
           >
             <motion.div
               ref={modalRef}
@@ -382,15 +383,19 @@ export default function EmbeddedCheckoutForm() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+              className="bg-slate-900 rounded-2xl border border-adhd-yellow/20 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden relative"
               onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+                marginTop: "60px",
+              }}
             >
               {/* Header */}
-              <div className="sticky top-0 z-20 bg-black border-b border-white/10">
-                <div className="p-6 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10">
+              <div className="sticky top-0 z-20 bg-slate-800/95 backdrop-blur-sm border-b border-adhd-yellow/20">
+                <div className="p-6 bg-gradient-to-r from-adhd-yellow/5 to-adhd-orange/5">
                   <button
                     onClick={closeModal}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-adhd-yellow/50"
+                    className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-adhd-yellow/50 z-30"
                     aria-label="Close modal"
                   >
                     <X className="w-6 h-6 text-white" />
@@ -458,7 +463,7 @@ export default function EmbeddedCheckoutForm() {
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-white/10 bg-black">
+              <div className="p-6 border-t border-adhd-yellow/20 bg-slate-800/95 backdrop-blur-sm">
                 <div className="flex items-center justify-center text-sm text-gray-400">
                   <Lock className="w-4 h-4 mr-2 text-adhd-green" />
                   Secure checkout powered by Stripe
