@@ -187,29 +187,16 @@ export default function EmbeddedCheckoutForm() {
     paymentModalEvents.emit(showPayment);
   }, [showPayment]);
 
-  // IMPROVED: Better body scroll locking for mobile
+  // Lock body scroll and handle escape key
   useEffect(() => {
     if (!showPayment) return;
 
-    // Store original styles
     const scrollY = window.scrollY;
-    const originalStyles = {
-      overflow: document.body.style.overflow,
-      position: document.body.style.position,
-      top: document.body.style.top,
-      width: document.body.style.width,
-      height: document.body.style.height,
-    };
-
-    // Apply scroll lock with mobile-friendly approach
+    const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
-    document.body.style.height = "100%";
-
-    // Also lock html element for better mobile support
-    document.documentElement.style.overflow = "hidden";
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -221,18 +208,10 @@ export default function EmbeddedCheckoutForm() {
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-
-      // Restore original styles
-      document.body.style.overflow = originalStyles.overflow;
-      document.body.style.position = originalStyles.position;
-      document.body.style.top = originalStyles.top;
-      document.body.style.width = originalStyles.width;
-      document.body.style.height = originalStyles.height;
-
-      // Restore html element
-      document.documentElement.style.overflow = "";
-
-      // Restore scroll position
+      document.body.style.overflow = originalStyle;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
       window.scrollTo(0, scrollY);
     };
   }, [showPayment]);
@@ -337,95 +316,55 @@ export default function EmbeddedCheckoutForm() {
         )}
       </div>
 
-      {/* IMPROVED: Mobile-optimized Checkout Modal */}
+      {/* Ultra-Minimal Checkout Modal */}
       <AnimatePresence>
         {showPayment && (
-          <>
-            {/* Portal container for better isolation - you'll need to add this div to your root layout */}
-            {/* <div id="modal-root"></div> */}
-
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={closeModal}
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-md"
-              onClick={closeModal}
-              style={{
-                // Use CSS variables for dynamic viewport height (better mobile support)
-                height: "100dvh", // Dynamic viewport height for mobile
-              }}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Container with better mobile handling */}
-              <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 sm:p-6">
-                <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  className="relative bg-white rounded-lg w-full max-w-2xl shadow-2xl"
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    // Use dynamic viewport height for better mobile support
-                    maxHeight: "min(90vh, 90dvh)",
-                    // Ensure modal doesn't go under notch on iOS
-                    marginTop: "env(safe-area-inset-top)",
-                    marginBottom: "env(safe-area-inset-bottom)",
-                  }}
-                >
-                  {/* Close button with better positioning */}
-                  <button
-                    onClick={closeModal}
-                    className="absolute top-3 right-3 z-[100001] p-2 rounded-full bg-white hover:bg-gray-100 transition-colors shadow-lg border border-gray-200"
-                    aria-label="Close payment modal"
-                  >
-                    <X className="w-5 h-5 text-gray-600" />
-                  </button>
+              {/* Close button */}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/90 hover:bg-gray-100 transition-colors shadow-lg"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
 
-                  {/* Scrollable Content Container */}
-                  <div
-                    className="overflow-y-auto overflow-x-hidden rounded-lg"
-                    style={{
-                      maxHeight: "min(85vh, 85dvh)",
-                      WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
-                    }}
-                  >
-                    {/* Stripe Checkout Container */}
-                    <div className="p-4 sm:p-6">
-                      {loading && (
-                        <div className="flex flex-col items-center justify-center py-20">
-                          <Loader2
-                            className="animate-spin text-gray-400 mb-4"
-                            size={40}
-                          />
-                          <p className="text-gray-500">
-                            Loading secure checkout...
-                          </p>
-                        </div>
-                      )}
-
-                      <div
-                        id="checkout-container"
-                        ref={checkoutRef}
-                        className="min-h-[500px] sm:min-h-[600px]"
-                        style={{
-                          // Ensure Stripe iframe doesn't cause overflow
-                          maxWidth: "100%",
-                          overflow: "hidden",
-                        }}
-                      />
-                    </div>
+              {/* Stripe Checkout Container */}
+              <div className="p-4">
+                {loading && (
+                  <div className="flex items-center justify-center py-20">
+                    <Loader2 className="animate-spin text-gray-400" size={32} />
                   </div>
-                </motion.div>
+                )}
+                
+                <div
+                  id="checkout-container"
+                  ref={checkoutRef}
+                  className="min-h-[600px]"
+                />
               </div>
             </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Gradient animation styles + mobile-specific fixes */}
+      {/* Gradient animation styles */}
       <style jsx>{`
         @keyframes gradient-x {
-          0%,
-          100% {
+          0%, 100% {
             transform: translateX(0%);
           }
           50% {
@@ -437,27 +376,6 @@ export default function EmbeddedCheckoutForm() {
         }
         .bg-size-200 {
           background-size: 200% 200%;
-        }
-
-        /* Mobile-specific fixes */
-        @supports (height: 100dvh) {
-          .fixed {
-            height: 100dvh;
-          }
-        }
-
-        /* Prevent iOS bounce scrolling on modal */
-        body.modal-open {
-          position: fixed;
-          overflow: hidden;
-          width: 100%;
-          height: 100%;
-        }
-
-        /* Fix for Stripe iframe on mobile */
-        #checkout-container iframe {
-          max-width: 100% !important;
-          width: 100% !important;
         }
       `}</style>
     </>
