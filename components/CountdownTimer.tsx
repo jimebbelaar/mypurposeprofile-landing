@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { paymentModalEvents } from "@/components/EmbeddedCheckoutForm";
 
 export default function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({
@@ -10,39 +11,43 @@ export default function CountdownTimer() {
     minutes: 0,
     seconds: 0,
   });
-  const [spotsLeft, setSpotsLeft] = useState(5); // Default value for SSR
+  const [spotsLeft, setSpotsLeft] = useState(5);
   const [showNotification, setShowNotification] = useState(false);
-  const [isClient, setIsClient] = useState(false); // Track if we're on client
+  const [isClient, setIsClient] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const simulationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
   const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Mark that we're on the client
     setIsClient(true);
   }, []);
 
+  // Subscribe to payment modal events
   useEffect(() => {
-    // Only run this logic on the client and once
+    const unsubscribe = paymentModalEvents.subscribe((isOpen) => {
+      setIsPaymentModalOpen(isOpen);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
     if (!isClient || hasInitializedRef.current) return;
     hasInitializedRef.current = true;
 
     const calculateTimeUntilMidnightAmsterdam = () => {
-      // Get current time in Amsterdam timezone
       const now = new Date();
       const amsterdamTime = new Date(
         now.toLocaleString("en-US", { timeZone: "Europe/Amsterdam" })
       );
 
-      // Create midnight time for Amsterdam (next day)
       const midnight = new Date(amsterdamTime);
-      midnight.setHours(24, 0, 0, 0); // Set to next midnight
+      midnight.setHours(24, 0, 0, 0);
 
-      // Calculate difference in milliseconds
       const difference = midnight.getTime() - amsterdamTime.getTime();
 
-      // Convert to hours, minutes, seconds
       const hours = Math.floor(difference / (1000 * 60 * 60));
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
@@ -61,15 +66,10 @@ export default function CountdownTimer() {
       currentHour: number,
       dayOfWeek: number
     ) => {
-      // More realistic spot allocation based on time of day
-      // Peak hours (evening) have fewer spots, quiet hours have more
-
-      // Check if localStorage is available (client-side only)
       if (typeof window === "undefined") {
-        return 5; // Default for SSR
+        return 5;
       }
 
-      // Get stored data from localStorage
       try {
         const storedData = localStorage.getItem("countdownData");
         const now = Date.now();
@@ -81,24 +81,17 @@ export default function CountdownTimer() {
           const visitCount = data.visitCount || 1;
           const hoursSinceLastVisit = (now - lastVisit) / (1000 * 60 * 60);
 
-          // If returning visitor
           if (hoursSinceLastVisit > 0.5) {
-            // More than 30 minutes ago
-            // Always show fewer or same spots for returning visitors
             let newSpots = lastSpots;
 
             if (hoursSinceLastVisit > 24) {
-              // Next day, reset but start lower
-              newSpots = Math.max(2, Math.floor(Math.random() * 3) + 3); // 3-5 spots
+              newSpots = Math.max(2, Math.floor(Math.random() * 3) + 3);
             } else if (hoursSinceLastVisit > 4) {
-              // Several hours later, definitely fewer
               newSpots = Math.max(2, lastSpots - 2);
             } else if (hoursSinceLastVisit > 1) {
-              // An hour or more later, reduce by 1
               newSpots = Math.max(2, lastSpots - 1);
             }
 
-            // Store updated data
             localStorage.setItem(
               "countdownData",
               JSON.stringify({
@@ -111,7 +104,6 @@ export default function CountdownTimer() {
 
             return newSpots;
           } else {
-            // Same session, return stored value
             return lastSpots;
           }
         }
@@ -119,36 +111,26 @@ export default function CountdownTimer() {
         console.error("Error accessing localStorage:", error);
       }
 
-      // First time visitor or no stored data
       let baseSpots = 7;
 
-      // Time-based allocation (Amsterdam time)
       if (currentHour >= 0 && currentHour < 6) {
-        // Night: 5-7 spots
         baseSpots = Math.floor(Math.random() * 3) + 5;
       } else if (currentHour >= 6 && currentHour < 10) {
-        // Morning: 4-6 spots
         baseSpots = Math.floor(Math.random() * 3) + 4;
       } else if (currentHour >= 10 && currentHour < 14) {
-        // Midday: 3-5 spots
         baseSpots = Math.floor(Math.random() * 3) + 3;
       } else if (currentHour >= 14 && currentHour < 18) {
-        // Afternoon: 3-4 spots
         baseSpots = Math.floor(Math.random() * 2) + 3;
       } else if (currentHour >= 18 && currentHour < 22) {
-        // Peak evening: 2-3 spots (highest urgency)
         baseSpots = Math.floor(Math.random() * 2) + 2;
       } else {
-        // Late evening: 3-4 spots
         baseSpots = Math.floor(Math.random() * 2) + 3;
       }
 
-      // Weekend adjustment (slightly more spots on weekends)
       if (dayOfWeek === 0 || dayOfWeek === 6) {
         baseSpots = Math.min(7, baseSpots + 1);
       }
 
-      // Store initial data
       try {
         localStorage.setItem(
           "countdownData",
@@ -166,7 +148,6 @@ export default function CountdownTimer() {
       return baseSpots;
     };
 
-    // Initialize time and spots
     const timeData = calculateTimeUntilMidnightAmsterdam();
     setTimeLeft({
       hours: timeData.hours,
@@ -174,14 +155,12 @@ export default function CountdownTimer() {
       seconds: timeData.seconds,
     });
 
-    // Set initial spots based on smart calculation
     const initialSpots = calculateSmartSpotsLeft(
       timeData.currentHour,
       timeData.dayOfWeek
     );
     setSpotsLeft(initialSpots);
 
-    // Update timer every second
     const timer = setInterval(() => {
       const newTimeData = calculateTimeUntilMidnightAmsterdam();
       setTimeLeft({
@@ -191,9 +170,7 @@ export default function CountdownTimer() {
       });
     }, 1000);
 
-    // Simulate dynamic purchases
     const simulatePurchase = () => {
-      // Check if we should simulate a purchase
       try {
         const storedData = localStorage.getItem("countdownData");
         const hasSeenPurchase = localStorage.getItem("hasSeenPurchase");
@@ -202,16 +179,13 @@ export default function CountdownTimer() {
           const data = JSON.parse(storedData);
           const currentSpots = data.lastSpots;
 
-          // Only simulate if there are more than 2 spots
           if (currentSpots > 2) {
-            // Random delay between 15-35 seconds
             const delay = 15000 + Math.random() * 20000;
 
             simulationTimeoutRef.current = setTimeout(() => {
               setSpotsLeft((current) => {
                 const newSpots = Math.max(2, current - 1);
 
-                // Update localStorage
                 try {
                   const storedData = localStorage.getItem("countdownData");
                   if (storedData) {
@@ -225,15 +199,12 @@ export default function CountdownTimer() {
                     );
                   }
 
-                  // Mark that user has seen a purchase this session
                   localStorage.setItem("hasSeenPurchase", "true");
                 } catch (error) {
                   console.error("Error updating localStorage:", error);
                 }
 
                 setShowNotification(true);
-
-                // Hide notification after 4 seconds
                 setTimeout(() => setShowNotification(false), 4000);
 
                 return newSpots;
@@ -246,19 +217,15 @@ export default function CountdownTimer() {
       }
     };
 
-    // Run purchase simulation
     simulatePurchase();
 
-    // Periodically update spots (every 5 minutes) to simulate other purchases
     const periodicUpdate = setInterval(() => {
       const chance = Math.random();
-      // 20% chance to decrease spots every 5 minutes
       if (chance < 0.2) {
         setSpotsLeft((current) => {
           if (current > 2) {
             const newSpots = current - 1;
 
-            // Update localStorage
             try {
               const storedData = localStorage.getItem("countdownData");
               if (storedData) {
@@ -283,9 +250,8 @@ export default function CountdownTimer() {
           return current;
         });
       }
-    }, 5 * 60 * 1000); // Every 5 minutes
+    }, 5 * 60 * 1000);
 
-    // Clear session marker on page unload
     const handleUnload = () => {
       try {
         localStorage.removeItem("hasSeenPurchase");
@@ -311,7 +277,9 @@ export default function CountdownTimer() {
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50"
+        className={`fixed top-0 left-0 right-0 ${
+          isPaymentModalOpen ? "z-30" : "z-50"
+        }`}
         style={{
           background: "rgba(10, 10, 10, 0.4)",
           backdropFilter: "blur(20px)",
@@ -413,13 +381,15 @@ export default function CountdownTimer() {
 
       {/* Purchase simulation notification */}
       <AnimatePresence>
-        {showNotification && (
+        {showNotification && !isPaymentModalOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.8 }}
             transition={{ duration: 0.5 }}
-            className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-lg"
+            className={`fixed top-16 left-1/2 transform -translate-x-1/2 ${
+              isPaymentModalOpen ? "z-30" : "z-50"
+            } px-4 py-2 rounded-lg`}
             style={{
               background: "rgba(255, 204, 0, 0.1)",
               backdropFilter: "blur(10px)",
