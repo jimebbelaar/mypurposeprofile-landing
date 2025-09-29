@@ -13,47 +13,47 @@ import { trackEvent, initTracking } from "@/lib/meta-pixel";
 import { motion } from "framer-motion";
 
 export default function Home() {
-  useEffect(() => {
-    initTracking();
+  // useEffect(() => {
+  //   initTracking();
 
-    // Track scroll depth
-    let maxScroll = 0;
-    const handleScroll = () => {
-      const scrollPercent =
-        (window.scrollY /
-          (document.documentElement.scrollHeight - window.innerHeight)) *
-        100;
+  //   // Track scroll depth
+  //   let maxScroll = 0;
+  //   const handleScroll = () => {
+  //     const scrollPercent =
+  //       (window.scrollY /
+  //         (document.documentElement.scrollHeight - window.innerHeight)) *
+  //       100;
 
-      if (scrollPercent > maxScroll) {
-        maxScroll = scrollPercent;
-        if (maxScroll >= 25 && maxScroll < 50) {
-          trackEvent("ScrollDepth25");
-        } else if (maxScroll >= 50 && maxScroll < 75) {
-          trackEvent("ScrollDepth50");
-        } else if (maxScroll >= 75 && maxScroll < 90) {
-          trackEvent("ScrollDepth75");
-        } else if (maxScroll >= 90) {
-          trackEvent("ScrollDepth90");
-        }
-      }
-    };
+  //     if (scrollPercent > maxScroll) {
+  //       maxScroll = scrollPercent;
+  //       if (maxScroll >= 25 && maxScroll < 50) {
+  //         trackEvent("ScrollDepth25");
+  //       } else if (maxScroll >= 50 && maxScroll < 75) {
+  //         trackEvent("ScrollDepth50");
+  //       } else if (maxScroll >= 75 && maxScroll < 90) {
+  //         trackEvent("ScrollDepth75");
+  //       } else if (maxScroll >= 90) {
+  //         trackEvent("ScrollDepth90");
+  //       }
+  //     }
+  //   };
 
-    window.addEventListener("scroll", handleScroll);
+  //   window.addEventListener("scroll", handleScroll);
 
-    // Track time on page
-    const startTime = Date.now();
-    const handleBeforeUnload = () => {
-      const timeSpent = Math.round((Date.now() - startTime) / 1000);
-      trackEvent("TimeOnPage", { seconds: timeSpent });
-    };
+  //   // Track time on page
+  //   const startTime = Date.now();
+  //   const handleBeforeUnload = () => {
+  //     const timeSpent = Math.round((Date.now() - startTime) / 1000);
+  //     trackEvent("TimeOnPage", { seconds: timeSpent });
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
 
   return (
     <>
