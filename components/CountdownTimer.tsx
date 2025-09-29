@@ -350,9 +350,9 @@ export default function CountdownTimer() {
             <AnimatePresence mode="wait">
               <motion.span
                 key={spotsLeft}
-                initial={isClient ? { scale: 0.8, opacity: 0 } : false}
+                initial={isClient ? { scale: 0.8, opacity: 0 } : undefined}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={isClient ? { scale: 1.2, opacity: 0 } : false}
+                exit={isClient ? { scale: 1.2, opacity: 0 } : undefined}
                 transition={{ duration: 0.3 }}
                 className="text-adhd-yellow font-bold text-xs sm:text-sm drop-shadow-[0_2px_10px_rgba(255,204,0,0.5)]"
               >
