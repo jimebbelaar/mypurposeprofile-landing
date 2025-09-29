@@ -44,61 +44,13 @@
   }
 }
 
-/* Prevent horizontal scroll - targeted approach */
-* {
-  box-sizing: border-box;
-}
-
-html {
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
+/* Global styles */
 body {
   background: var(--dark-background);
   color: var(--dark-foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-/* Prevent overflow on main wrapper elements only */
-#__next,
-main {
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Ensure sections don't cause overflow */
-section {
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Fix for blur effects specifically */
-.blur-3xl {
-  transform: translateZ(0); /* Force GPU acceleration */
-  will-change: transform;
-  contain: layout style paint;
-  pointer-events: none; /* Prevent interaction with background blurs */
-}
-
-/* Ensure text wraps properly without forcing width */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span,
-div,
-a,
-button {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 /* Custom utility classes */
@@ -192,29 +144,10 @@ button {
   }
 }
 
-/* Mobile-specific fixes - targeted only at problem elements */
-@media (max-width: 768px) {
-  /* Constrain background blur elements specifically */
-  .absolute .blur-3xl {
-    max-width: 50vw;
-  }
-
-  /* Ensure images and media don't overflow */
-  img,
-  video,
-  iframe {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Reduce hover effects on mobile to prevent overflow */
-  .hover\:scale-105:hover {
-    transform: scale(1.02);
-  }
-
-  /* Fix for Framer Motion elements that might cause overflow */
-  [style*="transform: translateX(50px)"],
-  [style*="transform: translateX(-50px)"] {
-    transform: translateX(0) !important;
-  }
+/* Prevent horizontal scroll globally */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
 }
