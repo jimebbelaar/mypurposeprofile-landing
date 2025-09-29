@@ -89,6 +89,7 @@ function PaymentForm({
       content_name: priceInfo.productName,
     });
 
+    // Always redirect to success page - Stripe will handle the redirect
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -101,26 +102,19 @@ function PaymentForm({
           },
         },
       },
+      // redirect: 'always' is the default for confirmPayment
     });
 
+    // This code only runs if there's an error (successful payments redirect)
     if (error) {
       if (error.type === "card_error" || error.type === "validation_error") {
         setMessage(error.message || "An error occurred");
       } else {
         setMessage("An unexpected error occurred.");
       }
-    } else {
-      // Payment succeeded
-      trackEvent("Purchase", {
-        value: parseFloat(priceInfo.price),
-        currency: priceInfo.currency,
-        content_name: priceInfo.productName,
-        content_type: "product",
-      });
-      onSuccess();
+      setIsProcessing(false);
     }
-
-    setIsProcessing(false);
+    // If payment succeeds, user is redirected to success page
   };
 
   const handleExpressCheckout = async (event: any) => {
@@ -137,26 +131,22 @@ function PaymentForm({
       payment_method: "express",
     });
 
-    const { expressPaymentType } = event;
-
     try {
-      // Confirm the payment using the Express Checkout element
-      // Always redirect to success page to ensure we capture everything
+      // Always redirect to success page for express checkout
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/success`,
-          // Email will be collected from the payment method
         },
-        redirect: "always", // Always redirect to ensure success page
+        redirect: "always", // Explicitly set to always redirect
       });
 
+      // This code only runs if there's an error (successful payments redirect)
       if (error) {
-        // Handle error - this will only happen if payment fails
         setMessage(error.message || "Payment failed");
         setIsProcessing(false);
       }
-      // If no error, user will be redirected to success page
+      // If payment succeeds, user is redirected to success page
     } catch (err: any) {
       console.error("Express checkout error:", err);
       setMessage("An error occurred during express checkout");
