@@ -91,7 +91,7 @@ export default function Home() {
   return (
     <>
       <CountdownTimer />
-      <StickyBottomCTA />
+      {/* <StickyBottomCTA /> */}
       <main className="min-h-screen">
         <Hero />
         <Testimonials />
