@@ -32,6 +32,28 @@ export async function POST(request: NextRequest) {
     const product = price.product as string;
     const productDetails = await stripe.products.retrieve(product);
 
+    // Create or retrieve customer if email is provided
+    let customerId = undefined;
+    if (email) {
+      const customers = await stripe.customers.list({
+        email: email,
+        limit: 1,
+      });
+
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email: email,
+          name: name,
+          metadata: {
+            product_purchased: productDetails.name,
+          },
+        });
+        customerId = customer.id;
+      }
+    }
+
     // Create a PaymentIntent with the price from Stripe
     const paymentIntent = await stripe.paymentIntents.create({
       amount: price.unit_amount!, // Amount in cents from the Stripe Price
@@ -44,7 +66,10 @@ export async function POST(request: NextRequest) {
         price_id: price.id,
         product_id: productDetails.id,
       },
-      // Add customer email if provided
+      // Attach customer if we have one
+      ...(customerId && { customer: customerId }),
+
+      // Add customer email if provided (for receipts)
       ...(email && { receipt_email: email }),
 
       // Add description from product
@@ -53,12 +78,15 @@ export async function POST(request: NextRequest) {
       // Add statement descriptor for better merchant identification
       statement_descriptor_suffix: "ADHD Method",
 
-      // Add merchant display name for Apple Pay
+      // Configure payment method options
       payment_method_options: {
         card: {
           request_three_d_secure: "automatic",
         },
       },
+
+      // Save payment method for future use (optional)
+      setup_future_usage: "off_session",
     });
 
     // Return client secret and price information for the frontend

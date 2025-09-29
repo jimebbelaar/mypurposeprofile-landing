@@ -141,36 +141,22 @@ function PaymentForm({
 
     try {
       // Confirm the payment using the Express Checkout element
+      // Always redirect to success page to ensure we capture everything
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/success`,
-          receipt_email: email || undefined,
-          payment_method_data: {
-            billing_details: {
-              name: name || undefined,
-              email: email || undefined,
-            },
-          },
+          // Email will be collected from the payment method
         },
-        redirect: "if_required", // Important for express checkout
+        redirect: "always", // Always redirect to ensure success page
       });
 
       if (error) {
-        // Handle error
+        // Handle error - this will only happen if payment fails
         setMessage(error.message || "Payment failed");
         setIsProcessing(false);
-      } else {
-        // Payment succeeded without redirect
-        trackEvent("Purchase", {
-          value: parseFloat(priceInfo.price),
-          currency: priceInfo.currency,
-          content_name: priceInfo.productName,
-          content_type: "product",
-          payment_method: expressPaymentType || "express",
-        });
-        onSuccess();
       }
+      // If no error, user will be redirected to success page
     } catch (err: any) {
       console.error("Express checkout error:", err);
       setMessage("An error occurred during express checkout");
@@ -249,6 +235,7 @@ function PaymentForm({
               );
 
               // Resolve the click event to show payment sheet
+              // Request email in the payment sheet
               if (event.resolve) {
                 event.resolve({});
               }
