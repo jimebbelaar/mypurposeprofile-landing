@@ -1,3 +1,4 @@
+// app/api/create-payment-intent/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 
