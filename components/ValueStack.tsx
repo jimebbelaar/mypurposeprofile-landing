@@ -106,20 +106,7 @@ export default function ValueStack() {
             </motion.div>
           ))}
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-8 text-center"
-          >
-            <div className="text-gray-500 text-2xl mb-2">
-              Total value: <span className="line-through">$1,035</span>
-            </div>
-            <div className="text-6xl font-black gradient-text mb-2">$27</div>
-            <div className="text-adhd-yellow font-semibold">
-              Today 97% off • Only {spotsLeft} spots left
-            </div>
-          </motion.div>
+       
         </div>
 
         <motion.div

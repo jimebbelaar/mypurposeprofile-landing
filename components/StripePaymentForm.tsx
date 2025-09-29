@@ -11,6 +11,7 @@ import {
   CreditCard,
   Loader2,
   AlertCircle,
+  TrendingDown,
 } from "lucide-react";
 
 const stripePromise = loadStripe(
@@ -61,10 +62,10 @@ export default function EmbeddedCheckoutForm() {
   const previousActiveElement = useRef<Element | null>(null);
 
   const [priceInfo, setPriceInfo] = useState<PriceInfo>({
-    price: "27.00",
+    price: "27",
     currency: "USD",
     productName: "ADHD Identity Method",
-    originalPrice: "1035.00",
+    originalPrice: "1035", // Default original price
   });
   const [priceLoading, setPriceLoading] = useState(true);
 
@@ -80,10 +81,18 @@ export default function EmbeddedCheckoutForm() {
         const response = await fetch("/api/get-price");
         if (response.ok) {
           const data = await response.json();
-          setPriceInfo(data);
+          // Ensure originalPrice is always set and remove decimals if they're .00
+          setPriceInfo({
+            ...data,
+            price: parseFloat(data.price).toFixed(0), // Remove decimals
+            originalPrice: data.originalPrice
+              ? parseFloat(data.originalPrice).toFixed(0)
+              : "1035", // Fallback to default if not provided
+          });
         }
       } catch (error) {
         console.error("Failed to fetch price info:", error);
+        // Keep default values on error
       } finally {
         setPriceLoading(false);
       }
@@ -238,13 +247,19 @@ export default function EmbeddedCheckoutForm() {
     };
   }, [showPayment]);
 
-  // Calculate percentage off if original price exists
+  // Calculate percentage off and savings
   const percentageOff = priceInfo.originalPrice
     ? Math.round(
         ((parseFloat(priceInfo.originalPrice) - parseFloat(priceInfo.price)) /
           parseFloat(priceInfo.originalPrice)) *
           100
       )
+    : null;
+
+  const youSave = priceInfo.originalPrice
+    ? Math.round(
+        parseFloat(priceInfo.originalPrice) - parseFloat(priceInfo.price)
+      ) // Rounded to whole number
     : null;
 
   return (
@@ -258,46 +273,90 @@ export default function EmbeddedCheckoutForm() {
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-4 mb-6">
-              <div>
-                {priceInfo.originalPrice && (
-                  <span className="text-gray-500 line-through text-2xl">
-                    ${priceInfo.originalPrice}
-                  </span>
-                )}
-                <div className="text-5xl font-bold text-adhd-yellow">
-                  ${priceInfo.price}
-                </div>
-              </div>
+            {/* Price Display Section */}
+            <div className="mb-6">
+              {/* Discount Badge */}
               {percentageOff && (
-                <div className="bg-adhd-red text-white px-4 py-2 rounded-full font-bold">
-                  {percentageOff}% OFF TODAY
+                <div className="flex items-center justify-center mb-4">
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", damping: 10 }}
+                    className="bg-gradient-to-r from-adhd-red to-red-600 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg"
+                  >
+                    <TrendingDown className="w-4 h-4" />
+                    LIMITED TIME: {percentageOff}% OFF
+                  </motion.div>
                 </div>
               )}
+
+              {/* Price Container */}
+              <div className="flex flex-col items-center gap-2">
+                {/* Original Price */}
+                {priceInfo.originalPrice && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-400 text-sm">
+                      Total value:
+                    </span>
+                    <span className="text-gray-400 line-through text-xl font-medium">
+                      ${priceInfo.originalPrice}
+                    </span>
+                  </div>
+                )}
+
+                {/* Current Price */}
+                <div className="flex items-center gap-3">
+                  <div className="text-adhd-yellow">
+                    <span className="text-6xl gradient-text font-black ">$</span>
+                    <span className="text-6xl gradient-text font-black ">
+                      {priceInfo.price}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Payment Note */}
+                <div className="text-xs text-gray-300 mt-1">
+                  One-time payment • No subscription
+                </div>
+              </div>
             </div>
 
+            {/* CTA Button */}
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleOpenPayment}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all animate-pulse-slow mb-4 disabled:opacity-50 flex items-center justify-center gap-3"
+              className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-adhd-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
-              <CreditCard className="w-6 h-6" />
-              {loading ? "Loading..." : "Get Instant Access →"}
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-adhd-yellow via-adhd-orange to-adhd-yellow bg-size-200 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Button content */}
+              <div className="relative flex items-center gap-3">
+                <CreditCard className="w-6 h-6" />
+                <span>{loading ? "Loading..." : "Get Instant Access"}</span>
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                >
+                  →
+                </motion.span>
+              </div>
             </motion.button>
 
-            <div className="flex flex-col gap-2 text-sm text-gray-400">
+            {/* Trust Badges */}
+            <div className="flex flex-col gap-2 text-sm text-gray-300 mt-4 items-center text-center">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
                 <span>30-day money-back guarantee</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
                 <span>Instant access (start in 2 min)</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <Lock className="w-4 h-4 text-adhd-green flex-shrink-0" />
                 <span>Secure payment by Stripe</span>
               </div>
             </div>
@@ -342,9 +401,16 @@ export default function EmbeddedCheckoutForm() {
                   >
                     Secure Checkout
                   </h2>
-                  <p className="text-gray-400 mt-1">
-                    Complete your purchase to get instant access
-                  </p>
+                  {/* <div className="flex items-center gap-4 mt-2">
+                    <p className="text-gray-400">
+                      Complete your purchase to get instant access
+                    </p>
+                    {youSave && (
+                      <span className="text-adhd-green text-sm font-medium bg-adhd-green/10 px-2 py-1 rounded">
+                        Saving ${youSave}
+                      </span>
+                    )}
+                  </div> */}
                 </div>
               </div>
 
@@ -405,6 +471,25 @@ export default function EmbeddedCheckoutForm() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Add gradient animation styles */}
+      <style jsx>{`
+        @keyframes gradient-x {
+          0%,
+          100% {
+            transform: translateX(0%);
+          }
+          50% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-gradient-x {
+          animation: gradient-x 3s ease infinite;
+        }
+        .bg-size-200 {
+          background-size: 200% 200%;
+        }
+      `}</style>
     </>
   );
 }
