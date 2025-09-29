@@ -10,50 +10,82 @@ import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import CountdownTimer from "@/components/CountdownTimer";
 import { trackEvent, initTracking } from "@/lib/meta-pixel";
-import { motion } from "framer-motion";
 
 export default function Home() {
-  // useEffect(() => {
-  //   initTracking();
+  useEffect(() => {
+    // Initialize and track PageView once
+    initTracking();
 
-  //   // Track scroll depth
-  //   let maxScroll = 0;
-  //   const handleScroll = () => {
-  //     const scrollPercent =
-  //       (window.scrollY /
-  //         (document.documentElement.scrollHeight - window.innerHeight)) *
-  //       100;
+    // Track scroll depth with proper flags
+    const scrollTracked = {
+      depth25: false,
+      depth50: false,
+      depth75: false,
+      depth90: false,
+    };
 
-  //     if (scrollPercent > maxScroll) {
-  //       maxScroll = scrollPercent;
-  //       if (maxScroll >= 25 && maxScroll < 50) {
-  //         trackEvent("ScrollDepth25");
-  //       } else if (maxScroll >= 50 && maxScroll < 75) {
-  //         trackEvent("ScrollDepth50");
-  //       } else if (maxScroll >= 75 && maxScroll < 90) {
-  //         trackEvent("ScrollDepth75");
-  //       } else if (maxScroll >= 90) {
-  //         trackEvent("ScrollDepth90");
-  //       }
-  //     }
-  //   };
+    let scrollTimeout: NodeJS.Timeout;
 
-  //   window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      // Debounce scroll events
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollPercent =
+          (window.scrollY /
+            (document.documentElement.scrollHeight - window.innerHeight)) *
+          100;
 
-  //   // Track time on page
-  //   const startTime = Date.now();
-  //   const handleBeforeUnload = () => {
-  //     const timeSpent = Math.round((Date.now() - startTime) / 1000);
-  //     trackEvent("TimeOnPage", { seconds: timeSpent });
-  //   };
+        // Only track each depth once
+        if (scrollPercent >= 25 && !scrollTracked.depth25) {
+          scrollTracked.depth25 = true;
+          trackEvent("ScrollDepth25");
+          console.log("📊 Tracked: ScrollDepth25");
+        }
+        if (scrollPercent >= 50 && !scrollTracked.depth50) {
+          scrollTracked.depth50 = true;
+          trackEvent("ScrollDepth50");
+          console.log("📊 Tracked: ScrollDepth50");
+        }
+        if (scrollPercent >= 75 && !scrollTracked.depth75) {
+          scrollTracked.depth75 = true;
+          trackEvent("ScrollDepth75");
+          console.log("📊 Tracked: ScrollDepth75");
+        }
+        if (scrollPercent >= 90 && !scrollTracked.depth90) {
+          scrollTracked.depth90 = true;
+          trackEvent("ScrollDepth90");
+          console.log("📊 Tracked: ScrollDepth90");
+        }
+      }, 100); // Debounce delay of 100ms
+    };
 
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
+    // Track ViewContent after small delay (user actually viewing)
+    const viewContentTimeout = setTimeout(() => {
+      trackEvent("ViewContent", {
+        content_name: "ADHD Harmony Landing Page",
+        content_category: "Landing Page",
+      });
+      console.log("📊 Tracked: ViewContent");
+    }, 3000); // After 3 seconds on page
 
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, []);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Track time on page
+    const startTime = Date.now();
+    const handleBeforeUnload = () => {
+      const timeSpent = Math.round((Date.now() - startTime) / 1000);
+      trackEvent("TimeOnPage", { seconds: timeSpent });
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      clearTimeout(scrollTimeout);
+      clearTimeout(viewContentTimeout);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>
