@@ -131,30 +131,40 @@ export default function EmbeddedCheckoutForm() {
   // Register this instance as the shared one
   useEffect(() => {
     sharedSetShowPayment = async (show: boolean) => {
-      if (show && !checkoutInstance) {
+      if (show) {
         await handleOpenPayment();
       } else {
         setShowPayment(show);
       }
     };
-  }, [checkoutInstance]);
+  }, []);
 
   // Initialize checkout when modal opens
   useEffect(() => {
-    if (showPayment && stripe && !checkoutInstance) {
+    if (showPayment && stripe) {
+      // Always initialize fresh checkout when opening
       initializeCheckout();
     }
 
-    return () => {
-      if (checkoutInstance) {
-        checkoutInstance.destroy();
-        setCheckoutInstance(null);
-      }
-    };
+    // Cleanup when modal closes
+    if (!showPayment && checkoutInstance) {
+      checkoutInstance.destroy();
+      setCheckoutInstance(null);
+    }
   }, [showPayment, stripe]);
 
   const initializeCheckout = async () => {
     if (!stripe) return;
+
+    // Clean up any existing instance first
+    if (checkoutInstance) {
+      try {
+        checkoutInstance.destroy();
+      } catch (e) {
+        console.error("Error destroying checkout:", e);
+      }
+      setCheckoutInstance(null);
+    }
 
     setLoading(true);
     setError(null);
@@ -185,7 +195,7 @@ export default function EmbeddedCheckoutForm() {
       setCheckoutInstance(checkout);
 
       setTimeout(() => {
-        if (checkoutRef.current) {
+        if (checkoutRef.current && checkout) {
           checkout.mount("#checkout-container");
         }
       }, 100);
@@ -195,10 +205,14 @@ export default function EmbeddedCheckoutForm() {
       console.error("Checkout error:", err);
       setError(err.message);
       setLoading(false);
+      setCheckoutInstance(null);
     }
   };
 
   const handleOpenPayment = async () => {
+    // Prevent multiple simultaneous opens
+    if (showPayment) return;
+
     previousActiveElement.current = document.activeElement;
 
     trackEvent("InitiateCheckout", {
@@ -212,25 +226,45 @@ export default function EmbeddedCheckoutForm() {
   };
 
   const closeModal = () => {
-    setShowPayment(false);
-
+    // Clean up checkout instance first
     if (checkoutInstance) {
-      checkoutInstance.destroy();
+      try {
+        checkoutInstance.destroy();
+      } catch (e) {
+        console.error("Error destroying checkout on close:", e);
+      }
       setCheckoutInstance(null);
     }
 
+    // Reset error state
+    setError(null);
+    setLoading(false);
+
+    // Close the modal
+    setShowPayment(false);
+
+    // Restore focus
     if (previousActiveElement.current instanceof HTMLElement) {
-      previousActiveElement.current.focus();
+      setTimeout(() => {
+        previousActiveElement.current?.focus();
+      }, 100);
     }
   };
 
   const handleRetry = () => {
     setError(null);
     if (checkoutInstance) {
-      checkoutInstance.destroy();
+      try {
+        checkoutInstance.destroy();
+      } catch (e) {
+        console.error("Error destroying checkout on retry:", e);
+      }
       setCheckoutInstance(null);
     }
-    initializeCheckout();
+    // Small delay before reinitializing
+    setTimeout(() => {
+      initializeCheckout();
+    }, 100);
   };
 
   // Emit payment modal state changes
@@ -431,6 +465,11 @@ export default function EmbeddedCheckoutForm() {
                       Secure Checkout
                     </h2>
                   </div>
+                  {youSave && (
+                    <div className="text-xs sm:text-sm text-adhd-green bg-adhd-green/10 px-3 py-1 rounded-full inline-flex items-center gap-1">
+                      <span>You save ${youSave}!</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
