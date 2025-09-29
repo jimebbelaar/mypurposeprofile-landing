@@ -17,7 +17,7 @@ export default function StickyBottomCTA() {
       // Show after scrolling 5% of the page
       const scrollPercent =
         (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-      setIsVisible(scrollPercent > 5);
+      setIsVisible(scrollPercent > 15);
     };
 
     // Check initial scroll position
