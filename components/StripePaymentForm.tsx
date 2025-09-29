@@ -265,7 +265,7 @@ export default function EmbeddedCheckoutForm() {
   return (
     <>
       {/* Main CTA Button */}
-      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
+      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow z-50">
         {priceLoading ? (
           <div className="animate-pulse">
             <div className="h-12 bg-gray-700 rounded mb-4"></div>
