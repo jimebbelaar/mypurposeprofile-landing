@@ -1,6 +1,3 @@
-// ================
-// components/StripePaymentForm.tsx
-// ================
 "use client";
 
 import { useState, FormEvent, useEffect, useRef } from "react";
@@ -13,7 +10,7 @@ import {
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { trackEvent } from "@/lib/meta-pixel";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, X, Lock, CreditCard } from "lucide-react";
+import { CheckCircle, X, Lock, CreditCard, Smartphone } from "lucide-react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -33,6 +30,19 @@ export const paymentModalEvents = {
   },
 };
 
+// Detect if user is on iPhone/iPad
+function isAppleDevice() {
+  if (typeof window === "undefined") return false;
+
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  const isIOS = /iphone|ipad|ipod/.test(userAgent);
+  const isMacOS = /macintosh|mac os x/.test(userAgent);
+  const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+
+  // Check for iOS devices or Safari on Mac (which supports Apple Pay)
+  return isIOS || (isMacOS && isSafari);
+}
+
 function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -40,6 +50,7 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   const [message, setMessage] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [isApple] = useState(isAppleDevice());
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -133,7 +144,26 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       </div>
 
-      {/* Payment Element */}
+      {/* Apple Pay Notice for Apple Users */}
+      {isApple && (
+        <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-lg p-4 border border-white/20">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Smartphone className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-white">
+                Apple Pay Available
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Fast checkout with Face ID or Touch ID
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Element with Enhanced Styling */}
       <div className="bg-white/5 rounded-lg p-6 border border-white/10">
         <div className="flex items-center gap-2 mb-4">
           <CreditCard className="w-5 h-5 text-adhd-yellow" />
@@ -141,17 +171,34 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
             Payment Details
           </span>
         </div>
-        <PaymentElement
-          options={{
-            layout: "tabs",
-            defaultValues: {
-              billingDetails: {
-                email: email,
-                name: name,
+
+        {/* Custom wrapper for better Apple Pay visibility */}
+        <div className="payment-element-wrapper">
+          <PaymentElement
+            options={{
+              layout: {
+                type: "accordion",
+                defaultCollapsed: false,
+                radios: true,
+                spacedAccordionItems: true,
               },
-            },
-          }}
-        />
+              defaultValues: {
+                billingDetails: {
+                  email: email,
+                  name: name,
+                },
+              },
+              wallets: {
+                applePay: "auto",
+                googlePay: "auto",
+              },
+              // Prioritize wallet payments for Apple devices
+              ...(isApple && {
+                paymentMethodOrder: ["applePay", "card"],
+              }),
+            }}
+          />
+        </div>
       </div>
 
       {/* Error Message */}
@@ -294,12 +341,63 @@ export default function StripePaymentForm() {
         colorDanger: "#EF4444",
         fontFamily: "Inter, system-ui, sans-serif",
         borderRadius: "8px",
+        spacingUnit: "6px",
+        // Enhanced sizing for better Apple Pay visibility
+        spacingAccordionItem: "14px",
+        fontSizeBase: "16px",
+        fontWeightMedium: "600",
+      },
+      rules: {
+        // Make wallet buttons more prominent
+        ".WalletButton": {
+          backgroundColor: "#ffffff",
+          color: "#000000",
+          padding: "14px",
+          borderRadius: "12px",
+          fontSize: "16px",
+          fontWeight: "600",
+          minHeight: "56px",
+        },
+        ".WalletButton--applePay": {
+          backgroundColor: "#000000",
+          color: "#ffffff",
+          border: "1px solid #ffffff",
+        },
+        ".AccordionItem": {
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          borderRadius: "12px",
+          marginBottom: "12px",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        },
+        ".AccordionItem--selected": {
+          backgroundColor: "rgba(255, 215, 0, 0.05)",
+          borderColor: "rgba(255, 215, 0, 0.3)",
+        },
       },
     },
   };
 
   return (
     <>
+      {/* Add custom CSS for payment element */}
+      <style jsx global>{`
+        .payment-element-wrapper {
+          min-height: 300px;
+        }
+
+        /* Enhance Apple Pay button visibility */
+        .payment-element-wrapper iframe {
+          min-height: 400px !important;
+        }
+
+        /* Make wallet buttons more prominent on mobile */
+        @media (max-width: 640px) {
+          .payment-element-wrapper {
+            min-height: 350px;
+          }
+        }
+      `}</style>
+
       {/* Main CTA Button */}
       <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
         <div className="flex items-center gap-4 mb-6">
