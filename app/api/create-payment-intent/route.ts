@@ -9,39 +9,58 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Stripe secret key is configured
+    // Check if Stripe configuration is complete
     if (!process.env.STRIPE_SECRET_KEY) {
       throw new Error(
         "STRIPE_SECRET_KEY is not configured in environment variables."
       );
     }
 
-    const body = await request.json();
-    const { amount = 1 } = body; // Default to $27.00
+    if (!process.env.STRIPE_PRICE_ID) {
+      throw new Error(
+        "STRIPE_PRICE_ID is not configured in environment variables."
+      );
+    }
 
-    // Create a PaymentIntent with proper configuration
+    const body = await request.json();
+    const { email, name } = body;
+
+    // Retrieve the price from Stripe to get the amount
+    const price = await stripe.prices.retrieve(process.env.STRIPE_PRICE_ID);
+
+    // Get the product details for metadata
+    const product = price.product as string;
+    const productDetails = await stripe.products.retrieve(product);
+
+    // Create a PaymentIntent with the price from Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
-      currency: "usd",
+      amount: price.unit_amount!, // Amount in cents from the Stripe Price
+      currency: price.currency,
       automatic_payment_methods: {
         enabled: true, // This enables all payment methods including Apple Pay
       },
       metadata: {
-        product: "ADHD Identity Method",
-        price: "$27.00",
+        product_name: productDetails.name,
+        price_id: price.id,
+        product_id: productDetails.id,
       },
-      // Optional: Add customer email if you have it
-      // receipt_email: email,
+      // Add customer email if provided
+      ...(email && { receipt_email: email }),
 
-      // Optional: Add a description for your records
-      description: "ADHD Identity Method - Digital Product",
-
-      // Optional: Set up for saving payment method
-      // setup_future_usage: 'off_session',
+      // Add description from product
+      description: productDetails.description || productDetails.name,
     });
 
+    // Return client secret and price information for the frontend
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
+      priceInfo: {
+        amount: price.unit_amount,
+        currency: price.currency,
+        productName: productDetails.name,
+        // Include original price if it's in metadata
+        originalAmount: productDetails.metadata?.original_price || null,
+      },
     });
   } catch (error: any) {
     console.error("Payment intent creation error:", error);

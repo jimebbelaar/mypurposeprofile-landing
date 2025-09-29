@@ -44,12 +44,24 @@ function isAppleDevice() {
   return isIOS || (isMacOS && isSafari);
 }
 
+// Price information interface
+interface PriceInfo {
+  price: string;
+  currency: string;
+  productName: string;
+  productDescription?: string;
+  originalPrice?: string;
+  priceId?: string;
+}
+
 function PaymentForm({
   onSuccess,
   clientSecret,
+  priceInfo,
 }: {
   onSuccess: () => void;
   clientSecret: string;
+  priceInfo: PriceInfo;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -72,9 +84,9 @@ function PaymentForm({
 
     // Track payment attempt
     trackEvent("AddPaymentInfo", {
-      value: 27.0,
-      currency: "USD",
-      content_name: "ADHD Identity Method",
+      value: parseFloat(priceInfo.price),
+      currency: priceInfo.currency,
+      content_name: priceInfo.productName,
     });
 
     const { error } = await stripe.confirmPayment({
@@ -100,9 +112,9 @@ function PaymentForm({
     } else {
       // Payment succeeded
       trackEvent("Purchase", {
-        value: 27.0,
-        currency: "USD",
-        content_name: "ADHD Identity Method",
+        value: parseFloat(priceInfo.price),
+        currency: priceInfo.currency,
+        content_name: priceInfo.productName,
         content_type: "product",
       });
       onSuccess();
@@ -119,29 +131,27 @@ function PaymentForm({
 
     // Track express checkout attempt
     trackEvent("AddPaymentInfo", {
-      value: 27.0,
-      currency: "USD",
-      content_name: "ADHD Identity Method",
+      value: parseFloat(priceInfo.price),
+      currency: priceInfo.currency,
+      content_name: priceInfo.productName,
       payment_method: "express",
     });
 
     // ExpressCheckoutElement handles its own payment confirmation
-    // The event contains the expressPaymentType
     const { expressPaymentType } = event;
 
     // The payment confirmation is handled by the ExpressCheckoutElement itself
-    // We just need to handle the result
     event.resolve({
       business: {
-        name: "ADHD Identity Method",
+        name: priceInfo.productName,
       },
     });
 
     // Track successful purchase
     trackEvent("Purchase", {
-      value: 27.0,
-      currency: "USD",
-      content_name: "ADHD Identity Method",
+      value: parseFloat(priceInfo.price),
+      currency: priceInfo.currency,
+      content_name: priceInfo.productName,
       content_type: "product",
       payment_method: expressPaymentType || "express",
     });
@@ -292,7 +302,7 @@ function PaymentForm({
         ) : (
           <>
             <Lock className="w-5 h-5" />
-            Complete Purchase - $27
+            Complete Purchase - ${priceInfo.price}
           </>
         )}
       </button>
@@ -329,8 +339,35 @@ export default function StripePaymentForm() {
   const [showPayment, setShowPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [priceInfo, setPriceInfo] = useState<PriceInfo>({
+    price: "27.00",
+    currency: "USD",
+    productName: "ADHD Identity Method",
+    originalPrice: "1035.00",
+  });
+  const [priceLoading, setPriceLoading] = useState(true);
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
+
+  // Fetch price information on component mount
+  useEffect(() => {
+    const fetchPriceInfo = async () => {
+      try {
+        const response = await fetch("/api/get-price");
+        if (response.ok) {
+          const data = await response.json();
+          setPriceInfo(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch price info:", error);
+        // Use default values if fetch fails
+      } finally {
+        setPriceLoading(false);
+      }
+    };
+
+    fetchPriceInfo();
+  }, []);
 
   // Register this instance as the shared one
   useEffect(() => {
@@ -351,29 +388,45 @@ export default function StripePaymentForm() {
 
     // Track checkout initiation
     trackEvent("InitiateCheckout", {
-      value: 27.0,
-      currency: "USD",
-      content_name: "ADHD Identity Method",
+      value: parseFloat(priceInfo.price),
+      currency: priceInfo.currency,
+      content_name: priceInfo.productName,
       content_category: "Digital Product",
     });
 
     try {
-      // Create payment intent
+      // Create payment intent with email and name if needed
       const response = await fetch("/api/create-payment-intent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 1, // $27.00 in cents
+          // Email and name can be passed here if collected earlier
         }),
       });
 
       const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       setClientSecret(data.clientSecret);
+
+      // Update price info if returned from API
+      if (data.priceInfo) {
+        setPriceInfo((prev) => ({
+          ...prev,
+          ...data.priceInfo,
+          price: (data.priceInfo.amount / 100).toFixed(2),
+        }));
+      }
+
       setShowPayment(true);
     } catch (error) {
       console.error("Error:", error);
+      alert("Failed to initialize payment. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -521,6 +574,15 @@ export default function StripePaymentForm() {
     },
   };
 
+  // Calculate percentage off if original price exists
+  const percentageOff = priceInfo.originalPrice
+    ? Math.round(
+        ((parseFloat(priceInfo.originalPrice) - parseFloat(priceInfo.price)) /
+          parseFloat(priceInfo.originalPrice)) *
+          100
+      )
+    : null;
+
   return (
     <>
       {/* Add custom CSS for better modal handling */}
@@ -558,41 +620,58 @@ export default function StripePaymentForm() {
 
       {/* Main CTA Button */}
       <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
-        <div className="flex items-center gap-4 mb-6">
-          <div>
-            <span className="text-gray-500 line-through text-2xl">$1,035</span>
-            <div className="text-5xl font-bold text-adhd-yellow">$27</div>
+        {priceLoading ? (
+          <div className="animate-pulse">
+            <div className="h-12 bg-gray-700 rounded mb-4"></div>
+            <div className="h-16 bg-gray-700 rounded mb-4"></div>
           </div>
-          <div className="bg-adhd-red text-white px-4 py-2 rounded-full font-bold">
-            97% OFF TODAY
-          </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-4 mb-6">
+              <div>
+                {priceInfo.originalPrice && (
+                  <span className="text-gray-500 line-through text-2xl">
+                    ${priceInfo.originalPrice}
+                  </span>
+                )}
+                <div className="text-5xl font-bold text-adhd-yellow">
+                  ${priceInfo.price}
+                </div>
+              </div>
+              {percentageOff && (
+                <div className="bg-adhd-red text-white px-4 py-2 rounded-full font-bold">
+                  {percentageOff}% OFF TODAY
+                </div>
+              )}
+            </div>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleOpenPayment}
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all animate-pulse-slow mb-4 disabled:opacity-50 flex items-center justify-center gap-3"
-        >
-          <CreditCard className="w-6 h-6" />
-          {loading ? "Loading..." : "Get Instant Access →"}
-        </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleOpenPayment}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all animate-pulse-slow mb-4 disabled:opacity-50 flex items-center justify-center gap-3"
+            >
+              <CreditCard className="w-6 h-6" />
+              {loading ? "Loading..." : "Get Instant Access →"}
+            </motion.button>
 
-        <div className="flex flex-col gap-2 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-adhd-green" />
-            <span>30-day money-back guarantee</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-adhd-green" />
-            <span>Instant access (start in 2 min)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-adhd-green" />
-            <span>Secure payment by Stripe</span>
-          </div>
-        </div>
+            <div className="flex flex-col gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <span>30-day money-back guarantee</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <span>Instant access (start in 2 min)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-adhd-green" />
+                <span>Secure payment by Stripe</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Payment Modal */}
@@ -652,6 +731,7 @@ export default function StripePaymentForm() {
                       <PaymentForm
                         onSuccess={closeModal}
                         clientSecret={clientSecret}
+                        priceInfo={priceInfo}
                       />
                     </Elements>
                   </div>
