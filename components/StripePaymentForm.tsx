@@ -365,7 +365,7 @@ export default function StripePaymentForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 2700, // $27.00 in cents
+          amount: 1, // $27.00 in cents
         }),
       });
 
