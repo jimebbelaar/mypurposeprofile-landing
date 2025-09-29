@@ -330,7 +330,7 @@ export default function EmbeddedCheckoutForm() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto"
+              className="relative bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
