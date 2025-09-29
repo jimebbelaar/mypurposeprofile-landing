@@ -431,11 +431,6 @@ export default function EmbeddedCheckoutForm() {
                       Secure Checkout
                     </h2>
                   </div>
-                  {youSave && (
-                    <div className="text-xs sm:text-sm text-adhd-green bg-adhd-green/10 px-3 py-1 rounded-full inline-flex items-center gap-1">
-                      <span>You save ${youSave}!</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
