@@ -73,7 +73,7 @@ export default function Hero() {
               </div>
 
               {/* Additional trust indicators */}
-              <div className="flex flex-wrap gap-6 pt-4">
+              {/* <div className="flex flex-wrap gap-6 pt-4">
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <Shield className="w-4 h-4 text-adhd-green" />
                   <span>30-day money-back guarantee</span>
@@ -86,7 +86,7 @@ export default function Hero() {
                   <Heart className="w-4 h-4 text-adhd-red" />
                   <span>Made by ADHDer for ADHDers</span>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
 
             {/* Desktop only: Payment form */}
