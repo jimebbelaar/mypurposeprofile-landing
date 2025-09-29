@@ -1,493 +1,357 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-import { trackEvent } from "@/lib/meta-pixel";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import {
-  CheckCircle,
-  X,
-  Lock,
-  CreditCard,
-  Loader2,
-  AlertCircle,
-  TrendingDown,
-} from "lucide-react";
+  EmbeddedCheckout,
+  EmbeddedCheckoutProvider,
+} from "@stripe/react-stripe-js";
+import { trackEvent } from "@/lib/meta-pixel";
+import { CheckCircle, CreditCard, Lock, X } from "lucide-react";
 
+/** --- Stripe singleton --- */
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-// Global event emitter for payment modal state
-export const paymentModalEvents = {
-  listeners: [] as Array<(isOpen: boolean) => void>,
-  subscribe(listener: (isOpen: boolean) => void) {
-    this.listeners.push(listener);
-    return () => {
-      this.listeners = this.listeners.filter((l) => l !== listener);
-    };
-  },
-  emit(isOpen: boolean) {
-    this.listeners.forEach((listener) => listener(isOpen));
-  },
+/** --- Exporteerbare opener (voor CTA’s elders op de pagina) --- */
+let externalOpen: null | (() => void) = null;
+export function openPaymentModal() {
+  if (externalOpen) externalOpen();
+}
+
+/** --- Types --- */
+type PriceInfo = {
+  price: string; // "27"
+  currency: string; // "USD"
+  productName: string; // "ADHD Identity Method"
+  originalPrice?: string; // "1035"
+  priceId?: string;
 };
 
-// Export a shared payment modal instance
-let sharedSetShowPayment: ((show: boolean) => void) | null = null;
+export default function SimpleEmbeddedCheckout() {
+  /** UI state */
+  const [stripe, setStripe] = useState<Stripe | null>(null);
+  const [price, setPrice] = useState<PriceInfo | null>(null);
+  const [loadingPrice, setLoadingPrice] = useState(true);
 
-export function openPaymentModal() {
-  if (sharedSetShowPayment) {
-    sharedSetShowPayment(true);
-  }
-}
-
-// Price information interface
-interface PriceInfo {
-  price: string;
-  currency: string;
-  productName: string;
-  productDescription?: string;
-  originalPrice?: string;
-  priceId?: string;
-}
-
-export default function EmbeddedCheckoutForm() {
-  const [showPayment, setShowPayment] = useState(false);
-  const [loading, setLoading] = useState(false);
+  /** Modal + checkout state */
+  const [isOpen, setIsOpen] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [creatingSession, setCreatingSession] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [checkoutInstance, setCheckoutInstance] = useState<any>(null);
-  const checkoutRef = useRef<HTMLDivElement>(null);
-  const [stripe, setStripe] = useState<any>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
-  const previousActiveElement = useRef<Element | null>(null);
 
-  const [priceInfo, setPriceInfo] = useState<PriceInfo>({
-    price: "27",
-    currency: "USD",
-    productName: "ADHD Identity Method",
-    originalPrice: "1035", // Default original price
-  });
-  const [priceLoading, setPriceLoading] = useState(true);
+  /** Refs */
+  const lastFocusedEl = useRef<HTMLElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
-  // Initialize Stripe
+  /** Stripe init */
   useEffect(() => {
-    loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!).then(setStripe);
+    stripePromise.then(setStripe);
   }, []);
 
-  // Fetch price information on component mount
+  /** Prijs ophalen (unchanged endpoint, met fallback voor originalPrice) */
   useEffect(() => {
-    const fetchPriceInfo = async () => {
+    let alive = true;
+    (async () => {
       try {
-        const response = await fetch("/api/get-price");
-        if (response.ok) {
-          const data = await response.json();
-          // Ensure originalPrice is always set and remove decimals if they're .00
-          setPriceInfo({
+        const res = await fetch("/api/get-price");
+        const data = res.ok ? await res.json() : null;
+        if (!alive) return;
+        if (data) {
+          setPrice({
             ...data,
-            price: parseFloat(data.price).toFixed(0), // Remove decimals
-            originalPrice: data.originalPrice
-              ? parseFloat(data.originalPrice).toFixed(0)
-              : "1035", // Fallback to default if not provided
+            price: parseFloat(data.price).toFixed(0),
+            // Fallback als endpoint geen originalPrice stuurt
+            originalPrice:
+              data.originalPrice != null && data.originalPrice !== ""
+                ? parseFloat(data.originalPrice).toFixed(0)
+                : "1035",
           });
         }
-      } catch (error) {
-        console.error("Failed to fetch price info:", error);
-        // Keep default values on error
+      } catch {
+        // prijs tonen is nice-to-have; bij failure tonen we fallback
+        if (alive) {
+          setPrice({
+            price: "27",
+            currency: "USD",
+            productName: "ADHD Identity Method",
+            originalPrice: "1035",
+          });
+        }
       } finally {
-        setPriceLoading(false);
+        if (alive) setLoadingPrice(false);
       }
+    })();
+    return () => {
+      alive = false;
     };
-
-    fetchPriceInfo();
   }, []);
 
-  // Register this instance as the shared one
+  /** Externe open-koppeling */
   useEffect(() => {
-    sharedSetShowPayment = async (show: boolean) => {
-      if (show && !checkoutInstance) {
-        await handleOpenPayment();
-      } else {
-        setShowPayment(show);
-      }
-    };
-  }, [checkoutInstance]);
-
-  // Initialize checkout when modal opens
-  useEffect(() => {
-    if (showPayment && stripe && !checkoutInstance) {
-      initializeCheckout();
-    }
-
+    externalOpen = () => void openCheckout();
     return () => {
-      if (checkoutInstance) {
-        checkoutInstance.destroy();
-        setCheckoutInstance(null);
-      }
+      externalOpen = null;
     };
-  }, [showPayment, stripe]);
+  }, [price, stripe]);
 
-  const initializeCheckout = async () => {
-    if (!stripe) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Create checkout session
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          priceId: priceInfo.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-          mode: "payment",
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create checkout session");
-      }
-
-      const { clientSecret } = await response.json();
-
-      // Initialize embedded checkout
-      const checkout = await stripe.initEmbeddedCheckout({
-        clientSecret,
-      });
-
-      setCheckoutInstance(checkout);
-
-      // Mount checkout after a brief delay to ensure container is ready
-      setTimeout(() => {
-        if (checkoutRef.current) {
-          checkout.mount("#checkout-container");
-        }
-      }, 100);
-
-      setLoading(false);
-    } catch (err: any) {
-      console.error("Checkout error:", err);
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const handleOpenPayment = async () => {
-    // Store the currently focused element
-    previousActiveElement.current = document.activeElement;
-
-    // Track checkout initiation
-    trackEvent("InitiateCheckout", {
-      value: parseFloat(priceInfo.price),
-      currency: priceInfo.currency,
-      content_name: priceInfo.productName,
-      content_category: "Digital Product",
-    });
-
-    setShowPayment(true);
-  };
-
-  const closeModal = () => {
-    setShowPayment(false);
-
-    // Destroy checkout instance when closing
-    if (checkoutInstance) {
-      checkoutInstance.destroy();
-      setCheckoutInstance(null);
-    }
-
-    // Restore focus to the element that opened the modal
-    if (previousActiveElement.current instanceof HTMLElement) {
-      previousActiveElement.current.focus();
-    }
-  };
-
-  const handleRetry = () => {
-    setError(null);
-    if (checkoutInstance) {
-      checkoutInstance.destroy();
-      setCheckoutInstance(null);
-    }
-    initializeCheckout();
-  };
-
-  // Emit payment modal state changes
+  /** Body scroll lock + Escape + focus trap */
   useEffect(() => {
-    paymentModalEvents.emit(showPayment);
-  }, [showPayment]);
+    if (!isOpen) return;
 
-  // Lock body scroll and handle escape key
-  useEffect(() => {
-    if (!showPayment) return;
-
-    const scrollY = window.scrollY;
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Lock body scroll (simpel & betrouwbaar)
+    const { scrollY } = window;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        closeModal();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+      if (e.key === "Tab" && modalRef.current) {
+        // simpele focus trap
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
-
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", onKey);
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = originalStyle;
-      document.body.style.position = "";
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
       document.body.style.top = "";
       document.body.style.width = "";
       window.scrollTo(0, scrollY);
     };
-  }, [showPayment]);
+  }, [isOpen]);
 
-  // Calculate percentage off and savings
-  const percentageOff = priceInfo.originalPrice
-    ? Math.round(
-        ((parseFloat(priceInfo.originalPrice) - parseFloat(priceInfo.price)) /
-          parseFloat(priceInfo.originalPrice)) *
-          100
-      )
-    : null;
+  /** Open + maak Checkout Session + set clientSecret */
+  async function openCheckout() {
+    if (!price) return;
+    if (!stripe) return;
 
-  const youSave = priceInfo.originalPrice
-    ? Math.round(
-        parseFloat(priceInfo.originalPrice) - parseFloat(priceInfo.price)
-      ) // Rounded to whole number
-    : null;
+    // Meta Pixel — behouden zoals gevraagd
+    trackEvent("InitiateCheckout", {
+      value: parseFloat(price.price),
+      currency: price.currency,
+      content_name: price.productName,
+      content_category: "Digital Product",
+    });
+
+    lastFocusedEl.current = document.activeElement as HTMLElement | null;
+    setIsOpen(true);
+    setError(null);
+    setCreatingSession(true);
+
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceId: price.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
+          mode: "payment",
+        }),
+      });
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e?.error || "Failed to create checkout session");
+      }
+      const { clientSecret } = await res.json();
+      setClientSecret(clientSecret);
+    } catch (e: any) {
+      setError(e?.message || "Something went wrong creating your checkout.");
+    } finally {
+      setCreatingSession(false);
+    }
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+    setClientSecret(null); // EmbeddedCheckout unmount → clean slate
+    setError(null);
+    setCreatingSession(false);
+    if (lastFocusedEl.current) {
+      // focus terugzetten
+      lastFocusedEl.current.focus();
+    }
+  }
+
+  /** Currency + discount helpers */
+  const currency = (price?.currency ?? "USD").toUpperCase();
+  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : "$";
+
+  const original = price?.originalPrice ? Number(price.originalPrice) : null;
+  const current = price?.price ? Number(price.price) : null;
+
+  const percentOff =
+    original && current && original > current
+      ? Math.round(((original - current) / original) * 100)
+      : null;
+
+  const youSave =
+    original && current && original > current
+      ? Math.round(original - current)
+      : null;
+
+  /** UI */
+  const displayPrice = loadingPrice
+    ? null
+    : price?.price
+    ? `${symbol}${price.price}`
+    : `${symbol}27`;
 
   return (
     <>
-      {/* Main CTA Button */}
-      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
-        {priceLoading ? (
-          <div className="animate-pulse">
-            <div className="h-12 bg-gray-700 rounded mb-4"></div>
-            <div className="h-16 bg-gray-700 rounded mb-4"></div>
+      {/* CTA / Price card */}
+      <div className="rounded-2xl border border-adhd-yellow/30 p-6 sm:p-8 bg-black/40">
+        <div className="text-center mb-6">
+          {/* Kortingsbadge */}
+          {percentOff ? (
+            <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-bold bg-red-600/20 border border-red-500/40 text-red-200 mb-3">
+              LIMITED TIME: {percentOff}% OFF
+            </div>
+          ) : null}
+
+          {/* Vergelijkingsprijs */}
+          {original ? (
+            <div className="text-gray-400 text-sm mb-1">
+              Total value:{" "}
+              <span className="line-through">
+                {symbol}
+                {original}
+              </span>
+            </div>
+          ) : null}
+
+          {/* Huidige prijs */}
+          <div className="text-5xl sm:text-6xl font-extrabold text-adhd-yellow">
+            {displayPrice ?? "…"}
           </div>
-        ) : (
-          <>
-            {/* Price Display Section */}
-            <div className="mb-6">
-              {/* Discount Badge */}
-              {percentageOff && (
-                <div className="flex items-center justify-center mb-4">
-                  <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: "spring", damping: 10 }}
-                    className="bg-gradient-to-r from-adhd-red to-red-600 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg"
-                  >
-                    <TrendingDown className="w-4 h-4" />
-                    LIMITED TIME: {percentageOff}% OFF
-                  </motion.div>
+
+          {/* You save of note */}
+            <div className="text-xs text-gray-300 mt-1">
+              One-time payment • No subscription
+            </div>
+        </div>
+
+        <button
+          onClick={openCheckout}
+          disabled={creatingSession || loadingPrice}
+          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-adhd-yellow text-black font-bold text-lg sm:text-xl py-4 disabled:opacity-60"
+        >
+          <CreditCard className="w-5 h-5" />
+          {creatingSession ? "Loading checkout…" : "Get Instant Access"}
+        </button>
+
+        {/* Trust badges */}
+        <div className="flex flex-col gap-2 text-sm text-gray-300 mt-4 items-center">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-adhd-green" />
+            <span>30-day money-back guarantee</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-adhd-green" />
+            <span>Instant access (start in 2 min)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-adhd-green" />
+            <span>Secure payment by Stripe</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Secure checkout"
+          onMouseDown={(e) => {
+            // klik buiten sluit
+            if (e.target === e.currentTarget) closeModal();
+          }}
+        >
+          <div
+            ref={modalRef}
+            className="relative w-full max-w-3xl h-[92dvh] sm:h-[86dvh] mx-4 rounded-2xl border border-white/10 bg-black flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-adhd-green" />
+                <h2 className="text-lg sm:text-xl font-bold">
+                  Secure Checkout
+                </h2>
+              </div>
+              <button
+                onClick={closeModal}
+                aria-label="Close"
+                className="p-2 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-adhd-yellow"
+                autoFocus
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body (scrollable) */}
+            <div className="flex-1 overflow-auto px-2 sm:px-4 py-3">
+              {error && (
+                <div className="mx-2 mb-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                  {error}
                 </div>
               )}
 
-              {/* Price Container */}
-              <div className="flex flex-col items-center gap-2">
-                {/* Original Price */}
-                {priceInfo.originalPrice && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-sm">Total value:</span>
-                    <span className="text-gray-400 line-through text-xl font-medium">
-                      ${priceInfo.originalPrice}
-                    </span>
-                  </div>
-                )}
-
-                {/* Current Price */}
-                <div className="flex items-center gap-3">
-                  <div className="text-adhd-yellow">
-                    <span className="text-6xl gradient-text font-black ">
-                      $
-                    </span>
-                    <span className="text-6xl gradient-text font-black ">
-                      {priceInfo.price}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Payment Note */}
-                <div className="text-xs text-gray-300 mt-1">
-                  One-time payment • No subscription
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleOpenPayment}
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-adhd-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
-            >
-              {/* Animated background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-adhd-yellow via-adhd-orange to-adhd-yellow bg-size-200 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-              {/* Button content */}
-              <div className="relative flex items-center gap-3">
-                <CreditCard className="w-6 h-6" />
-                <span>{loading ? "Loading..." : "Get Instant Access"}</span>
-                <motion.span
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5 }}
-                >
-                  →
-                </motion.span>
-              </div>
-            </motion.button>
-
-            {/* Trust Badges */}
-            <div className="flex flex-col gap-2 text-sm text-gray-300 mt-4 items-center text-center">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
-                <span>30-day money-back guarantee</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
-                <span>Instant access (start in 2 min)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-adhd-green flex-shrink-0" />
-                <span>Secure payment by Stripe</span>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Embedded Checkout Modal */}
-      <AnimatePresence>
-        {showPayment && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-backdrop fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-            aria-modal="true"
-            role="dialog"
-            aria-labelledby="modal-title"
-          >
-            <motion.div
-              ref={modalRef}
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-black rounded-2xl border border-adhd-yellow/20 shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="sticky top-0 z-20 bg-black border-b border-white/10">
-                <div className="p-6 bg-gradient-to-r from-adhd-yellow/10 to-adhd-orange/10">
-                  <button
-                    onClick={closeModal}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-adhd-yellow/50"
-                    aria-label="Close modal"
+              {/* Stripe Embedded Checkout */}
+              {stripe && clientSecret ? (
+                <div className="rounded-xl border border-white/10 p-2">
+                  <EmbeddedCheckoutProvider
+                    stripe={stripe}
+                    options={{ clientSecret }}
                   >
-                    <X className="w-6 h-6 text-white" />
-                  </button>
-                  <h2
-                    id="modal-title"
-                    className="text-2xl font-bold gradient-text pr-10"
-                  >
-                    Secure Checkout
-                  </h2>
-                  {/* <div className="flex items-center gap-4 mt-2">
-                    <p className="text-gray-400">
-                      Complete your purchase to get instant access
-                    </p>
-                    {youSave && (
-                      <span className="text-adhd-green text-sm font-medium bg-adhd-green/10 px-2 py-1 rounded">
-                        Saving ${youSave}
-                      </span>
-                    )}
-                  </div> */}
-                </div>
-              </div>
-
-              {/* Checkout Container */}
-              <div className="p-6 flex-1 overflow-y-auto">
-                {loading && (
-                  <div className="flex items-center justify-center py-12">
-                    <Loader2
-                      className="animate-spin text-adhd-yellow mr-3"
-                      size={32}
-                    />
-                    <span className="text-gray-400">
-                      Loading secure checkout...
-                    </span>
-                  </div>
-                )}
-
-                {error && (
-                  <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                    <div className="flex items-center">
-                      <AlertCircle className="text-red-500 mr-2" size={20} />
-                      <div>
-                        <p className="text-red-400 font-medium">
-                          Payment Error
-                        </p>
-                        <p className="text-red-300 text-sm">{error}</p>
-                      </div>
+                    {/* Stripe iFrame vult automatisch de container */}
+                    <div className="min-h-[420px] sm:min-h-[520px]">
+                      <EmbeddedCheckout />
                     </div>
-                    <button
-                      onClick={handleRetry}
-                      className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Try Again
-                    </button>
-                  </div>
-                )}
-
-                <div
-                  id="checkout-container"
-                  ref={checkoutRef}
-                  className="min-h-[500px]"
-                >
-                  {/* Embedded checkout will be mounted here */}
+                  </EmbeddedCheckoutProvider>
                 </div>
-              </div>
-
-              {/* Footer */}
-              <div className="p-6 border-t border-white/10 bg-black">
-                <div className="flex items-center justify-center text-sm text-gray-400">
-                  <Lock className="w-4 h-4 mr-2 text-adhd-green" />
-                  Secure checkout powered by Stripe
+              ) : (
+                <div className="text-center text-sm text-gray-300 py-10">
+                  Initializing secure checkout…
                 </div>
-                <p className="text-xs text-gray-500 text-center mt-2">
-                  Apple Pay, Google Pay, and all major cards accepted
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              )}
+            </div>
 
-      {/* Add gradient animation styles */}
-      <style jsx>{`
-        @keyframes gradient-x {
-          0%,
-          100% {
-            transform: translateX(0%);
+            {/* Footer */}
+            <div className="px-4 sm:px-6 py-3 border-t border-white/10 text-center text-xs text-gray-400">
+              Apple Pay, Google Pay, and all major cards accepted
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Minimal styles for safe-area support */}
+      <style jsx global>{`
+        @supports (padding: max(0px)) {
+          [role="dialog"] > div {
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
           }
-          50% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-gradient-x {
-          animation: gradient-x 3s ease infinite;
-        }
-        .bg-size-200 {
-          background-size: 200% 200%;
         }
       `}</style>
     </>
