@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Declare global type for cleanup interval
+declare global {
+  var _trackingCleanupInterval: NodeJS.Timeout | undefined;
+}
+
 // Store tracked events in memory (resets on server restart)
 const trackedEvents = new Map<string, Set<string>>();
 
@@ -24,6 +29,7 @@ export async function POST(request: NextRequest) {
     "ScrollDepth75",
     "ScrollDepth90",
   ];
+
   if (nonRepeatableEvents.includes(event)) {
     if (!trackedEvents.has(sessionId)) {
       trackedEvents.set(sessionId, new Set());
@@ -68,10 +74,21 @@ export async function POST(request: NextRequest) {
       access_token: process.env.META_ACCESS_TOKEN,
     };
 
-    // ALWAYS use test mode for now
-    if (process.env.META_TEST_EVENT_CODE) {
+    // Check if we're in test mode or live mode
+    const isTestMode = !!process.env.META_TEST_EVENT_CODE;
+
+    if (isTestMode) {
+      // Test mode - add test event code
       eventData.test_event_code = process.env.META_TEST_EVENT_CODE;
-      console.log("🧪 Test mode - Event:", event);
+      console.log(`🧪 TEST MODE - Event: ${event}`, {
+        testCode: process.env.META_TEST_EVENT_CODE,
+        data: data,
+      });
+    } else {
+      // Live mode - no test event code
+      console.log(`🔴 LIVE MODE - Event: ${event}`, {
+        data: data,
+      });
     }
 
     const response = await fetch(
@@ -96,8 +113,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Log success with mode indicator
     console.log(`✅ Meta event sent: ${event}`, {
-      testMode: true,
+      mode: isTestMode ? "TEST" : "LIVE",
       eventsReceived: result.events_received,
       fbTraceId: result.fbtrace_id,
     });
@@ -105,7 +123,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       result,
-      testMode: true,
+      testMode: isTestMode,
+      mode: isTestMode ? "test" : "live",
     });
   } catch (error: any) {
     console.error("❌ Meta tracking error:", error);
@@ -117,9 +136,13 @@ export async function POST(request: NextRequest) {
 }
 
 // Clean up old sessions periodically (every hour)
-setInterval(() => {
-  if (trackedEvents.size > 1000) {
-    trackedEvents.clear();
-    console.log("🧹 Cleared tracked events cache");
-  }
-}, 60 * 60 * 1000);
+// Note: This only works in long-running Node processes, not in serverless
+if (!global._trackingCleanupInterval) {
+  global._trackingCleanupInterval = setInterval(() => {
+    if (trackedEvents.size > 1000) {
+      const oldSize = trackedEvents.size;
+      trackedEvents.clear();
+      console.log(`🧹 Cleared tracked events cache (was ${oldSize} sessions)`);
+    }
+  }, 60 * 60 * 1000);
+}
