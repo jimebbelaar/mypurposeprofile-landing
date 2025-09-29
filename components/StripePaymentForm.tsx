@@ -1,4 +1,6 @@
+// ================
 // components/StripePaymentForm.tsx
+// ================
 "use client";
 
 import { useState, FormEvent, useEffect, useRef } from "react";
@@ -16,6 +18,20 @@ import { CheckCircle, X, Lock, CreditCard } from "lucide-react";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
+
+// Create a global event emitter for payment modal state
+export const paymentModalEvents = {
+  listeners: [] as Array<(isOpen: boolean) => void>,
+  subscribe(listener: (isOpen: boolean) => void) {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener);
+    };
+  },
+  emit(isOpen: boolean) {
+    this.listeners.forEach((listener) => listener(isOpen));
+  },
+};
 
 function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
@@ -183,11 +199,31 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
+// Export a shared payment modal instance
+let sharedSetShowPayment: ((show: boolean) => void) | null = null;
+
+export function openPaymentModal() {
+  if (sharedSetShowPayment) {
+    sharedSetShowPayment(true);
+  }
+}
+
 export default function StripePaymentForm() {
   const [showPayment, setShowPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const modalContentRef = useRef<HTMLDivElement>(null);
+
+  // Register this instance as the shared one
+  useEffect(() => {
+    sharedSetShowPayment = async (show: boolean) => {
+      if (show && !clientSecret) {
+        await handleOpenPayment();
+      } else {
+        setShowPayment(show);
+      }
+    };
+  }, [clientSecret]);
 
   const handleOpenPayment = async () => {
     setLoading(true);
@@ -221,6 +257,11 @@ export default function StripePaymentForm() {
       setLoading(false);
     }
   };
+
+  // Emit payment modal state changes
+  useEffect(() => {
+    paymentModalEvents.emit(showPayment);
+  }, [showPayment]);
 
   // Reset scroll position when modal opens
   useEffect(() => {
@@ -312,7 +353,7 @@ export default function StripePaymentForm() {
               }
             }}
           >
-            <div className="min-h-screen w-full flex items-center justify-center p-4 py-8">
+            <div className="min-h-screen w-full flex items-center justify-center p-4 py-20 sm:py-8">
               <motion.div
                 ref={modalContentRef}
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -339,7 +380,7 @@ export default function StripePaymentForm() {
                 </div>
 
                 {/* Payment Form - Scrollable Content */}
-                <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                <div className="p-6 max-h-[calc(100vh-240px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto">
                   <Elements stripe={stripePromise} options={options}>
                     <PaymentForm onSuccess={() => setShowPayment(false)} />
                   </Elements>
