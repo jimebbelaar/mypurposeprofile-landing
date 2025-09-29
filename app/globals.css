@@ -5,24 +5,40 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* ADHD Brand Colors */
-  --adhd-yellow: #ffd700;
-  --adhd-orange: #ffa500;
-  --adhd-green: #10b981;
-  --adhd-red: #ef4444;
+  /* ADHD Brand Colors - More subtle variations */
+  --adhd-yellow: #fbbf24;
+  --adhd-yellow-bright: #ffd700;
+  --adhd-orange: #fb923c;
+  --adhd-orange-bright: #ffa500;
+  --adhd-green: #34d399;
+  --adhd-green-bright: #10b981;
+  --adhd-red: #f87171;
+  --adhd-red-bright: #ef4444;
 
-  /* Dark theme colors */
-  --dark-background: #000000;
-  --dark-foreground: #ffffff;
-  --dark-muted: #6b7280;
+  /* Dark blue theme colors */
+  --dark-background: #0a0e1a;
+  --dark-background-secondary: #0f1629;
+  --dark-surface: #141b2d;
+  --dark-foreground: #f8fafc;
+  --dark-muted: #94a3b8;
 
   /* Glass effect colors */
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(30, 41, 59, 0.3);
+  --glass-border: rgba(148, 163, 184, 0.1);
 
-  /* Glow effects */
-  --glow-yellow: rgba(255, 215, 0, 0.3);
-  --glow-orange: rgba(255, 165, 0, 0.3);
+  /* Subtle glow effects */
+  --glow-yellow: rgba(251, 191, 36, 0.15);
+  --glow-orange: rgba(251, 146, 60, 0.15);
+  --glow-green: rgba(52, 211, 153, 0.15);
+  --glow-red: rgba(248, 113, 113, 0.15);
+
+  /* Indicator colors */
+  --indicator-green-bg: rgba(16, 185, 129, 0.1);
+  --indicator-green-border: rgba(16, 185, 129, 0.2);
+  --indicator-red-bg: rgba(239, 68, 68, 0.1);
+  --indicator-red-border: rgba(239, 68, 68, 0.2);
+  --indicator-yellow-bg: rgba(251, 191, 36, 0.1);
+  --indicator-yellow-border: rgba(251, 191, 36, 0.2);
 }
 
 @theme inline {
@@ -32,6 +48,7 @@
   --color-adhd-orange: var(--adhd-orange);
   --color-adhd-green: var(--adhd-green);
   --color-adhd-red: var(--adhd-red);
+  --color-dark-surface: var(--dark-surface);
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono", "Courier New", monospace;
 }
@@ -39,14 +56,18 @@
 /* Dark mode (always dark for this landing page) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
-    --foreground: #ffffff;
+    --background: #0a0e1a;
+    --foreground: #f8fafc;
   }
 }
 
 /* Global styles */
 body {
-  background: var(--dark-background);
+  background: linear-gradient(
+    135deg,
+    var(--dark-background) 0%,
+    var(--dark-background-secondary) 100%
+  );
   color: var(--dark-foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -58,8 +79,8 @@ body {
   .gradient-text {
     background: linear-gradient(
       135deg,
-      var(--adhd-yellow) 0%,
-      var(--adhd-orange) 100%
+      var(--adhd-yellow-bright) 0%,
+      var(--adhd-orange-bright) 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -68,17 +89,44 @@ body {
 
   .glass-effect {
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
   }
 
   .glow-yellow {
-    box-shadow: 0 0 60px var(--glow-yellow);
+    box-shadow: 0 0 40px var(--glow-yellow), inset 0 0 20px var(--glow-yellow);
   }
 
   .glow-orange {
-    box-shadow: 0 0 60px var(--glow-orange);
+    box-shadow: 0 0 40px var(--glow-orange), inset 0 0 20px var(--glow-orange);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 30px var(--glow-green), inset 0 0 15px var(--glow-green);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 30px var(--glow-red), inset 0 0 15px var(--glow-red);
+  }
+
+  /* Indicator badges */
+  .indicator-green {
+    background: var(--indicator-green-bg);
+    border: 1px solid var(--indicator-green-border);
+    color: var(--adhd-green);
+  }
+
+  .indicator-red {
+    background: var(--indicator-red-bg);
+    border: 1px solid var(--indicator-red-border);
+    color: var(--adhd-red);
+  }
+
+  .indicator-yellow {
+    background: var(--indicator-yellow-bg);
+    border: 1px solid var(--indicator-yellow-border);
+    color: var(--adhd-yellow);
   }
 
   /* Animated gradient background */
@@ -99,23 +147,28 @@ body {
     animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  /* Subtle float animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--dark-surface);
   }
 
   ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, var(--adhd-yellow), var(--adhd-orange));
-    border-radius: 4px;
+    border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--adhd-yellow);
+    background: var(--adhd-yellow-bright);
   }
 }
 
@@ -139,8 +192,18 @@ body {
     box-shadow: 0 0 20px var(--glow-yellow);
   }
   50% {
-    opacity: 0.9;
-    box-shadow: 0 0 40px var(--glow-yellow), 0 0 60px var(--glow-orange);
+    opacity: 0.95;
+    box-shadow: 0 0 30px var(--glow-yellow), 0 0 50px var(--glow-orange);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
