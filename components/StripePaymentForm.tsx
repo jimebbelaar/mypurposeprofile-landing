@@ -231,7 +231,6 @@ export default function StripePaymentForm() {
       variables: {
         colorPrimary: "#FFD700",
         colorBackground: "#000000",
-        colorSurface: "#1a1a1a",
         colorText: "#ffffff",
         colorDanger: "#EF4444",
         fontFamily: "Inter, system-ui, sans-serif",
