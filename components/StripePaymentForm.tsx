@@ -124,7 +124,7 @@ function PaymentForm({
   };
 
   const handleExpressCheckout = async (event: any) => {
-    if (!stripe) return;
+    if (!stripe || !elements) return;
 
     setIsProcessing(true);
     setMessage(null);
@@ -137,27 +137,45 @@ function PaymentForm({
       payment_method: "express",
     });
 
-    // ExpressCheckoutElement handles its own payment confirmation
     const { expressPaymentType } = event;
 
-    // The payment confirmation is handled by the ExpressCheckoutElement itself
-    event.resolve({
-      business: {
-        name: priceInfo.productName,
-      },
-    });
+    try {
+      // Confirm the payment using the Express Checkout element
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/success`,
+          receipt_email: email || undefined,
+          payment_method_data: {
+            billing_details: {
+              name: name || undefined,
+              email: email || undefined,
+            },
+          },
+        },
+        redirect: "if_required", // Important for express checkout
+      });
 
-    // Track successful purchase
-    trackEvent("Purchase", {
-      value: parseFloat(priceInfo.price),
-      currency: priceInfo.currency,
-      content_name: priceInfo.productName,
-      content_type: "product",
-      payment_method: expressPaymentType || "express",
-    });
-
-    // Success callback will be triggered by Stripe redirect
-    setIsProcessing(false);
+      if (error) {
+        // Handle error
+        setMessage(error.message || "Payment failed");
+        setIsProcessing(false);
+      } else {
+        // Payment succeeded without redirect
+        trackEvent("Purchase", {
+          value: parseFloat(priceInfo.price),
+          currency: priceInfo.currency,
+          content_name: priceInfo.productName,
+          content_type: "product",
+          payment_method: expressPaymentType || "express",
+        });
+        onSuccess();
+      }
+    } catch (err: any) {
+      console.error("Express checkout error:", err);
+      setMessage("An error occurred during express checkout");
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -219,6 +237,25 @@ function PaymentForm({
                 googlePay: "auto",
               },
               buttonHeight: 48,
+            }}
+            onReady={(event) => {
+              console.log("Express Checkout ready");
+            }}
+            onClick={(event) => {
+              // Track when express checkout button is clicked
+              console.log(
+                "Express checkout clicked:",
+                event.expressPaymentType
+              );
+
+              // Resolve the click event to show payment sheet
+              if (event.resolve) {
+                event.resolve({});
+              }
+            }}
+            onCancel={() => {
+              console.log("Express checkout cancelled");
+              setIsProcessing(false);
             }}
             onLoadError={(error) => {
               console.error("Express Checkout load error:", error);

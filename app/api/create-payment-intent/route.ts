@@ -49,6 +49,16 @@ export async function POST(request: NextRequest) {
 
       // Add description from product
       description: productDetails.description || productDetails.name,
+
+      // Add statement descriptor for better merchant identification
+      statement_descriptor_suffix: "ADHD Method",
+
+      // Add merchant display name for Apple Pay
+      payment_method_options: {
+        card: {
+          request_three_d_secure: "automatic",
+        },
+      },
     });
 
     // Return client secret and price information for the frontend
