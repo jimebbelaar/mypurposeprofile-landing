@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { amount = 2700 } = body; // Default to $27.00
+    const { amount = 1 } = body; // Default to $27.00
 
     // Create a PaymentIntent with proper configuration
     const paymentIntent = await stripe.paymentIntents.create({
