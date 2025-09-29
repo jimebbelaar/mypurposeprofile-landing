@@ -1,103 +1,91 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect } from "react";
+import Hero from "@/components/Hero";
+import Testimonials from "@/components/Testimonials";
+import ProblemSection from "@/components/ProblemSection";
+import Solution from "@/components/Solution";
+import ValueStack from "@/components/ValueStack";
+import FAQ from "@/components/FAQ";
+import FinalCTA from "@/components/FinalCTA";
+import CountdownTimer from "@/components/CountdownTimer";
+import { trackEvent, initTracking } from "@/lib/meta-pixel";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  useEffect(() => {
+    initTracking();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+    // Track scroll depth
+    let maxScroll = 0;
+    const handleScroll = () => {
+      const scrollPercent =
+        (window.scrollY /
+          (document.documentElement.scrollHeight - window.innerHeight)) *
+        100;
+
+      if (scrollPercent > maxScroll) {
+        maxScroll = scrollPercent;
+        if (maxScroll >= 25 && maxScroll < 50) {
+          trackEvent("ScrollDepth25");
+        } else if (maxScroll >= 50 && maxScroll < 75) {
+          trackEvent("ScrollDepth50");
+        } else if (maxScroll >= 75 && maxScroll < 90) {
+          trackEvent("ScrollDepth75");
+        } else if (maxScroll >= 90) {
+          trackEvent("ScrollDepth90");
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Track time on page
+    const startTime = Date.now();
+    const handleBeforeUnload = () => {
+      const timeSpent = Math.round((Date.now() - startTime) / 1000);
+      trackEvent("TimeOnPage", { seconds: timeSpent });
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  return (
+    <>
+      <CountdownTimer />
+      <main className="min-h-screen">
+        <Hero />
+        <Testimonials />
+        <ProblemSection />
+        <Solution />
+        <ValueStack />
+        <FAQ />
+        <FinalCTA />
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className="py-12 border-t border-white/10">
+        <div className="container mx-auto px-4 text-center text-gray-400">
+          <p className="mb-4">© 2025 ADHD Harmony</p>
+          <div className="flex justify-center gap-6 text-sm">
+            <a href="/terms" className="hover:text-adhd-yellow transition">
+              Terms of Use
+            </a>
+            <a href="/privacy" className="hover:text-adhd-yellow transition">
+              Privacy Policy
+            </a>
+            <a href="/cookies" className="hover:text-adhd-yellow transition">
+              Cookie Policy
+            </a>
+          </div>
+          <p className="mt-4 text-xs">
+            This is not medical advice. Results vary per person.
+          </p>
+        </div>
       </footer>
-    </div>
+    </>
   );
 }
