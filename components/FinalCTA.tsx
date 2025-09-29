@@ -130,14 +130,6 @@ export default function FinalCTA() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="mt-6"
           >
-            <div className="inline-flex items-center gap-4 text-sm text-gray-400">
-              <span className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-adhd-red rounded-full animate-pulse" />
-                Only {spotsLeft} spots available today
-              </span>
-              <span>•</span>
-              <span>30-day guarantee</span>
-            </div>
           </motion.div>
         </div>
       </div>
