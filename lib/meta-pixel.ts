@@ -3,65 +3,64 @@ declare global {
     fbq: any;
     _fbq: any;
     _fbqTracked?: {
-      pageView?: boolean;
-      [key: string]: boolean | undefined;
+      [key: string]: boolean;
     };
   }
 }
 
-export const initTracking = () => {
-  if (typeof window !== "undefined" && window.fbq) {
-    // Initialize tracking object to prevent duplicates
-    if (!window._fbqTracked) {
-      window._fbqTracked = {};
-    }
-
-    // Only track PageView once
-    if (!window._fbqTracked.pageView) {
-      window.fbq("track", "PageView");
-      window._fbqTracked.pageView = true;
-      console.log("📊 Tracked: PageView");
-    }
-  }
-};
-
 export const trackEvent = (eventName: string, parameters?: any) => {
-  if (typeof window !== "undefined" && window.fbq) {
-    // For non-repeatable events, check if already tracked
-    const nonRepeatableEvents = [
-      "PageView",
-      "ScrollDepth25",
-      "ScrollDepth50",
-      "ScrollDepth75",
-      "ScrollDepth90",
-    ];
+  if (typeof window === "undefined" || !window.fbq) return;
 
-    if (nonRepeatableEvents.includes(eventName)) {
-      if (!window._fbqTracked) {
-        window._fbqTracked = {};
-      }
+  // Initialize tracking object
+  if (!window._fbqTracked) {
+    window._fbqTracked = {};
+  }
 
-      if (window._fbqTracked[eventName]) {
-        console.log(`⏭️ Skipping duplicate event: ${eventName}`);
-        return;
-      }
+  // For non-repeatable events, check if already tracked CLIENT-SIDE
+  const nonRepeatableEvents = [
+    "PageView",
+    "ScrollDepth25",
+    "ScrollDepth50",
+    "ScrollDepth75",
+    "ScrollDepth90",
+  ];
 
-      window._fbqTracked[eventName] = true;
+  const trackingKey = `${eventName}_${parameters?.value || ""}`;
+
+  if (nonRepeatableEvents.includes(eventName)) {
+    if (window._fbqTracked[trackingKey]) {
+      console.log(`⏭️ Skipping duplicate client event: ${eventName}`);
+      return;
     }
+    window._fbqTracked[trackingKey] = true;
+  }
 
-    // Track client-side
-    window.fbq("track", eventName, parameters);
+  // Track client-side (browser pixel)
+  window.fbq("track", eventName, parameters);
+  console.log(`📊 Client tracked: ${eventName}`, parameters);
 
-    // Also send to server for CAPI
+  // Send to server for CAPI (Conversions API)
+  // Use sendBeacon for reliability, especially on page unload
+  const payload = JSON.stringify({
+    event: eventName,
+    data: parameters,
+    url: window.location.href,
+    userAgent: navigator.userAgent,
+  });
+
+  // Try sendBeacon first (more reliable), fallback to fetch
+  const sent = navigator.sendBeacon?.(
+    "/api/track-event",
+    new Blob([payload], { type: "application/json" })
+  );
+
+  if (!sent) {
+    // Fallback to fetch if sendBeacon not supported
     fetch("/api/track-event", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        event: eventName,
-        data: parameters,
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-      }),
-    }).catch((error) => console.error("Error tracking event:", error));
+      body: payload,
+      keepalive: true, // Important for beforeunload events
+    }).catch((error) => console.error("❌ CAPI tracking error:", error));
   }
 };

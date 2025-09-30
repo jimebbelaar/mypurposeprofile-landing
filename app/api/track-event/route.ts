@@ -1,25 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Declare global type for cleanup interval
 declare global {
   var _trackingCleanupInterval: NodeJS.Timeout | undefined;
 }
 
-// Store tracked events in memory (resets on server restart)
-const trackedEvents = new Map<string, Set<string>>();
+// Use a more sophisticated cache with timestamps
+interface TrackedEvent {
+  timestamp: number;
+  events: Set<string>;
+}
+
+const trackedEvents = new Map<string, TrackedEvent>();
+const SESSION_EXPIRY = 30 * 60 * 1000; // 30 minutes
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  let body;
+  try {
+    const text = await request.text();
+
+    // Handle sendBeacon blob format
+    if (text.startsWith("{")) {
+      body = JSON.parse(text);
+    } else {
+      // Invalid format
+      return NextResponse.json(
+        { success: false, error: "Invalid request format" },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
+    console.error("❌ Invalid JSON body:", error);
+    return NextResponse.json(
+      { success: false, error: "Invalid JSON body" },
+      { status: 400 }
+    );
+  }
+
   const { event, data, url, userAgent } = body;
+
+  if (!event || !url || !userAgent) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Missing required fields",
+        message: "event, url, and userAgent are required",
+      },
+      { status: 400 }
+    );
+  }
 
   // Get IP address
   const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0] ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
-    "";
+    "unknown";
 
-  // Create session identifier (based on IP + User Agent)
-  const sessionId = `${ip}-${userAgent}`;
+  // Create session identifier
+  const sessionId = `${ip}-${userAgent.substring(0, 50)}`;
+
+  // Clean up expired sessions
+  const now = Date.now();
+  for (const [key, value] of trackedEvents.entries()) {
+    if (now - value.timestamp > SESSION_EXPIRY) {
+      trackedEvents.delete(key);
+    }
+  }
 
   // Check for duplicate non-repeatable events
   const nonRepeatableEvents = [
@@ -31,17 +76,11 @@ export async function POST(request: NextRequest) {
   ];
 
   if (nonRepeatableEvents.includes(event)) {
-    if (!trackedEvents.has(sessionId)) {
-      trackedEvents.set(sessionId, new Set());
-    }
+    const sessionData = trackedEvents.get(sessionId);
 
-    const sessionEvents = trackedEvents.get(sessionId)!;
-    if (sessionEvents.has(event)) {
+    if (sessionData?.events.has(event)) {
       console.log(
-        `⏭️ Skipping duplicate server event: ${event} for session ${sessionId.substring(
-          0,
-          20
-        )}...`
+        `⏭️ Skipping duplicate: ${event} for ${sessionId.substring(0, 20)}...`
       );
       return NextResponse.json({
         success: true,
@@ -50,12 +89,25 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    sessionEvents.add(event);
+    // Track the event
+    if (!sessionData) {
+      trackedEvents.set(sessionId, {
+        timestamp: now,
+        events: new Set([event]),
+      });
+    } else {
+      sessionData.events.add(event);
+      sessionData.timestamp = now;
+    }
   }
 
   try {
-    // Build event data
-    const eventData: any = {
+    // Parse cookies properly
+    const cookies = request.headers.get("cookie") || "";
+    const fbcMatch = cookies.match(/(?:^|;\s*)_fbc=([^;]+)/);
+    const fbpMatch = cookies.match(/(?:^|;\s*)_fbp=([^;]+)/);
+
+    const eventData = {
       data: [
         {
           event_name: event,
@@ -65,30 +117,19 @@ export async function POST(request: NextRequest) {
           user_data: {
             client_ip_address: ip,
             client_user_agent: userAgent,
-            fbc: request.headers.get("cookie")?.match(/_fbc=([^;]+)/)?.[1],
-            fbp: request.headers.get("cookie")?.match(/_fbp=([^;]+)/)?.[1],
+            ...(fbcMatch && { fbc: fbcMatch[1] }),
+            ...(fbpMatch && { fbp: fbpMatch[1] }),
           },
-          custom_data: data,
+          custom_data: data || {},
         },
       ],
       access_token: process.env.META_ACCESS_TOKEN,
     };
 
-    // Check if we're in test mode or live mode
     const isTestMode = !!process.env.META_TEST_EVENT_CODE;
 
     if (isTestMode) {
-      // Test mode - add test event code
       eventData.test_event_code = process.env.META_TEST_EVENT_CODE;
-      console.log(`🧪 TEST MODE - Event: ${event}`, {
-        testCode: process.env.META_TEST_EVENT_CODE,
-        data: data,
-      });
-    } else {
-      // Live mode - no test event code
-      console.log(`🔴 LIVE MODE - Event: ${event}`, {
-        data: data,
-      });
     }
 
     const response = await fetch(
@@ -105,29 +146,22 @@ export async function POST(request: NextRequest) {
     if (result.error) {
       console.error("❌ Meta API Error:", result.error);
       return NextResponse.json(
-        {
-          success: false,
-          error: result.error,
-        },
+        { success: false, error: result.error },
         { status: 400 }
       );
     }
 
-    // Log success with mode indicator
-    console.log(`✅ Meta event sent: ${event}`, {
-      mode: isTestMode ? "TEST" : "LIVE",
+    console.log(`✅ CAPI sent: ${event} [${isTestMode ? "TEST" : "LIVE"}]`, {
       eventsReceived: result.events_received,
-      fbTraceId: result.fbtrace_id,
     });
 
     return NextResponse.json({
       success: true,
       result,
-      testMode: isTestMode,
       mode: isTestMode ? "test" : "live",
     });
   } catch (error: any) {
-    console.error("❌ Meta tracking error:", error);
+    console.error("❌ CAPI error:", error);
     return NextResponse.json(
       { error: "Error tracking event", message: error.message },
       { status: 500 }
@@ -135,14 +169,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Clean up old sessions periodically (every hour)
-// Note: This only works in long-running Node processes, not in serverless
+// Periodic cleanup
 if (!global._trackingCleanupInterval) {
   global._trackingCleanupInterval = setInterval(() => {
     if (trackedEvents.size > 1000) {
-      const oldSize = trackedEvents.size;
       trackedEvents.clear();
-      console.log(`🧹 Cleared tracked events cache (was ${oldSize} sessions)`);
+      console.log(`🧹 Cleared event cache`);
     }
   }, 60 * 60 * 1000);
 }
