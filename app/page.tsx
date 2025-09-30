@@ -13,7 +13,6 @@ import { trackEvent } from "@/lib/meta-pixel";
 
 export default function Home() {
   useEffect(() => {
-    // Track scroll depth - use refs to avoid closure issues
     const scrollTracked = {
       depth25: false,
       depth50: false,
@@ -47,7 +46,6 @@ export default function Home() {
       }, 150);
     };
 
-    // Track ViewContent after user engages (3 seconds)
     const viewContentTimeout = setTimeout(() => {
       trackEvent("ViewContent", {
         content_name: "ADHD Harmony Landing Page",
@@ -55,14 +53,12 @@ export default function Home() {
       });
     }, 3000);
 
-    // Track time on page
     const startTime = Date.now();
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         const timeSpent = Math.round((Date.now() - startTime) / 1000);
         if (timeSpent > 5) {
-          // Only track if spent more than 5 seconds
           trackEvent("TimeOnPage", { seconds: timeSpent });
         }
       }

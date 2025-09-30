@@ -12,8 +12,17 @@ interface SessionData {
   payment_status: string;
   customer_email?: string;
   customer_name?: string;
+  customer_phone?: string;
   amount_total?: number;
   currency?: string;
+  customer_details?: {
+    address?: {
+      city?: string;
+      state?: string;
+      postal_code?: string;
+      country?: string;
+    };
+  };
 }
 
 function SuccessContent() {
@@ -27,7 +36,6 @@ function SuccessContent() {
   const [customerEmail, setCustomerEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    // Handle embedded checkout session (NEW - for Apple Pay email fix)
     if (sessionId) {
       setLoading(true);
       fetch(`/api/session-status?session_id=${sessionId}`)
@@ -35,20 +43,35 @@ function SuccessContent() {
         .then((data) => {
           setSessionData(data);
 
-          // Store customer email if available
           if (data.customer_email) {
             setCustomerEmail(data.customer_email);
           }
 
-          // Track purchase with session data
           if (data.payment_status === "paid") {
+            const nameParts = data.customer_name?.split(" ") || [];
+            const firstName = nameParts[0] || "";
+            const lastName = nameParts.slice(1).join(" ") || "";
+
             trackEvent("Purchase", {
               value: data.amount_total ? data.amount_total / 100 : 27.0,
               currency: data.currency?.toUpperCase() || "USD",
               content_name: "ADHD Identity Method",
               content_type: "product",
-              session_id: sessionId,
+
+              // Customer data (will be hashed by CAPI)
               customer_email: data.customer_email,
+              customer_phone: data.customer_phone,
+              first_name: firstName,
+              last_name: lastName,
+
+              // Address data if available
+              city: data.customer_details?.address?.city,
+              state: data.customer_details?.address?.state,
+              zip: data.customer_details?.address?.postal_code,
+              country: data.customer_details?.address?.country,
+
+              // Transaction identifiers
+              session_id: sessionId,
             });
           }
         })
@@ -57,12 +80,9 @@ function SuccessContent() {
         })
         .finally(() => {
           setLoading(false);
-          // Clear URL parameters for cleaner URL
           window.history.replaceState({}, "", "/success");
         });
-    }
-    // Handle PaymentIntent redirect (LEGACY - still supported)
-    else if (redirectStatus === "succeeded" && paymentIntent) {
+    } else if (redirectStatus === "succeeded" && paymentIntent) {
       trackEvent("Purchase", {
         value: 27.0,
         currency: "USD",
@@ -70,12 +90,10 @@ function SuccessContent() {
         content_type: "product",
         payment_intent: paymentIntent,
       });
-      // Clear URL parameters for cleaner URL
       window.history.replaceState({}, "", "/success");
     }
   }, [sessionId, redirectStatus, paymentIntent]);
 
-  // Show loading state while fetching session data
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
@@ -87,7 +105,6 @@ function SuccessContent() {
     );
   }
 
-  // Check for failed payment (works for both session and payment intent)
   if (
     (redirectStatus && redirectStatus !== "succeeded") ||
     (sessionData && sessionData.payment_status !== "paid")
@@ -120,7 +137,6 @@ function SuccessContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
-      {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-96 h-96 bg-adhd-yellow/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-adhd-green/20 rounded-full blur-3xl animate-pulse" />
@@ -132,7 +148,6 @@ function SuccessContent() {
         transition={{ duration: 0.5, type: "spring" }}
         className="relative z-10 text-center max-w-2xl px-4"
       >
-        {/* Success Icon */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -144,7 +159,6 @@ function SuccessContent() {
           </div>
         </motion.div>
 
-        {/* Success Message */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -154,10 +168,9 @@ function SuccessContent() {
             <span className="gradient-text">Success!</span>
           </h1>
           <p className="text-2xl text-gray-300 mb-8">
-            Your purchase was completed successfully 🎉
+            Your purchase was completed successfully
           </p>
 
-          {/* Show amount and product if we have session data */}
           {sessionData && sessionData.amount_total && (
             <p className="text-lg text-gray-400 mb-8">
               <span className="text-adhd-yellow font-semibold">
@@ -172,7 +185,6 @@ function SuccessContent() {
           )}
         </motion.div>
 
-        {/* Check Email Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -220,7 +232,6 @@ function SuccessContent() {
           </div>
         </motion.div>
 
-        {/* Email Provider Buttons */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -230,7 +241,6 @@ function SuccessContent() {
           <p className="text-gray-400 mb-4">Open your email provider:</p>
 
           <div className="flex justify-center gap-4 flex-wrap">
-            {/* Highlight the user's email provider if we can detect it */}
             {[
               {
                 name: "Gmail",
@@ -282,7 +292,6 @@ function SuccessContent() {
           </div>
         </motion.div>
 
-        {/* Support Info */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -291,9 +300,8 @@ function SuccessContent() {
         >
           <div className="p-4 bg-adhd-yellow/10 rounded-xl border border-adhd-yellow/30">
             <p className="text-sm text-adhd-yellow">
-              <strong>💡 Didn't receive the email?</strong> Check your spam
-              folder or wait a few minutes. Emails typically arrive within 5
-              minutes.
+              <strong>Didn't receive the email?</strong> Check your spam folder
+              or wait a few minutes. Emails typically arrive within 5 minutes.
             </p>
           </div>
 
@@ -303,7 +311,6 @@ function SuccessContent() {
               {(sessionId || paymentIntent || "").substring(0, 20)}...
             </p>
           )}
-
           <p className="text-sm text-gray-400">
             Need help? Contact support at{" "}
             <a
