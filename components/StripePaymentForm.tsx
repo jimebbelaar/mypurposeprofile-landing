@@ -280,7 +280,6 @@ export default function EmbeddedCheckoutForm() {
           exit={{ scale: 0.95, opacity: 0 }}
           className="relative bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto"
           style={{
-            maxHeight: "90vh",
             maxHeight: "90dvh",
           }}
           onClick={(e) => e.stopPropagation()}
