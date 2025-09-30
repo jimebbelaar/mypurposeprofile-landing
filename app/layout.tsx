@@ -52,6 +52,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen`}>
         {children}
+          <div id="modal-root"></div> {/* Add this */}
       </body>
     </html>
   );

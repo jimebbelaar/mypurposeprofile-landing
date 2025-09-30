@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { trackEvent } from "@/lib/meta-pixel";
 import { motion, AnimatePresence } from "framer-motion";
@@ -56,6 +57,7 @@ export default function EmbeddedCheckoutForm() {
   const [checkoutInstance, setCheckoutInstance] = useState<any>(null);
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [stripe, setStripe] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
   const [priceInfo, setPriceInfo] = useState<PriceInfo>({
     price: "27",
@@ -64,6 +66,12 @@ export default function EmbeddedCheckoutForm() {
     originalPrice: "1035",
   });
   const [priceLoading, setPriceLoading] = useState(true);
+
+  // Check if component is mounted (for portal)
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   // Initialize Stripe
   useEffect(() => {
@@ -187,16 +195,40 @@ export default function EmbeddedCheckoutForm() {
     paymentModalEvents.emit(showPayment);
   }, [showPayment]);
 
-  // Lock body scroll and handle escape key
+  // IMPROVED body scroll locking specifically for iOS
   useEffect(() => {
     if (!showPayment) return;
 
     const scrollY = window.scrollY;
-    const originalStyle = window.getComputedStyle(document.body).overflow;
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
+    const body = document.body;
+    const html = document.documentElement;
+
+    // Store original styles
+    const originalBodyStyle = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+
+    const originalHtmlStyle = {
+      overflow: html.style.overflow,
+      position: html.style.position,
+    };
+
+    // Apply iOS-friendly scroll lock
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    html.style.overflow = "hidden";
+
+    // Additional iOS fix - prevent touchmove on the overlay
+    const preventScroll = (e: TouchEvent) => {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+      }
+    };
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -205,13 +237,17 @@ export default function EmbeddedCheckoutForm() {
     };
 
     document.addEventListener("keydown", handleEscape);
+    document.addEventListener("touchmove", preventScroll, { passive: false });
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = originalStyle;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
+      document.removeEventListener("touchmove", preventScroll);
+
+      // Restore original styles
+      Object.assign(body.style, originalBodyStyle);
+      Object.assign(html.style, originalHtmlStyle);
+
+      // Restore scroll position
       window.scrollTo(0, scrollY);
     };
   }, [showPayment]);
@@ -223,6 +259,57 @@ export default function EmbeddedCheckoutForm() {
           100
       )
     : null;
+
+  // Modal content to be rendered via portal
+  const modalContent = showPayment && (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+        style={{
+          position: "fixed",
+          isolation: "isolate",
+        }}
+        onClick={closeModal}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="relative bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto"
+          style={{
+            maxHeight: "90vh",
+            maxHeight: "90dvh",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={closeModal}
+            className="sticky top-4 right-4 z-50 p-2 rounded-full bg-white/90 hover:bg-gray-100 transition-colors shadow-lg ml-auto block mr-4 mt-4"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+
+          <div className="p-4">
+            {loading && (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="animate-spin text-gray-400" size={32} />
+              </div>
+            )}
+
+            <div
+              id="checkout-container"
+              ref={checkoutRef}
+              className="min-h-[600px]"
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <>
@@ -316,55 +403,17 @@ export default function EmbeddedCheckoutForm() {
         )}
       </div>
 
-      {/* Ultra-Minimal Checkout Modal */}
-      <AnimatePresence>
-        {showPayment && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close button */}
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/90 hover:bg-gray-100 transition-colors shadow-lg"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-
-              {/* Stripe Checkout Container */}
-              <div className="p-4">
-                {loading && (
-                  <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-gray-400" size={32} />
-                  </div>
-                )}
-                
-                <div
-                  id="checkout-container"
-                  ref={checkoutRef}
-                  className="min-h-[600px]"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Render modal via Portal */}
+      {mounted &&
+        typeof window !== "undefined" &&
+        modalContent &&
+        createPortal(modalContent, document.getElementById("modal-root")!)}
 
       {/* Gradient animation styles */}
       <style jsx>{`
         @keyframes gradient-x {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateX(0%);
           }
           50% {
