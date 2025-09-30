@@ -4,25 +4,22 @@ declare global {
   var _trackingCleanupInterval: NodeJS.Timeout | undefined;
 }
 
-// Use a more sophisticated cache with timestamps
 interface TrackedEvent {
   timestamp: number;
   events: Set<string>;
 }
 
 const trackedEvents = new Map<string, TrackedEvent>();
-const SESSION_EXPIRY = 30 * 60 * 1000; // 30 minutes
+const SESSION_EXPIRY = 30 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
   let body;
   try {
     const text = await request.text();
 
-    // Handle sendBeacon blob format
     if (text.startsWith("{")) {
       body = JSON.parse(text);
     } else {
-      // Invalid format
       return NextResponse.json(
         { success: false, error: "Invalid request format" },
         { status: 400 }
@@ -49,16 +46,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Get IP address
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
     "unknown";
 
-  // Create session identifier
   const sessionId = `${ip}-${userAgent.substring(0, 50)}`;
 
-  // Clean up expired sessions
   const now = Date.now();
   for (const [key, value] of trackedEvents.entries()) {
     if (now - value.timestamp > SESSION_EXPIRY) {
@@ -66,7 +60,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Check for duplicate non-repeatable events
   const nonRepeatableEvents = [
     "PageView",
     "ScrollDepth25",
@@ -89,7 +82,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Track the event
     if (!sessionData) {
       trackedEvents.set(sessionId, {
         timestamp: now,
@@ -102,12 +94,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Parse cookies properly
     const cookies = request.headers.get("cookie") || "";
     const fbcMatch = cookies.match(/(?:^|;\s*)_fbc=([^;]+)/);
     const fbpMatch = cookies.match(/(?:^|;\s*)_fbp=([^;]+)/);
 
-    const eventData = {
+    // Use proper typing with index signature
+    const eventData: any = {
       data: [
         {
           event_name: event,
@@ -169,7 +161,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Periodic cleanup
 if (!global._trackingCleanupInterval) {
   global._trackingCleanupInterval = setInterval(() => {
     if (trackedEvents.size > 1000) {
