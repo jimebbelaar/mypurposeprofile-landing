@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { event, data, url, userAgent } = body;
+  const { event, data, url, userAgent, eventId } = body;
 
   if (!event || !url || !userAgent) {
     return NextResponse.json(
@@ -123,18 +123,27 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // CRITICAL: Add Purchase to non-repeatable events
   const nonRepeatableEvents = [
     "PageView",
     "ScrollDepth25",
     "ScrollDepth50",
     "ScrollDepth75",
     "ScrollDepth90",
+    "InitiateCheckout",
+    "Purchase", // ← Added this!
   ];
 
   if (nonRepeatableEvents.includes(event)) {
+    // For Purchase events, use session_id as part of deduplication key
+    const deduplicationKey =
+      event === "Purchase" && data?.session_id
+        ? `${event}_${data.session_id}`
+        : event;
+
     const sessionData = trackedEvents.get(sessionId);
 
-    if (sessionData?.events.has(event)) {
+    if (sessionData?.events.has(deduplicationKey)) {
       console.log(
         `⏭️ Skipping duplicate: ${event} for ${sessionId.substring(0, 20)}...`
       );
@@ -148,10 +157,10 @@ export async function POST(request: NextRequest) {
     if (!sessionData) {
       trackedEvents.set(sessionId, {
         timestamp: now,
-        events: new Set([event]),
+        events: new Set([deduplicationKey]),
       });
     } else {
-      sessionData.events.add(event);
+      sessionData.events.add(deduplicationKey);
       sessionData.timestamp = now;
     }
   }
@@ -180,6 +189,7 @@ export async function POST(request: NextRequest) {
         {
           event_name: event,
           event_time: Math.floor(Date.now() / 1000),
+          event_id: eventId, // ← CRITICAL: Add event_id for deduplication
           action_source: "website",
           event_source_url: url,
           user_data: {
@@ -203,6 +213,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`📤 Sending to Meta CAPI:`, {
       event,
+      eventId, // ← Log the event_id
       mode: isTestMode ? "TEST" : "LIVE",
       hasEmail: !!hashedCustomerData.em,
       hasPhone: !!hashedCustomerData.ph,
@@ -230,6 +241,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ CAPI sent: ${event} [${isTestMode ? "TEST" : "LIVE"}]`, {
       eventsReceived: result.events_received,
+      eventId,
     });
 
     return NextResponse.json({

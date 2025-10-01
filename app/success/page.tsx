@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { trackEvent } from "@/lib/meta-pixel";
 import { motion } from "framer-motion";
@@ -35,7 +35,16 @@ function SuccessContent() {
   const [loading, setLoading] = useState(false);
   const [customerEmail, setCustomerEmail] = useState<string | null>(null);
 
+  // CRITICAL: Track if we've already processed this purchase
+  const hasTrackedRef = useRef(false);
+
   useEffect(() => {
+    // Prevent tracking if we've already tracked this session
+    if (hasTrackedRef.current) {
+      console.log("⏭️ Purchase already tracked for this component instance");
+      return;
+    }
+
     if (sessionId) {
       setLoading(true);
       fetch(`/api/session-status?session_id=${sessionId}`)
@@ -47,7 +56,10 @@ function SuccessContent() {
             setCustomerEmail(data.customer_email);
           }
 
-          if (data.payment_status === "paid") {
+          // CRITICAL: Only track if we haven't tracked yet AND payment is successful
+          if (data.payment_status === "paid" && !hasTrackedRef.current) {
+            hasTrackedRef.current = true; // Mark as tracked BEFORE calling trackEvent
+
             const nameParts = data.customer_name?.split(" ") || [];
             const firstName = nameParts[0] || "";
             const lastName = nameParts.slice(1).join(" ") || "";
@@ -70,7 +82,7 @@ function SuccessContent() {
               zip: data.customer_details?.address?.postal_code,
               country: data.customer_details?.address?.country,
 
-              // Transaction identifiers
+              // CRITICAL: Include session_id for deduplication
               session_id: sessionId,
             });
           }
@@ -80,9 +92,16 @@ function SuccessContent() {
         })
         .finally(() => {
           setLoading(false);
+          // Clean URL after fetching to prevent re-triggering
           window.history.replaceState({}, "", "/success");
         });
-    } else if (redirectStatus === "succeeded" && paymentIntent) {
+    } else if (
+      redirectStatus === "succeeded" &&
+      paymentIntent &&
+      !hasTrackedRef.current
+    ) {
+      hasTrackedRef.current = true; // Mark as tracked
+
       trackEvent("Purchase", {
         value: 27.0,
         currency: "USD",
@@ -92,7 +111,7 @@ function SuccessContent() {
       });
       window.history.replaceState({}, "", "/success");
     }
-  }, [sessionId, redirectStatus, paymentIntent]);
+  }, [sessionId, redirectStatus, paymentIntent]); // Keep dependencies as they are
 
   if (loading) {
     return (
