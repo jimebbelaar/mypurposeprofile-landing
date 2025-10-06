@@ -22,7 +22,7 @@ const faqs = [
       "No. If you recognize yourself in the struggles I described, this is for you. Many successful entrepreneurs have ADHD traits without official diagnosis. This system works for anyone who thinks differently.",
   },
   {
-    question: "What exactly do I get for $27?",
+    question: "What exactly do I get for $47?",
     answer:
       "3 video modules (45 min total), AI voice analysis session, your personal transformation report, 90-day action plan, and a bonus 1-on-1 call with me. Everything is instantly accessible after purchase.",
   },

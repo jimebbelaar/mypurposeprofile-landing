@@ -94,7 +94,7 @@ export default function FinalCTA() {
                 Break The Pattern
               </h3>
               <p className="text-gray-300">
-                Invest $27 (less than an Uber Eats order). Discover who you are
+                Invest $47 (less than a night out). Discover who you are
                 in 60 minutes. Get a system that works. Finally build that
                 business.
               </p>

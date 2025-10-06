@@ -92,7 +92,7 @@ export default function ValueStack() {
           </div>
           <h2 className="text-3xl lg:text-5xl font-black">
             Everything You Get Today For{" "}
-            <span className="gradient-text">$27</span>
+            <span className="gradient-text">$47</span>
           </h2>
         </motion.div>
 

@@ -1,8 +1,31 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet";
 import StripePaymentForm from "./StripePaymentForm";
 import { CheckCircle, X, Zap, Heart, Clock, Shield } from "lucide-react";
+
+// VTurb Player Component following official React guide
+function VTurbPlayer() {
+  return (
+    <>
+      <div
+        dangerouslySetInnerHTML={{
+          __html:
+            '<vturb-smartplayer id="vid-68e349514809825c61fb1c76" style="display: block; margin: 0 auto; min-width: 100%; min-height: 100%;"></vturb-smartplayer>',
+        }}
+      />
+      <Helmet>
+        <script type="text/javascript">{`
+          var s=document.createElement("script");
+          s.src="https://scripts.converteai.net/f3ae95a0-ae37-43cb-a4df-9c965554bcfa/players/68e349514809825c61fb1c76/v4/player.js";
+          s.async=!0;
+          document.head.appendChild(s);
+        `}</script>
+      </Helmet>
+    </>
+  );
+}
 
 export default function Hero() {
   return (
@@ -109,12 +132,7 @@ export default function Hero() {
           >
             <div className="glass-effect rounded-2xl p-2 glow-yellow">
               <div className="relative aspect-[1080/1350] bg-dark-surface rounded-xl overflow-hidden">
-                <iframe
-                  src="https://www.loom.com/embed/4c89601b6fc8411d89982db83df48bdc?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
-                  frameBorder="0"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                />
+                <VTurbPlayer />
               </div>
             </div>
           </motion.div>
