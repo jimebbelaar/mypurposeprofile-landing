@@ -1,36 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import StripePaymentForm from "./StripePaymentForm";
 import { CheckCircle, X, Zap, Heart, Clock, Shield } from "lucide-react";
 
-// VTurb Player Component following official React guide
-function VTurbPlayer() {
-  return (
-    <>
-      <div
-        dangerouslySetInnerHTML={{
-          __html:
-            '<vturb-smartplayer id="vid-68e349514809825c61fb1c76" style="display: block; margin: 0 auto; min-width: 100%; min-height: 100%;"></vturb-smartplayer>',
-        }}
-      />
-      <Helmet>
-        <script type="text/javascript">{`
-          var s=document.createElement("script");
-          s.src="https://scripts.converteai.net/f3ae95a0-ae37-43cb-a4df-9c965554bcfa/players/68e349514809825c61fb1c76/v4/player.js";
-          s.async=!0;
-          document.head.appendChild(s);
-        `}</script>
-      </Helmet>
-    </>
-  );
-}
-
 export default function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center pt-14 pb-10 relative overflow-hidden">
-      {/* Background Effects - More subtle with blue tints */}
+      {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-adhd-yellow/10 rounded-full blur-3xl float" />
         <div
@@ -42,7 +21,7 @@ export default function Hero() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content - Shows second on mobile, first on desktop */}
+          {/* Left Content */}
           <div className="space-y-8 order-2 lg:order-1">
             <div>
               <motion.div
@@ -73,7 +52,7 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed"
               >
-                Discover in 4 minutes why you always quit halfway - and get a
+                Discover in 4 minutes why you always quit halfway — and get a
                 personal roadmap that actually works for your ADHD brain
               </motion.p>
             </div>
@@ -95,24 +74,11 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Additional trust indicators */}
-              {/* <div className="flex flex-wrap gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Shield className="w-4 h-4 text-adhd-green" />
-                  <span>30-day money-back guarantee</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Clock className="w-4 h-4 text-adhd-yellow" />
-                  <span>Instant access (start in 2 min)</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Heart className="w-4 h-4 text-adhd-red" />
-                  <span>Made by ADHDer for ADHDers</span>
-                </div>
-              </div> */}
+              {/* Optional trust indicators */}
+              {/* ... */}
             </motion.div>
 
-            {/* Desktop only: Payment form */}
+            {/* Desktop payment form */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -123,7 +89,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right Content - Loom Video - Shows first on mobile */}
+          {/* Right Content — Image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -131,13 +97,19 @@ export default function Hero() {
             className="relative order-1 lg:order-2 w-full"
           >
             <div className="glass-effect rounded-2xl p-2 glow-yellow">
-              <div className="relative aspect-[1080/1350] bg-dark-surface rounded-xl overflow-hidden">
-                <VTurbPlayer />
+              <div className="relative aspect-[1080/1350] rounded-xl overflow-hidden bg-dark-surface/60">
+                <Image
+                  src="/images/MPP-hero.jpg"
+                  alt="My Purpose Profile — hero"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
             </div>
           </motion.div>
 
-          {/* Mobile only: Payment form shows after video and content */}
+          {/* Mobile payment form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

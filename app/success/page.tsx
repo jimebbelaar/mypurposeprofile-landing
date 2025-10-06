@@ -67,7 +67,7 @@ function SuccessContent() {
             trackEvent("Purchase", {
               value: data.amount_total ? data.amount_total / 100 : 47.0,
               currency: data.currency?.toUpperCase() || "USD",
-              content_name: "ADHD Identity Method",
+              content_name: "MyPurposeProfile",
               content_type: "product",
 
               // Customer data (will be hashed by CAPI)
@@ -105,7 +105,7 @@ function SuccessContent() {
       trackEvent("Purchase", {
         value: 47.0,
         currency: "USD",
-        content_name: "ADHD Identity Method",
+        content_name: "MyPurposeProfile",
         content_type: "product",
         payment_intent: paymentIntent,
       });

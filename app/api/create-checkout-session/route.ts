@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
       // Add metadata for tracking
       metadata: {
-        product_name: "ADHD Identity Method",
+        product_name: "MyPurposeProfile",
         source: "embedded_checkout",
       },
 
@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
       invoice_creation: {
         enabled: true,
         invoice_data: {
-          description: "ADHD Identity Method - Digital Product",
+          description: "MyPurposeProfile - Digital Product",
           metadata: {
-            product: "ADHD Identity Method",
+            product: "MyPurposeProfile Method",
           },
         },
       },

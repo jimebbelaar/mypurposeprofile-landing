@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       {
         price: "47.00",
         currency: "USD",
-        productName: "ADHD Identity Method",
+        productName: "MyPurposeProfile",
         productDescription: null,
         originalPrice: "1035.00",
         priceId: null,
