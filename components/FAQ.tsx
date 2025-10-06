@@ -7,34 +7,34 @@ import { ChevronDown, HelpCircle, MessageCircle } from "lucide-react";
 
 const faqs = [
   {
-    question: "What if I quit halfway through like always?",
+    question: "What if I realize I should stay in corporate?",
     answer:
-      "That's exactly why I designed this differently. The videos are short (max 15 min each), the AI conversation is engaging (like talking to a friend), and you get your report instantly. No waiting, no overwhelm, just quick wins that build momentum.",
+      "That's valuable clarity too. About 20% discover they just need a different role or company, not entrepreneurship. Either way, you'll know.",
   },
   {
-    question: "Why does this work when nothing else has?",
+    question: "How is this different from career coaching?",
     answer:
-      "Because we start with WHO you are, not WHAT to do. Every other system tries to force you into their box. We build YOUR box, designed for YOUR brain, YOUR energy patterns, YOUR strengths.",
+      "Career coaches cost $200-500/hour and take weeks to get clarity. This uses AI to analyze patterns in 60 minutes for $47. Plus, no required vulnerability with a stranger.",
   },
   {
-    question: "Do I need an official ADHD diagnosis?",
+    question: "Do I need a business idea first?",
     answer:
-      "No. If you recognize yourself in the struggles I described, this is for you. Many successful entrepreneurs have ADHD traits without official diagnosis. This system works for anyone who thinks differently.",
+      "No. This is about discovering who you are first. The right ideas naturally follow clarity about your purpose and values.",
   },
   {
-    question: "What exactly do I get for $47?",
+    question: "What if I'm too risk-averse for entrepreneurship?",
     answer:
-      "3 video modules (45 min total), AI voice analysis session, your personal transformation report, 90-day action plan, and a bonus 1-on-1 call with me. Everything is instantly accessible after purchase.",
+      "The assessment reveals whether you're suited for entrepreneurship, employment, or a hybrid approach. Not everyone should quit. That's okay.",
   },
   {
-    question: "Is my privacy protected with the AI?",
+    question: "Is my information private?",
     answer:
-      "100%. The AI conversation is completely private and encrypted. Your data is never shared, sold, or used for anything except generating your personal report. You can delete everything with one click.",
+      "100% confidential. Your responses are analyzed by AI, not humans. We never share or sell your data.",
   },
   {
-    question: "What if it doesn't work for me?",
+    question: "What if it doesn't give me clarity?",
     answer:
-      "30-day money-back guarantee, no questions asked. If you don't get value, you don't pay. But honestly? If you complete the 60-minute process, you'll have insights worth 100x the price.",
+      "30-day money-back guarantee. If you don't get valuable insights, email us for a full refund. No questions asked.",
   },
 ];
 
@@ -46,7 +46,7 @@ export default function FAQ() {
     <section ref={ref} className="py-20 relative">
       {/* Background effect */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-adhd-green/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-mpp-green/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -59,7 +59,7 @@ export default function FAQ() {
           <div className="inline-flex items-center gap-2 mb-6">
             <span className="indicator-yellow px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
-              Real questions from ADHD entrepreneurs
+              Questions From Corporate Professionals
             </span>
           </div>
           <h2 className="text-3xl lg:text-5xl font-black">
@@ -77,17 +77,17 @@ export default function FAQ() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full glass-effect rounded-xl overflow-hidden text-left hover:border-adhd-yellow/30 transition-all duration-300 group"
+                className="w-full glass-effect rounded-xl overflow-hidden text-left hover:border-mpp-yellow/30 transition-all duration-300 group"
               >
                 <div className="p-6 flex justify-between items-center">
                   <div className="flex items-start gap-3 flex-1">
-                    <HelpCircle className="w-5 h-5 text-adhd-yellow mt-0.5 shrink-0" />
-                    <span className="font-semibold text-lg group-hover:text-adhd-yellow transition-colors">
+                    <HelpCircle className="w-5 h-5 text-mpp-yellow mt-0.5 shrink-0" />
+                    <span className="font-semibold text-lg group-hover:text-mpp-yellow transition-colors">
                       {faq.question}
                     </span>
                   </div>
                   <ChevronDown
-                    className={`w-5 h-5 transition-transform text-adhd-yellow/50 group-hover:text-adhd-yellow ${
+                    className={`w-5 h-5 transition-transform text-mpp-yellow/50 group-hover:text-mpp-yellow ${
                       openIndex === index ? "rotate-180" : ""
                     }`}
                   />
@@ -97,7 +97,7 @@ export default function FAQ() {
                     initial={{ height: 0 }}
                     animate={{ height: "auto" }}
                     transition={{ duration: 0.3 }}
-                    className="px-6 pb-6 text-gray-300"
+                    className="px-6 pb-6 text-gray-700"
                   >
                     <div className="pl-8">{faq.answer}</div>
                   </motion.div>

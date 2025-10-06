@@ -313,18 +313,18 @@ export default function CountdownTimer() {
         animate={{ y: 0 }}
         className="fixed top-0 left-0 right-0 z-50"
         style={{
-          background: "rgba(10, 10, 10, 0.4)",
+          background: "rgba(255, 255, 255, 0.75)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(255, 204, 0, 0.15)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.3)",
+          borderBottom: "1px solid rgba(124, 58, 237, 0.18)",
+          boxShadow: "0 4px 30px rgba(124, 58, 237, 0.12)",
         }}
       >
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(255, 204, 0, 0.03), transparent)",
+              "linear-gradient(to bottom, rgba(124, 58, 237, 0.06), transparent)",
           }}
         />
 
@@ -333,9 +333,9 @@ export default function CountdownTimer() {
             <motion.div
               className="w-2 h-2 rounded-full"
               style={{
-                background: "linear-gradient(45deg, #ff3333, #ff6666)",
+                background: "linear-gradient(45deg, #ef4444, #f87171)",
                 boxShadow:
-                  "0 0 20px rgba(255, 51, 51, 0.7), 0 0 40px rgba(255, 51, 51, 0.4)",
+                  "0 0 20px rgba(239, 68, 68, 0.7), 0 0 40px rgba(239, 68, 68, 0.4)",
               }}
               animate={{
                 opacity: [1, 0.3, 1],
@@ -354,7 +354,7 @@ export default function CountdownTimer() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={isClient ? { scale: 1.2, opacity: 0 } : undefined}
                 transition={{ duration: 0.3 }}
-                className="text-adhd-yellow font-bold text-xs sm:text-sm drop-shadow-[0_2px_10px_rgba(255,204,0,0.5)]"
+                className={`${spotsLeft === 2 ? "text-mpp-red drop-shadow-[0_2px_10px_rgba(239,68,68,0.5)]" : "text-mpp-yellow drop-shadow-[0_2px_10px_rgba(124,58,237,0.4)]"} font-bold text-xs sm:text-sm`}
               >
                 {spotsLeft === 2
                   ? "ONLY 2 SPOTS LEFT!"
@@ -366,42 +366,42 @@ export default function CountdownTimer() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-300 opacity-80">
+            <span className="text-xs text-gray-700 opacity-80">
               Discount ends in:
             </span>
             <div className="flex gap-1">
               <span
-                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-adhd-yellow font-bold text-xs sm:text-sm"
+                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-mpp-yellow font-bold text-xs sm:text-sm"
                 style={{
-                  background: "rgba(255, 204, 0, 0.08)",
-                  border: "1px solid rgba(255, 204, 0, 0.25)",
-                  boxShadow: "inset 0 1px 2px rgba(255, 204, 0, 0.1)",
+                  background: "rgba(124, 58, 237, 0.08)",
+                  border: "1px solid rgba(239, 68, 68, 0.35)",
+                  boxShadow: "inset 0 1px 2px rgba(124, 58, 237, 0.1)",
                 }}
               >
                 {String(timeLeft.hours).padStart(2, "0")}
               </span>
-              <span className="text-adhd-yellow text-xs sm:text-sm opacity-60">
+              <span className="text-mpp-yellow text-xs sm:text-sm opacity-60">
                 :
               </span>
               <span
-                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-adhd-yellow font-bold text-xs sm:text-sm"
+                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-mpp-yellow font-bold text-xs sm:text-sm"
                 style={{
-                  background: "rgba(255, 204, 0, 0.08)",
-                  border: "1px solid rgba(255, 204, 0, 0.25)",
-                  boxShadow: "inset 0 1px 2px rgba(255, 204, 0, 0.1)",
+                  background: "rgba(124, 58, 237, 0.08)",
+                  border: "1px solid rgba(239, 68, 68, 0.35)",
+                  boxShadow: "inset 0 1px 2px rgba(124, 58, 237, 0.1)",
                 }}
               >
                 {String(timeLeft.minutes).padStart(2, "0")}
               </span>
-              <span className="text-adhd-yellow text-xs sm:text-sm opacity-60">
+              <span className="text-mpp-yellow text-xs sm:text-sm opacity-60">
                 :
               </span>
               <span
-                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-adhd-yellow font-bold text-xs sm:text-sm"
+                className="px-1 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-mpp-yellow font-bold text-xs sm:text-sm"
                 style={{
-                  background: "rgba(255, 204, 0, 0.08)",
-                  border: "1px solid rgba(255, 204, 0, 0.25)",
-                  boxShadow: "inset 0 1px 2px rgba(255, 204, 0, 0.1)",
+                  background: "rgba(124, 58, 237, 0.08)",
+                  border: "1px solid rgba(239, 68, 68, 0.35)",
+                  boxShadow: "inset 0 1px 2px rgba(124, 58, 237, 0.1)",
                 }}
               >
                 {String(timeLeft.seconds).padStart(2, "0")}
@@ -421,13 +421,13 @@ export default function CountdownTimer() {
             transition={{ duration: 0.5 }}
             className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-lg"
             style={{
-              background: "rgba(255, 204, 0, 0.1)",
+              background: "rgba(124, 58, 237, 0.1)",
               backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 204, 0, 0.3)",
-              boxShadow: "0 4px 20px rgba(255, 204, 0, 0.2)",
+              border: "1px solid rgba(124, 58, 237, 0.3)",
+              boxShadow: "0 4px 20px rgba(124, 58, 237, 0.2)",
             }}
           >
-            <span className="text-adhd-yellow text-sm font-semibold">
+            <span className="text-mpp-yellow text-sm font-semibold">
               ⚡ Someone just claimed their spot!
             </span>
           </motion.div>

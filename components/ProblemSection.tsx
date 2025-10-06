@@ -3,46 +3,14 @@ import { useInView } from "react-intersection-observer";
 import { AlertCircle } from "lucide-react";
 
 const problems = [
-  {
-    emoji: "😤",
-    text: "You start 10 projects, finish 0. It feels like failing, every single time.",
-    type: "red",
-  },
-  {
-    emoji: "🌙",
-    text: "3 AM: brilliant ideas. 9 AM: zero energy to start.",
-    type: "yellow",
-  },
-  {
-    emoji: "💸",
-    text: "You watch others make $10K/month with 'simple' systems. You can't even last a week.",
-    type: "red",
-  },
-  {
-    emoji: "🎯",
-    text: "Hyperfocus on the wrong things. 12 hours on a logo, 0 minutes on sales.",
-    type: "yellow",
-  },
-  {
-    emoji: "📚",
-    text: "You buy another course. After 2 weeks it joins the other 47 unfinished ones.",
-    type: "red",
-  },
-  {
-    emoji: "🎭",
-    text: "Imposter syndrome: Outside you look successful. Inside it's chaos and energy drinks.",
-    type: "yellow",
-  },
-  {
-    emoji: "🧠",
-    text: "You know you're smart. But you feel stupid because you can't do 'simple' tasks.",
-    type: "red",
-  },
-  {
-    emoji: "🔄",
-    text: "Constantly trying new strategies. Never long enough to see results.",
-    type: "yellow",
-  },
+  { emoji: "😔", bold: "The pit in your stomach", rest: "as another weekend ends", type: "red" },
+  { emoji: "📊", bold: "Another week of meaningless PowerPoints", rest: "no one will read", type: "yellow" },
+  { emoji: "🎭", bold: "Putting on your corporate mask", rest: "for another performance review", type: "red" },
+  { emoji: "💭", bold: "Scrolling LinkedIn", rest: "seeing people who \"made it out\"", type: "yellow" },
+  { emoji: "📚", bold: "Your 47th business book", rest: "gathering dust on the nightstand", type: "red" },
+  { emoji: "⏰", bold: '"Maybe next year"', rest: "- what you've said for the last 3 years", type: "yellow" },
+  { emoji: "🔒", bold: "Golden handcuffs", rest: "getting tighter with each promotion", type: "red" },
+  { emoji: "❓", bold: '"Who am I without my title?"', rest: "- the question that haunts you", type: "yellow" },
 ];
 
 export default function ProblemSection() {
@@ -66,14 +34,14 @@ export default function ProblemSection() {
           <div className="inline-flex items-center gap-2 mb-6">
             <span className="indicator-red px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
               <AlertCircle className="w-4 h-4" />
-              The daily ADHD struggle
+              The Weekly Struggle
             </span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-black mb-4">
             Recognize This <span className="gradient-text">Feeling?</span>
           </h2>
-          <p className="text-xl text-gray-400">
-            You're not lazy. Your brain just works differently.
+          <p className="text-xl text-gray-600">
+            It's Sunday Night. Again.
           </p>
         </motion.div>
 
@@ -94,7 +62,10 @@ export default function ProblemSection() {
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-2xl">{problem.emoji}</span>
                 </div>
-                <p className="text-gray-300 pt-1">{problem.text}</p>
+                <p className="text-gray-900 pt-1">
+                  <span className="font-extrabold">{problem.bold}</span>
+                  <span className="text-gray-700"> {problem.rest}</span>
+                </p>
               </motion.div>
             );
           })}
@@ -108,10 +79,9 @@ export default function ProblemSection() {
         >
           <div className="inline-block glass-effect px-8 py-4 rounded-full border border-adhd-green/30">
             <p className="text-xl font-semibold">
-              This is <span className="text-adhd-green">NOT</span> your fault.
-              You just never learned how to work{" "}
-              <span className="text-adhd-green">WITH</span> your ADHD brain
-              instead of against it.
+              You're <span className="text-mpp-green">NOT</span> lazy. You're <span className="text-mpp-green">NOT</span> ungrateful.
+              You're exhausted from pretending this is enough.
+
             </p>
           </div>
         </motion.div>

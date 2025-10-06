@@ -14,10 +14,10 @@ const config: Config = {
     extend: {
       colors: {
         // Use CSS variables for colors
-        "adhd-yellow": "var(--adhd-yellow)",
-        "adhd-orange": "var(--adhd-orange)",
-        "adhd-green": "var(--adhd-green)",
-        "adhd-red": "var(--adhd-red)",
+        "mpp-yellow": "var(--mpp-yellow)",
+        "mpp-orange": "var(--mpp-orange)",
+        "mpp-green": "var(--mpp-green)",
+        "mpp-red": "var(--mpp-red)",
         background: "var(--dark-background)",
         foreground: "var(--dark-foreground)",
       },

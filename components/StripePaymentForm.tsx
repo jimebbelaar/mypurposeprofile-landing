@@ -295,7 +295,7 @@ export default function EmbeddedCheckoutForm() {
           <div className="p-4">
             {loading && (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="animate-spin text-gray-400" size={32} />
+                <Loader2 className="animate-spin text-gray-500" size={32} />
               </div>
             )}
 
@@ -313,7 +313,7 @@ export default function EmbeddedCheckoutForm() {
   return (
     <>
       {/* Main CTA Button */}
-      <div className="glass-effect p-8 rounded-2xl border border-adhd-yellow/30 glow-yellow">
+      <div className="glass-effect p-8 rounded-2xl border border-mpp-yellow/30 glow-yellow">
         {priceLoading ? (
           <div className="animate-pulse">
             <div className="h-12 bg-gray-700 rounded mb-4"></div>
@@ -329,7 +329,7 @@ export default function EmbeddedCheckoutForm() {
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", damping: 10 }}
-                    className="bg-gradient-to-r from-adhd-red to-red-600 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg"
+                    className="bg-gradient-to-r from-mpp-red to-red-600 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg"
                   >
                     <TrendingDown className="w-4 h-4" />
                     LIMITED TIME: {percentageOff}% OFF
@@ -340,15 +340,15 @@ export default function EmbeddedCheckoutForm() {
               <div className="flex flex-col items-center gap-2">
                 {priceInfo.originalPrice && (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-sm">Total value:</span>
-                    <span className="text-gray-400 line-through text-xl font-medium">
+                    <span className="text-gray-600 text-sm">Total value:</span>
+                    <span className="text-gray-600 line-through text-xl font-medium">
                       ${priceInfo.originalPrice}
                     </span>
                   </div>
                 )}
 
                 <div className="flex items-center gap-3">
-                  <div className="text-adhd-yellow">
+                  <div className="text-mpp-yellow">
                     <span className="text-6xl gradient-text font-black">$</span>
                     <span className="text-6xl gradient-text font-black">
                       {priceInfo.price}
@@ -356,7 +356,7 @@ export default function EmbeddedCheckoutForm() {
                   </div>
                 </div>
 
-                <div className="text-xs text-gray-300 mt-1">
+                <div className="text-xs text-gray-600 mt-1">
                   One-time payment • No subscription
                 </div>
               </div>
@@ -368,9 +368,9 @@ export default function EmbeddedCheckoutForm() {
               whileTap={{ scale: 0.98 }}
               onClick={handleOpenPayment}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-adhd-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
+              className="w-full bg-gradient-to-r from-mpp-yellow to-mpp-orange text-black font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-mpp-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-adhd-yellow via-adhd-orange to-adhd-yellow bg-size-200 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-r from-mpp-yellow via-mpp-orange to-mpp-yellow bg-size-200 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative flex items-center gap-3">
                 <CreditCard className="w-6 h-6" />
                 <span>{loading ? "Loading..." : "Get Instant Access"}</span>
@@ -384,17 +384,17 @@ export default function EmbeddedCheckoutForm() {
             </motion.button>
 
             {/* Trust Badges */}
-            <div className="flex flex-col gap-2 text-sm text-gray-300 mt-4 items-center text-center">
+            <div className="flex flex-col gap-2 text-sm text-gray-700 mt-4 items-center text-center">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 text-mpp-green flex-shrink-0" />
                 <span>30-day money-back guarantee</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-adhd-green flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 text-mpp-green flex-shrink-0" />
                 <span>Instant access (start in 2 min)</span>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-adhd-green flex-shrink-0" />
+                <Lock className="w-4 h-4 text-mpp-green flex-shrink-0" />
                 <span>Secure payment by Stripe</span>
               </div>
             </div>

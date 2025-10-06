@@ -1,72 +1,74 @@
 @import "tailwindcss";
 
 :root {
-  /* Base colors - Light mode (not used in this dark theme site) */
+  /* Base colors - Light MyPurposeProfile theme */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
 
-  /* ADHD Brand Colors - More subtle variations */
-  --adhd-yellow: #fbbf24;
-  --adhd-yellow-bright: #ffd700;
-  --adhd-orange: #fb923c;
-  --adhd-orange-bright: #ffa500;
-  --adhd-green: #34d399;
-  --adhd-green-bright: #10b981;
-  --adhd-red: #f87171;
-  --adhd-red-bright: #ef4444;
+  /* Brand palette (mapped onto existing tokens to minimize edits) */
+  /* MPP tokens */
+  --mpp-yellow: #7c3aed; /* primary purple */
+  --mpp-yellow-bright: #8b5cf6; /* lighter purple for gradients */
+  --mpp-orange: #a855f7; /* secondary violet */
+  --mpp-orange-bright: #c084fc; /* bright violet */
+  --mpp-green: #10b981; /* keep green for positive indicators */
+  --mpp-green-bright: #34d399;
+  --mpp-red: #ef4444; /* keep red for negative indicators */
+  --mpp-red-bright: #f87171;
 
-  /* Dark blue theme colors */
-  --dark-background: #0a0e1a;
-  --dark-background-secondary: #0f1629;
-  --dark-surface: #141b2d;
-  --dark-foreground: #f8fafc;
-  --dark-muted: #94a3b8;
+  /* Light theme surfaces */
+  --dark-background: #f6f3ff; /* soft lavender background */
+  --dark-background-secondary: #ffffff; /* white */
+  --dark-surface: #ffffff; /* cards */
+  --dark-foreground: #1a1a1a; /* main text */
+  --dark-muted: #6b7280; /* muted text */
 
-  /* Glass effect colors */
-  --glass-bg: rgba(30, 41, 59, 0.3);
-  --glass-border: rgba(148, 163, 184, 0.1);
+  /* Glass effect colors tuned for light background */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(17, 24, 39, 0.08);
 
-  /* Subtle glow effects */
-  --glow-yellow: rgba(251, 191, 36, 0.15);
-  --glow-orange: rgba(251, 146, 60, 0.15);
-  --glow-green: rgba(52, 211, 153, 0.15);
-  --glow-red: rgba(248, 113, 113, 0.15);
+  /* Subtle glow effects adapted to purple */
+  --glow-yellow: rgba(124, 58, 237, 0.18);
+  --glow-orange: rgba(168, 85, 247, 0.18);
+  --glow-green: rgba(16, 185, 129, 0.12);
+  --glow-red: rgba(239, 68, 68, 0.12);
 
   /* Indicator colors */
-  --indicator-green-bg: rgba(16, 185, 129, 0.1);
-  --indicator-green-border: rgba(16, 185, 129, 0.2);
-  --indicator-red-bg: rgba(239, 68, 68, 0.1);
-  --indicator-red-border: rgba(239, 68, 68, 0.2);
-  --indicator-yellow-bg: rgba(251, 191, 36, 0.1);
-  --indicator-yellow-border: rgba(251, 191, 36, 0.2);
+  --indicator-green-bg: rgba(16, 185, 129, 0.08);
+  --indicator-green-border: rgba(16, 185, 129, 0.18);
+  --indicator-red-bg: rgba(239, 68, 68, 0.08);
+  --indicator-red-border: rgba(239, 68, 68, 0.18);
+  --indicator-yellow-bg: rgba(124, 58, 237, 0.08); /* purple */
+  --indicator-yellow-border: rgba(124, 58, 237, 0.18);
 }
 
 @theme inline {
   --color-background: var(--dark-background);
   --color-foreground: var(--dark-foreground);
-  --color-adhd-yellow: var(--adhd-yellow);
-  --color-adhd-orange: var(--adhd-orange);
-  --color-adhd-green: var(--adhd-green);
-  --color-adhd-red: var(--adhd-red);
+  --color-mpp-yellow: var(--mpp-yellow);
+  --color-mpp-orange: var(--mpp-orange);
+  --color-mpp-green: var(--mpp-green);
+  --color-mpp-red: var(--mpp-red);
   --color-dark-surface: var(--dark-surface);
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono", "Courier New", monospace;
 }
 
-/* Dark mode (always dark for this landing page) */
+/* Prefer consistent light theme regardless of system setting */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0e1a;
-    --foreground: #f8fafc;
+    --background: #ffffff;
+    --foreground: #1a1a1a;
   }
 }
 
 /* Global styles */
 body {
+  /* Light lavender to white background to match MPP brand */
   background: linear-gradient(
-    135deg,
+    180deg,
     var(--dark-background) 0%,
-    var(--dark-background-secondary) 100%
+    var(--dark-background-secondary) 60%
   );
   color: var(--dark-foreground);
   font-family: var(--font-sans);
@@ -77,10 +79,11 @@ body {
 /* Custom utility classes */
 @layer utilities {
   .gradient-text {
+    /* Purple brand gradient for headings */
     background: linear-gradient(
       135deg,
-      var(--adhd-yellow-bright) 0%,
-      var(--adhd-orange-bright) 100%
+      var(--mpp-yellow) 0%,
+      var(--mpp-orange) 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -114,29 +117,29 @@ body {
   .indicator-green {
     background: var(--indicator-green-bg);
     border: 1px solid var(--indicator-green-border);
-    color: var(--adhd-green);
+    color: var(--mpp-green);
   }
 
   .indicator-red {
     background: var(--indicator-red-bg);
     border: 1px solid var(--indicator-red-border);
-    color: var(--adhd-red);
+    color: var(--mpp-red);
   }
 
   .indicator-yellow {
     background: var(--indicator-yellow-bg);
     border: 1px solid var(--indicator-yellow-border);
-    color: var(--adhd-yellow);
+    color: var(--mpp-yellow);
   }
 
   /* Animated gradient background */
   .gradient-bg {
     background: linear-gradient(
       -45deg,
-      var(--adhd-yellow),
-      var(--adhd-orange),
-      var(--adhd-red),
-      var(--adhd-green)
+      var(--mpp-yellow),
+      var(--mpp-orange),
+      var(--mpp-red),
+      var(--mpp-green)
     );
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
@@ -159,16 +162,16 @@ body {
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--dark-surface);
+    background: #f1f5f9;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--adhd-yellow), var(--adhd-orange));
+    background: linear-gradient(135deg, var(--mpp-yellow), var(--mpp-orange));
     border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--adhd-yellow-bright);
+    background: var(--mpp-yellow-bright);
   }
 }
 

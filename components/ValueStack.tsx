@@ -74,7 +74,7 @@ export default function ValueStack() {
     <section ref={ref} className="py-20 relative">
       {/* Background effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 right-20 w-96 h-96 bg-adhd-yellow/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-20 w-96 h-96 bg-mpp-yellow/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -107,18 +107,18 @@ export default function ValueStack() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className={`glass-effect p-6 rounded-xl flex items-center gap-6 ${
                   item.bonus
-                    ? "border-2 border-adhd-yellow/30 glow-yellow relative overflow-hidden"
+                    ? "border-2 border-mpp-yellow/30 glow-yellow relative overflow-hidden"
                     : "border border-glass-border"
                 }`}
               >
                 <div
                   className={`p-3 rounded-lg ${
-                    item.bonus ? "bg-adhd-yellow/10" : "bg-dark-surface"
+                    item.bonus ? "bg-mpp-yellow/10" : "bg-dark-surface"
                   }`}
                 >
                   <Icon
                     className={`w-6 h-6 ${
-                      item.bonus ? "text-adhd-yellow" : "text-adhd-green"
+                      item.bonus ? "text-mpp-yellow" : "text-mpp-green"
                     }`}
                   />
                 </div>
@@ -126,18 +126,18 @@ export default function ValueStack() {
                 <div className="flex-1">
                   <h4
                     className={`text-xl font-bold mb-1 ${
-                      item.bonus ? "text-adhd-yellow" : ""
+                      item.bonus ? "text-mpp-yellow" : ""
                     }`}
                   >
                     {item.title}
                   </h4>
-                  <p className="text-gray-400 text-sm">{item.description}</p>
+                  <p className="text-gray-700 text-sm">{item.description}</p>
                 </div>
 
                 <div
                   className={`text-2xl font-bold ${
                     item.bonus
-                      ? "text-adhd-yellow"
+                      ? "text-mpp-yellow"
                       : "text-gray-500 line-through"
                   }`}
                 >

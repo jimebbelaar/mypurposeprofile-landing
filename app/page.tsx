@@ -88,15 +88,15 @@ export default function Home() {
         <FAQ />
         <FinalCTA />
       </main>
-      <footer className="py-12 border-t border-white/10 pb-30">
-        <div className="container mx-auto px-4 text-center text-gray-400">
+      <footer className="py-12 border-t border-gray-200 pb-30">
+        <div className="container mx-auto px-4 text-center text-gray-600">
           <p className="mb-4">© 2025 ADHD Harmony</p>
           <div className="flex justify-center gap-6 text-sm">
             <a
               href="https://www.adhdharmony.com/legal/terms-of-service"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-adhd-yellow transition"
+              className="hover:text-mpp-yellow transition"
             >
               Terms of Use
             </a>
@@ -104,7 +104,7 @@ export default function Home() {
               href="https://www.adhdharmony.com/legal/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-adhd-yellow transition"
+              className="hover:text-mpp-yellow transition"
             >
               Privacy Policy
             </a>
@@ -112,7 +112,7 @@ export default function Home() {
               href="https://www.adhdharmony.com/legal/ai-assessment-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-adhd-yellow transition"
+              className="hover:text-mpp-yellow transition"
             >
               AI Policy
             </a>

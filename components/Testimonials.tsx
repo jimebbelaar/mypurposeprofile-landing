@@ -56,14 +56,14 @@ export default function Testimonials() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.2 }}
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="glass-effect rounded-2xl p-8 border border-adhd-yellow/20 hover:shadow-[0_20px_40px_rgba(255,215,0,0.2)] transition-all"
+              className="glass-effect rounded-2xl p-8 border border-mpp-yellow/20 hover:shadow-[0_20px_40px_rgba(124,58,237,0.2)] transition-all"
             >
               <div className="mb-6">
-                <div className="text-3xl font-black text-adhd-yellow mb-2">
+                <div className="text-3xl font-black text-mpp-yellow mb-2">
                   {testimonial.title}
                 </div>
               </div>
-              <p className="text-gray-300 mb-6 leading-relaxed">
+              <p className="text-gray-700 mb-6 leading-relaxed">
                 {testimonial.content}
               </p>
               <div className="flex items-center gap-4">
@@ -77,7 +77,7 @@ export default function Testimonials() {
                 </div>
                 <div>
                   <div className="font-semibold">{testimonial.name}</div>
-                  <div className="text-sm text-gray-400">
+                  <div className="text-sm text-gray-600">
                     {testimonial.role}
                   </div>
                 </div>

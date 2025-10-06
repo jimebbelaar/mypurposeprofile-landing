@@ -11,12 +11,12 @@ export default function Hero() {
     <section className="min-h-screen flex items-center justify-center pt-14 pb-10 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-adhd-yellow/10 rounded-full blur-3xl float" />
+        <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-yellow/10 rounded-full blur-3xl float" />
         <div
-          className="absolute bottom-20 right-20 w-96 h-96 bg-adhd-orange/10 rounded-full blur-3xl float"
+          className="absolute bottom-20 right-20 w-96 h-96 bg-mpp-orange/10 rounded-full blur-3xl float"
           style={{ animationDelay: "3s" }}
         />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-adhd-green/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-mpp-green/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -32,7 +32,7 @@ export default function Hero() {
               >
                 <span className="indicator-yellow px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                   <Zap className="w-4 h-4" />
-                  For (aspiring) ADHD Entrepreneurs
+                  For Corporate Professionals Ready to Escape
                 </span>
               </motion.div>
 
@@ -42,19 +42,38 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-6"
               >
-                Stop Self-Sabotaging And Finally Build That{" "}
-                <span className="gradient-text">$10K/Month</span> Business
+                Stop Overthinking and Finally Start 
+                <span className="gradient-text"> Your Business </span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed"
+                className="text-lg sm:text-xl text-gray-700 mb-8 leading-relaxed"
               >
-                Discover in 4 minutes why you always quit halfway — and get a
-                personal roadmap that actually works for your ADHD brain
+                <span className="font-extrabold text-gray-900">Your AI-powered Purpose Profile reveals exactly:</span>
               </motion.p>
+
+              <div className="space-y-6 text-gray-700">
+                <div>
+                  <p className="font-bold">✓ "Am I cut out for entrepreneurship?"</p>
+                  <p>Get a clear YES or NO based on your personality, values, and work style — not wishful thinking</p>
+                </div>
+                <div>
+                  <p className="font-bold">✓ "What should I actually do?"</p>
+                  <p>Discover 3–5 specific paths that match your strengths (no more comparing yourself to others)</p>
+                </div>
+                <div>
+                  <p className="font-bold">✓ "Why can't I just START already?"</p>
+                  <p>Finally understand the mental blocks that have kept you trapped— and how to overcome them</p>
+                </div>
+                <div>
+                  <p className="font-bold">✓ "How do I leave without losing everything?"</p>
+                  <p>Get specific steps to test your path while keeping your salary (no burning bridges required)</p>
+                </div>
+          
+              </div>
             </div>
 
             <motion.div
@@ -63,16 +82,16 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="space-y-4"
             >
-              <div className="flex flex-wrap gap-3">
+              {/* <div className="flex flex-wrap gap-3">
                 <div className="indicator-red px-3 py-2 rounded-full flex items-center gap-1">
                   <X className="w-4 h-4" />
-                  <span className="font-medium text-xs">No discipline BS</span>
+                  <span className="font-medium text-xs">No risky leap</span>
                 </div>
                 <div className="indicator-green px-3 py-2 rounded-full flex items-center gap-1">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium text-xs">ADHD-proof system</span>
+                  <span className="font-medium text-xs">Keep your salary while testing</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Optional trust indicators */}
               {/* ... */}
@@ -85,7 +104,9 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="hidden lg:block"
             >
-              <StripePaymentForm />
+              <div id="payment-section">
+                <StripePaymentForm />
+              </div>
             </motion.div>
           </div>
 
@@ -116,7 +137,9 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="lg:hidden order-3 w-full"
           >
-            <StripePaymentForm />
+            <div id="payment-section">
+              <StripePaymentForm />
+            </div>
           </motion.div>
         </div>
       </div>

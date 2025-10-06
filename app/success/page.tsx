@@ -117,7 +117,7 @@ function SuccessContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-adhd-yellow mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-mpp-yellow mx-auto mb-4" />
           <p className="text-gray-400">Verifying your payment...</p>
         </div>
       </div>
@@ -135,7 +135,7 @@ function SuccessContent() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center max-w-md"
         >
-          <div className="text-adhd-red text-6xl mb-4">⚠️</div>
+          <div className="text-mpp-red text-6xl mb-4">⚠️</div>
           <h1 className="text-3xl font-bold mb-4">Payment Not Completed</h1>
           <p className="text-gray-400 mb-8">
             Your payment was not completed. Please try again.
@@ -144,7 +144,7 @@ function SuccessContent() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-adhd-yellow to-adhd-orange text-black font-bold px-8 py-4 rounded-xl"
+              className="bg-gradient-to-r from-mpp-yellow to-mpp-orange text-black font-bold px-8 py-4 rounded-xl"
             >
               Return to Homepage
             </motion.button>
@@ -157,8 +157,8 @@ function SuccessContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-adhd-yellow/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-adhd-green/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-yellow/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-mpp-green/20 rounded-full blur-3xl animate-pulse" />
       </div>
 
       <motion.div
@@ -173,7 +173,7 @@ function SuccessContent() {
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           className="mb-8"
         >
-          <div className="w-24 h-24 bg-adhd-green rounded-full flex items-center justify-center mx-auto">
+          <div className="w-24 h-24 bg-mpp-green rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-16 h-16 text-white" />
           </div>
         </motion.div>
@@ -192,11 +192,11 @@ function SuccessContent() {
 
           {sessionData && sessionData.amount_total && (
             <p className="text-lg text-gray-400 mb-8">
-              <span className="text-adhd-yellow font-semibold">
+              <span className="text-mpp-yellow font-semibold">
                 ADHD Identity Method
               </span>
               {" • "}
-              <span className="text-adhd-green font-semibold">
+              <span className="text-mpp-green font-semibold">
                 ${(sessionData.amount_total / 100).toFixed(2)}{" "}
                 {sessionData.currency?.toUpperCase()}
               </span>
@@ -210,11 +210,11 @@ function SuccessContent() {
           transition={{ delay: 0.4 }}
           className="glass-effect rounded-2xl p-8 mb-8"
         >
-          <div className="w-16 h-16 bg-adhd-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Mail className="w-8 h-8 text-adhd-yellow" />
+          <div className="w-16 h-16 bg-mpp-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail className="w-8 h-8 text-mpp-yellow" />
           </div>
 
-          <h2 className="text-3xl font-bold mb-4 text-adhd-yellow">
+          <h2 className="text-3xl font-bold mb-4 text-mpp-yellow">
             Check Your Email!
           </h2>
 
@@ -237,15 +237,15 @@ function SuccessContent() {
           {sessionData?.customer_name && (
             <p className="text-gray-400 mb-4">
               Thank you for your purchase,{" "}
-              <span className="text-adhd-yellow">
+              <span className="text-mpp-yellow">
                 {sessionData.customer_name}
               </span>
               !
             </p>
           )}
 
-          <div className="bg-adhd-green/10 border border-adhd-green/30 rounded-lg p-3">
-            <p className="text-sm text-adhd-green">
+          <div className="bg-mpp-green/10 border border-mpp-green/30 rounded-lg p-3">
+            <p className="text-sm text-mpp-green">
               ✓ Access details sent to your email
             </p>
           </div>
@@ -298,7 +298,7 @@ function SuccessContent() {
                   whileTap={{ scale: 0.95 }}
                   className={`px-6 py-3 rounded-lg transition flex items-center gap-2 ${
                     isUserProvider
-                      ? "bg-adhd-yellow/20 border border-adhd-yellow/50 text-adhd-yellow"
+                      ? "bg-mpp-yellow/20 border border-mpp-yellow/50 text-mpp-yellow"
                       : "bg-white/10 hover:bg-white/20 text-white"
                   }`}
                 >
@@ -317,8 +317,8 @@ function SuccessContent() {
           transition={{ delay: 0.6 }}
           className="mt-12 space-y-4"
         >
-          <div className="p-4 bg-adhd-yellow/10 rounded-xl border border-adhd-yellow/30">
-            <p className="text-sm text-adhd-yellow">
+          <div className="p-4 bg-mpp-yellow/10 rounded-xl border border-mpp-yellow/30">
+            <p className="text-sm text-mpp-yellow">
               <strong>Didn't receive the email?</strong> Check your spam folder
               or wait a few minutes. Emails typically arrive within 5 minutes.
             </p>
@@ -334,7 +334,7 @@ function SuccessContent() {
             Need help? Contact support at{" "}
             <a
               href="mailto:info@adhdharmony.com"
-              className="text-adhd-yellow hover:underline"
+              className="text-mpp-yellow hover:underline"
             >
               info@adhdharmony.com
             </a>
@@ -350,7 +350,7 @@ export default function Success() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-black">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-adhd-yellow"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mpp-yellow"></div>
         </div>
       }
     >
