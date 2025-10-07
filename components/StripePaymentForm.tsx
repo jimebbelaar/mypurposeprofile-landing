@@ -63,7 +63,7 @@ export default function EmbeddedCheckoutForm() {
     price: "47",
     currency: "USD",
     productName: "MyPurposeProfile",
-    originalPrice: "541",
+    originalPrice: "568",
   });
   const [priceLoading, setPriceLoading] = useState(true);
 
@@ -90,7 +90,7 @@ export default function EmbeddedCheckoutForm() {
             price: parseFloat(data.price).toFixed(0),
             originalPrice: data.originalPrice
               ? parseFloat(data.originalPrice).toFixed(0)
-              : "541",
+              : "568",
           });
         }
       } catch (error) {

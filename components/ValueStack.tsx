@@ -30,7 +30,7 @@ const valueItems = [
     icon: BadgeDollarSign,
     title: "100% Money-Back Guarantee",
     description: "If you don't know what to do next, you don't pay.",
-    value: "",
+    value: "$27",
   },
   {
     icon: Phone,
