@@ -43,7 +43,7 @@ export default function Hero() {
                 className="text-3xl sm:text-4xl lg:text-6xl mb-4"
               >
                 Stop Overthinking and Finally Start
-                <span className="gradient-text"> Your Business </span>
+                <span className="gradient-text"> YOUR Business </span>
               </motion.h1>
 
               <motion.p
