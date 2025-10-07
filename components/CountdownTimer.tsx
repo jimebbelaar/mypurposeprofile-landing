@@ -347,7 +347,7 @@ export default function CountdownTimer() {
                 ease: "easeInOut",
               }}
             />
-            <AnimatePresence mode="wait">
+            {/* <AnimatePresence mode="wait">
               <motion.span
                 key={spotsLeft}
                 initial={isClient ? { scale: 0.8, opacity: 0 } : undefined}
@@ -362,7 +362,7 @@ export default function CountdownTimer() {
                   ? "LAST SPOT AVAILABLE!"
                   : `${spotsLeft} SPOTS LEFT TODAY`}
               </motion.span>
-            </AnimatePresence>
+            </AnimatePresence> */}
           </div>
 
           <div className="flex items-center gap-2">
