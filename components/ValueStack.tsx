@@ -1,8 +1,17 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+// components/ValueStack.tsx
+"use client";
+
 import StripePaymentForm from "./StripePaymentForm";
 import { useState, useEffect } from "react";
-import { Gift, Star, Zap, Brain, FileText, Phone, BadgeDollarSign } from "lucide-react";
+import {
+  Gift,
+  Star,
+  Zap,
+  Brain,
+  FileText,
+  Phone,
+  BadgeDollarSign,
+} from "lucide-react";
 
 const valueItems = [
   {
@@ -19,21 +28,21 @@ const valueItems = [
   },
   {
     icon: BadgeDollarSign,
-    title: "30‑Day Money-Back Guarantee",
+    title: "30-Day Money-Back Guarantee",
     description: "If you don't know what to do next, you don't pay.",
     value: "$97",
   },
   {
     icon: Phone,
     title: "BONUS: Free 1-on-1 Strategy Session",
-    description: "60 minutes personal guidance from one of our experts (limited spots)",
+    description:
+      "60 minutes personal guidance from one of our experts (limited spots)",
     value: "$497",
     bonus: true,
   },
 ];
 
 export default function ValueStack() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const [spotsLeft, setSpotsLeft] = useState(7);
 
   useEffect(() => {
@@ -54,7 +63,7 @@ export default function ValueStack() {
     setSpotsLeft(calculateSpotsLeft());
     const timer = setInterval(() => {
       setSpotsLeft(calculateSpotsLeft());
-    }, 30 * 60 * 1000);
+    }, 30 * 60 * 1000); // every 30 minutes
 
     return () => clearInterval(timer);
   }, []);
@@ -71,12 +80,7 @@ export default function ValueStack() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-6">
             <span className="indicator-green px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
               <Gift className="w-4 h-4" />
@@ -87,18 +91,17 @@ export default function ValueStack() {
             Everything You Get Today For{" "}
             <span className="gradient-text">$47</span>
           </h2>
-        </motion.div>
+          {/* Optional: show spotsLeft if you want */}
+          {/* <p className="mt-2 text-sm text-gray-600">Founding spots left today: {spotsLeft}</p> */}
+        </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
           {valueItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, x: -30 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`glass-effect p-6 rounded-xl flex items-center gap-6 ${
+                className={`glass-effect p-6 rounded-xl flex items-center gap-6 transition-all ${
                   item.bonus
                     ? "border-2 border-mpp-yellow/30 glow-yellow relative overflow-hidden"
                     : "border border-glass-border"
@@ -136,21 +139,15 @@ export default function ValueStack() {
                 >
                   {item.value}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="max-w-lg mx-auto mt-12"
-        >
+        <div className="max-w-lg mx-auto mt-12">
           <StripePaymentForm />
-        </motion.div>
+        </div>
       </div>
     </section>
-    
   );
 }

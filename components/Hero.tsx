@@ -42,7 +42,7 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-3xl sm:text-4xl lg:text-6xl mb-4"
               >
-                Stop Overthinking and Finally Start 
+                Stop Overthinking and Finally Start
                 <span className="gradient-text"> Your Business </span>
               </motion.h1>
 
@@ -52,36 +52,56 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-lg sm:text-xl text-gray-700 mb-4 leading-relaxed"
               >
-                <span className="font-extrabold text-gray-900">Your AI-powered Purpose Profile reveals exactly:</span>
+                <span className="font-extrabold text-gray-900">
+                  Your AI-powered Purpose Profile reveals exactly:
+                </span>
               </motion.p>
 
               <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
                   <div>
-                    <p className="font-semibold">Am I cut out for entrepreneurship?</p>
-                    <p className="text-sm sm:text-base">Get a clear YES or NO based on your personality, values, and work style.</p>
+                    <p className="font-semibold">
+                      Am I cut out for entrepreneurship?
+                    </p>
+                    <p className="text-sm sm:text-base">
+                      Get a clear YES or NO based on your personality, values,
+                      and work style.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
                   <div>
                     <p className="font-semibold">What should I actually do?</p>
-                    <p className="text-sm sm:text-base">Discover 3–5 specific paths that match your strengths and motivations.</p>
+                    <p className="text-sm sm:text-base">
+                      Discover 3–5 specific paths that match your strengths and
+                      motivations.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
                   <div>
-                    <p className="font-semibold">Why can't I just START already?</p>
-                    <p className="text-sm sm:text-base">Finally understand and overcome the mental blocks that have kept you trapped.</p>
+                    <p className="font-semibold">
+                      Why can't I just START already?
+                    </p>
+                    <p className="text-sm sm:text-base">
+                      Finally understand and overcome the mental blocks that
+                      have kept you trapped.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
                   <div>
-                    <p className="font-semibold">How do I leave without losing everything?</p>
-                    <p className="text-sm sm:text-base">Get specific, low-risk steps to test your path while keeping your salary.</p>
+                    <p className="font-semibold">
+                      How do I leave without losing everything?
+                    </p>
+                    <p className="text-sm sm:text-base">
+                      Get specific, low-risk steps to test your path while
+                      keeping your salary.
+                    </p>
                   </div>
                 </li>
               </ul>
@@ -92,21 +112,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className="space-y-4"
-            >
-              {/* <div className="flex flex-wrap gap-3">
-                <div className="indicator-red px-3 py-2 rounded-full flex items-center gap-1">
-                  <X className="w-4 h-4" />
-                  <span className="font-medium text-xs">No risky leap</span>
-                </div>
-                <div className="indicator-green px-3 py-2 rounded-full flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium text-xs">Keep your salary while testing</span>
-                </div>
-              </div> */}
-
-              {/* Optional trust indicators */}
-              {/* ... */}
-            </motion.div>
+            ></motion.div>
 
             {/* Desktop payment form */}
             <motion.div

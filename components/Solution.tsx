@@ -1,12 +1,12 @@
 // ================
 // components/Solution.tsx
 // ================
-"use client";  // Add this if you're using app router
+"use client"; // Add this if you're using app router
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 // Add this import at the top of your existing Solution.tsx file:
-import Image from 'next/image'
+import Image from "next/image";
 
 const steps = [
   {
@@ -26,14 +26,13 @@ const steps = [
     title: "Personal Report",
     description:
       "No labels or generic advice. An 360° breakdown of who you are, how you work best, and what business to build.",
-   
   },
   {
     number: "4",
-  title: "Strategy Session (Optional)",
-  description:
-    "A free 1-hour session with one of our experts to discuss your report and get personalized advice.",
-  },  
+    title: "Strategy Session (Optional)",
+    description:
+      "A free 1-hour session with one of our experts to discuss your report and get personalized advice.",
+  },
 ];
 
 const whatYouGet = [
@@ -114,7 +113,9 @@ export default function Solution() {
               className="glass-effect p-8 rounded-2xl border border-mpp-yellow/20"
             >
               <div className="text-3xl mb-4">{item.icon}</div>
-              <h3 className="text-2xl font-black mb-3 text-mpp-yellow">{item.title}</h3>
+              <h3 className="text-2xl font-black mb-3 text-mpp-yellow">
+                {item.title}
+              </h3>
               <p className="text-gray-700">{item.description}</p>
             </motion.div>
           ))}
@@ -126,11 +127,21 @@ export default function Solution() {
             className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
             aria-label="Previous slide"
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
-          
+
           {/* Slide indicators with numbers */}
           <div className="flex items-center gap-2">
             {Array.from({ length: slides }).map((_, i) => (
@@ -138,8 +149,8 @@ export default function Solution() {
                 key={i}
                 onClick={() => setActive(i)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  i === active 
-                    ? "bg-mpp-yellow text-white shadow-lg" 
+                  i === active
+                    ? "bg-mpp-yellow text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
@@ -147,15 +158,25 @@ export default function Solution() {
               </button>
             ))}
           </div>
-          
+
           {/* Next button */}
           <button
             onClick={() => setActive(active < slides - 1 ? active + 1 : 0)}
             className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
             aria-label="Next slide"
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
@@ -175,17 +196,17 @@ export default function Solution() {
             className="text-center mb-16"
           >
             <p className="text-adhd-yellow font-semibold mb-4">
-            Why You Can’t Think Your Way Into Freedom
+              Why You Can’t Think Your Way Into Freedom
             </p>
             <h2 className="text-4xl font-bold lg:text-5xl mb-4">
-            You're Using Corporate Strategy for a Personal Calling
+              You're Using Corporate Strategy for a Personal Calling
               <br />
-              
             </h2>
             <p className="text-lg md:text-xl text-gray-600">
-            You’ve been trained to analyze, plan, perform, and optimize — but not to trust your inner compass.
-            In 60 minutes, you'll discover who you really are underneath all the
-            corporate masks and conditioning and what you're meant to do.
+              You’ve been trained to analyze, plan, perform, and optimize — but
+              not to trust your inner compass. In 60 minutes, you'll discover
+              who you really are underneath all the corporate masks and
+              conditioning and what you're meant to do.
             </p>
           </motion.div>
 
@@ -218,7 +239,7 @@ export default function Solution() {
             transition={{ duration: 0.6 }}
             className="text-4xl lg:text-5xl text-center mb-10"
           >
-            This Is What You Get In Your {" "}
+            This Is What You Get In Your{" "}
             <span className="gradient-text">Purpose Profile</span>
           </motion.h2>
 
@@ -234,7 +255,7 @@ export default function Solution() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-                className="text-4xl lg:text-5xl text-center mb-16"
+            className="text-4xl lg:text-5xl text-center mb-16"
           >
             Why This <span className="gradient-text">Actually Works</span> (When
             Everything Else Fails)
@@ -249,17 +270,18 @@ export default function Solution() {
               <h3 className="text-2xl font-black mb-8 text-adhd-red">
                 ❌ Why You're Still You Stuck
               </h3>
-          
-              <p className="text-gray-600 mb-4">You've been trained to play it "safe":</p>
+
+              <p className="text-gray-600 mb-4">
+                You've been trained to play it "safe":
+              </p>
               <div className="space-y-4">
                 {[
                   "Analyze every risk until paralyzed",
                   "Get consensus before acting (but from who?)",
                   "Get rewarded to follow the rules and fit the mold",
-                  "Perfect the plan before starting (impossible)", 
+                  "Perfect the plan before starting (impossible)",
                   "Never show vulnerability (so you stay hidden)",
                   "Compare yourself to others through titles and benchmarks",
-
                 ].map((item, index) => (
                   <div
                     key={index}
@@ -280,7 +302,9 @@ export default function Solution() {
               <h3 className="text-2xl font-black mb-8 text-adhd-green">
                 ✅ Why MyPurposeProfile™ works
               </h3>
-              <p className="text-gray-700 mb-4">Build by corporate professionals, for corporate professionals:</p>
+              <p className="text-gray-700 mb-4">
+                Build by corporate professionals, for corporate professionals:
+              </p>
               <div className="space-y-4">
                 {[
                   "Rewires corporate caution into entrepreneurial confidence",
@@ -300,38 +324,6 @@ export default function Solution() {
           </div>
         </div>
       </section>
-      <section className="py-12 sm:py-16 lg:py-20 relative">
-<div className="container mx-auto px-4">
-  <motion.div 
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="max-w-4xl mx-auto glass-effect rounded-3xl p-12 border border-adhd-yellow/30"
-  >
-    <div className="grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h3 className="text-3xl font-bold mb-6">From burnout to 7-figure digital agency</h3>
-        <p className="text-gray-300 mb-4">
-          Hey, I'm Jim. At 24 I got my ADHD diagnosis. Finally understood why I'd started 37 projects and finished 0.
-        </p>
-        <p className="text-gray-300 mb-4">
-          I tried everything. Ritalin made me a productive zombie. Time blocking worked for 4 days. Discipline? I had more shame than discipline.
-        </p>
-        <p className="text-gray-300 mb-4">
-          Then I stopped fighting. Instead of 'managing' my ADHD, I started working with it. I built systems that fit my brain. Result? I now run a 7-figure digital agency.
-        </p>
-        <p className="text-adhd-yellow font-semibold">
-          This is what I'm giving you today: The exact method that took me from chronic starter to 7-figure entrepreneur. No BS, no discipline lectures. Just a system that works for ADHD brains.
-        </p>
-      </div>
-      <div className="flex justify-center">
-        <div className="w-64 h-64 bg-gradient-to-br from-adhd-yellow to-adhd-orange rounded-full" />
-      </div>
-    </div>
-  </motion.div>
-</div>
-</section>
-      
     </>
   );
 }

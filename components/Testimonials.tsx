@@ -1,9 +1,7 @@
 // components/Testimonials.tsx
-"use client"; // Add this if you're using app router
+"use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import Image from "next/image"; // Make sure this import is at the top
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -33,55 +31,44 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-
   return (
     <section className="py-12 sm:py-16 lg:py-20 relative">
       <div className="container mx-auto px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-4xl lg:text-5xl text-center font-heading font-medium mb-16"
-        >
-          <span className="gradient-text">Entrepreneurs</span> Who Escaped the Corporate Trap
-        </motion.h2>
+        <h2 className="text-4xl lg:text-5xl text-center font-heading font-medium mb-16">
+          <span className="gradient-text">Entrepreneurs</span> Who Escaped the
+          Corporate Trap
+        </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
+          {testimonials.map((t, index) => (
+            <div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="glass-effect rounded-2xl p-8 border border-mpp-yellow/20 hover:shadow-[0_20px_40px_rgba(124,58,237,0.2)] transition-all"
+              className="glass-effect rounded-2xl p-8 border border-mpp-yellow/20 transition-all hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(124,58,237,0.2)]"
             >
               <div className="mb-6">
                 <h3 className="text-3xl font-black text-mpp-yellow mb-2">
-                  {testimonial.title}
+                  {t.title}
                 </h3>
               </div>
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                {testimonial.content}
-              </p>
+
+              <p className="text-gray-700 mb-6 leading-relaxed">{t.content}</p>
+
               <div className="flex items-center gap-4">
                 <div className="relative w-12 h-12">
                   <Image
-                    src={testimonial.image}
-                    alt={testimonial.name}
+                    src={t.image}
+                    alt={t.name}
                     fill
+                    sizes="48px"
                     className="rounded-full object-cover"
                   />
                 </div>
                 <div>
-                  <div className="font-semibold">{testimonial.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {testimonial.role}
-                  </div>
+                  <div className="font-semibold">{t.name}</div>
+                  <div className="text-sm text-gray-600">{t.role}</div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
