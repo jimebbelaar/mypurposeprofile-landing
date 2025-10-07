@@ -2,8 +2,8 @@
 
 /* Import Vollkorn Variable Font */
 @font-face {
-  font-family: 'Vollkorn';
-  src: url('/Vollkorn-VariableFont_wght.ttf') format('truetype-variations');
+  font-family: "Vollkorn";
+  src: url("/Vollkorn-VariableFont_wght.ttf") format("truetype-variations");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -11,7 +11,7 @@
 
 :root {
   /* Base colors - Light MyPurposeProfile theme */
-  --background: #ffffff;
+  --background: #fefbf7;
   --foreground: #1a1a1a;
 
   /* Brand palette (mapped onto existing tokens to minimize edits) */
@@ -26,19 +26,19 @@
   --mpp-red-bright: #f87171;
 
   /* Text palette (primary and muted variants based on #16013e) */
-  --text-primary: #16013e;     /* requested base text color */
-  --text-muted: #4a2c85;       /* lighter variant for secondary text */
-  --text-subtle: #6a59a6;      /* even lighter variant for captions */
+  --text-primary: #16013e;
+  --text-muted: #4a2c85;
+  --text-subtle: #6a59a6;
 
-  /* Light theme surfaces */
-  --dark-background: #f6f3ff; /* soft lavender background */
-  --dark-background-secondary: #ffffff; /* white */
-  --dark-surface: #ffffff; /* cards */
-  --dark-foreground: var(--text-primary); /* main text uses base purple */
-  --dark-muted: var(--text-muted); /* muted text */
+  /* Light theme surfaces (adjusted to match beige background) */
+  --dark-background: #fefbf7; /* base background */
+  --dark-background-secondary: #fffaf3; /* slightly deeper beige for depth */
+  --dark-surface: #fefbf7; /* card backgrounds */
+  --dark-foreground: var(--text-primary);
+  --dark-muted: var(--text-muted);
 
-  /* Glass effect colors tuned for light background */
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  /* Glass effect colors tuned for beige background */
+  --glass-bg: rgba(254, 251, 247, 0.7);
   --glass-border: rgba(17, 24, 39, 0.08);
 
   /* Subtle glow effects adapted to purple */
@@ -52,7 +52,7 @@
   --indicator-green-border: rgba(16, 185, 129, 0.18);
   --indicator-red-bg: rgba(239, 68, 68, 0.08);
   --indicator-red-border: rgba(239, 68, 68, 0.18);
-  --indicator-yellow-bg: rgba(124, 58, 237, 0.08); /* purple */
+  --indicator-yellow-bg: rgba(124, 58, 237, 0.08);
   --indicator-yellow-border: rgba(124, 58, 237, 0.18);
 }
 
@@ -72,14 +72,13 @@
 /* Prefer consistent light theme regardless of system setting */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
+    --background: #fefbf7;
     --foreground: var(--text-primary);
   }
 }
 
 /* Global styles */
 body {
-  /* Light lavender to white background to match MPP brand */
   background: linear-gradient(
     180deg,
     var(--dark-background) 0%,
@@ -92,7 +91,12 @@ body {
 }
 
 /* Heading styles using Vollkorn font */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
   font-weight: 400;
   color: var(--text-primary);
@@ -100,20 +104,35 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Base responsive heading sizes */
 @layer base {
-  h1 { @apply text-4xl sm:text-5xl lg:text-6xl; }
-  h2 { @apply text-3xl sm:text-4xl lg:text-5xl; }
-  h3 { @apply text-2xl sm:text-3xl lg:text-4xl; }
+  h1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-3xl sm:text-4xl lg:text-5xl;
+  }
+  h3 {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
 
   /* Remap common gray utilities to brand text variants */
-  .text-gray-900, .text-gray-800, .text-gray-700, .text-black { color: var(--text-primary) !important; }
-  .text-gray-600, .text-gray-500 { color: var(--text-muted) !important; }
-  .text-gray-400, .text-gray-400 { color: var(--text-subtle) !important; }
+  .text-gray-900,
+  .text-gray-800,
+  .text-gray-700,
+  .text-black {
+    color: var(--text-primary) !important;
+  }
+  .text-gray-600,
+  .text-gray-500 {
+    color: var(--text-muted) !important;
+  }
+  .text-gray-400 {
+    color: var(--text-subtle) !important;
+  }
 }
 
 /* Custom utility classes */
 @layer utilities {
   .gradient-text {
-    /* Purple brand gradient for headings */
     background: linear-gradient(
       135deg,
       var(--mpp-yellow) 0%,
@@ -147,7 +166,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 0 30px var(--glow-red), inset 0 0 15px var(--glow-red);
   }
 
-  /* Indicator badges */
   .indicator-green {
     background: var(--indicator-green-bg);
     border: 1px solid var(--indicator-green-border);
@@ -166,7 +184,6 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--mpp-yellow);
   }
 
-  /* Animated gradient background */
   .gradient-bg {
     background: linear-gradient(
       -45deg,
@@ -179,24 +196,21 @@ h1, h2, h3, h4, h5, h6 {
     animation: gradient-shift 15s ease infinite;
   }
 
-  /* Pulse animation for CTAs */
-  .pulse-glow {  
+  .pulse-glow {
     animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  /* Subtle float animation */
   .float {
     animation: float 6s ease-in-out infinite;
   }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #f3eee7;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -209,7 +223,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Keyframe animations */
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
@@ -244,20 +257,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Prevent horizontal scroll globally */
 html,
 body {
   overflow-x: hidden;
   max-width: 100vw;
   position: relative;
 }
-/* Ensure modal container is always on top */
+
 #modal-root {
   position: relative;
   z-index: 99999;
 }
 
-/* iOS-specific fixes */
 @supports (-webkit-touch-callout: none) {
   body.modal-open {
     position: fixed !important;

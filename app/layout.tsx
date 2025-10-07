@@ -14,14 +14,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ADHD Harmony - Build Your $10K/Month Business",
+  title: "MyPurposeProfile - Stop Overthinking and Finally Start Your Business",
   description:
-    "Stop Self-Sabotaging And Finally Build That $10K/Month Business. Discover in 3 minutes why you always quit halfway.",
-  keywords: "ADHD, entrepreneur, business, productivity, ADHD entrepreneur",
+    "For corporate professionals ready to escape. Discover in 3 minutes whether entrepreneurship fits you, which paths match your strengths, and how to start safely.",
+  keywords:
+    "purpose, entrepreneurship, career change, corporate escape, business clarity, AI assessment",
   openGraph: {
-    title: "ADHD Harmony - Build Your $10K/Month Business",
+    title: "MyPurposeProfile - Discover Your Entrepreneurial Fit",
     description:
-      "Stop Self-Sabotaging And Finally Build That $10K/Month Business",
+      "Stop overthinking and finally start your business. Reveal if entrepreneurship fits you, which paths to take, and how to begin safely.",
     images: ["/og-image.png"],
   },
   themeColor: "#FFD700",

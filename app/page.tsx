@@ -109,17 +109,17 @@ export default function Home() {
               Privacy Policy
             </a>
             <a
-              href="https://www.adhdharmony.com/legal/ai-assessment-policy"
+              href="https://www.mypurposeprofile.com/legal/cookie-policy"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-mpp-yellow transition"
             >
-              AI Policy
+              Cookie Policy
             </a>
           </div>
-          <p className="mt-4 text-xs">
+          {/* <p className="mt-4 text-xs">
             This is not medical advice. Results vary per person.
-          </p>
+          </p> */}
         </div>
       </footer>
     </>
