@@ -37,7 +37,7 @@ const valueItems = [
     title: "BONUS: Free 1-on-1 Strategy Session",
     description:
       "60 minutes personal guidance from one of our experts (limited spots)",
-    value: "$497",
+    value: "$197",
     bonus: true,
   },
 ];

@@ -63,7 +63,7 @@ export default function FAQ() {
             </span>
           </div>
           <h2 className="text-3xl lg:text-5xl">
-            Questions? <span className="gradient-text">I Get It.</span>
+            Questions? <span className="gradient-text">We Get It.</span>
           </h2>
         </motion.div>
 
