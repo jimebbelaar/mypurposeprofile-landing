@@ -90,10 +90,10 @@ export default function Home() {
       </main>
       <footer className="py-12 border-t border-gray-200 pb-30">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p className="mb-4">© 2025 ADHD Harmony</p>
+          <p className="mb-4">© 2025 MyPurposeProfile</p>
           <div className="flex justify-center gap-6 text-sm">
             <a
-              href="https://www.adhdharmony.com/legal/terms-of-service"
+              href="https://www.mypurposeprofile.com/legal/terms-of-use"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-mpp-yellow transition"
@@ -101,7 +101,7 @@ export default function Home() {
               Terms of Use
             </a>
             <a
-              href="https://www.adhdharmony.com/legal/privacy-policy"
+              href="https://www.mypurposeprofile.com/legal/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-mpp-yellow transition"
