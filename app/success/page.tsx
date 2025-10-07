@@ -136,7 +136,7 @@ function SuccessContent() {
           className="text-center max-w-md"
         >
           <div className="text-mpp-red text-6xl mb-4">⚠️</div>
-          <h1 className="text-3xl font-bold mb-4">Payment Not Completed</h1>
+          <h1 className="text-3xl mb-4">Payment Not Completed</h1>
           <p className="text-gray-400 mb-8">
             Your payment was not completed. Please try again.
           </p>
@@ -183,7 +183,7 @@ function SuccessContent() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <h1 className="text-5xl font-black mb-4">
+          <h1 className="text-5xl mb-4">
             <span className="gradient-text">Success!</span>
           </h1>
           <p className="text-2xl text-gray-300 mb-8">
@@ -214,7 +214,7 @@ function SuccessContent() {
             <Mail className="w-8 h-8 text-mpp-yellow" />
           </div>
 
-          <h2 className="text-3xl font-bold mb-4 text-mpp-yellow">
+          <h2 className="text-3xl mb-4 text-mpp-yellow">
             Check Your Email!
           </h2>
 

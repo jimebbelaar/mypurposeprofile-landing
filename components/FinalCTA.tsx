@@ -37,7 +37,7 @@ export default function FinalCTA() {
   }, []);
 
   return (
-    <section ref={ref} className="py-20 relative">
+    <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
       {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-mpp-red/5 via-mpp-yellow/5 to-mpp-green/5 rounded-full blur-3xl" />

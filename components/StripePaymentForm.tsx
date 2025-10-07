@@ -63,7 +63,7 @@ export default function EmbeddedCheckoutForm() {
     price: "47",
     currency: "USD",
     productName: "MyPurposeProfile",
-    originalPrice: "1035",
+    originalPrice: "938",
   });
   const [priceLoading, setPriceLoading] = useState(true);
 
@@ -90,7 +90,7 @@ export default function EmbeddedCheckoutForm() {
             price: parseFloat(data.price).toFixed(0),
             originalPrice: data.originalPrice
               ? parseFloat(data.originalPrice).toFixed(0)
-              : "1035",
+              : "938",
           });
         }
       } catch (error) {
@@ -349,8 +349,8 @@ export default function EmbeddedCheckoutForm() {
 
                 <div className="flex items-center gap-3">
                   <div className="text-mpp-yellow">
-                    <span className="text-6xl gradient-text font-black">$</span>
-                    <span className="text-6xl gradient-text font-black">
+                    <span className="text-5xl gradient-text font-black">$</span>
+                    <span className="text-5xl gradient-text font-black">
                       {priceInfo.price}
                     </span>
                   </div>
@@ -368,7 +368,7 @@ export default function EmbeddedCheckoutForm() {
               whileTap={{ scale: 0.98 }}
               onClick={handleOpenPayment}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-mpp-yellow to-mpp-orange text-black font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-mpp-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
+              className="w-full bg-gradient-to-r from-mpp-yellow to-mpp-orange text-white font-bold text-xl py-6 rounded-xl transition-all shadow-2xl hover:shadow-mpp-yellow/30 disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-mpp-yellow via-mpp-orange to-mpp-yellow bg-size-200 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative flex items-center gap-3">
@@ -384,7 +384,7 @@ export default function EmbeddedCheckoutForm() {
             </motion.button>
 
             {/* Trust Badges */}
-            <div className="flex flex-col gap-2 text-sm text-gray-700 mt-4 items-center text-center">
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-700 mt-4 items-center text-center">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-mpp-green flex-shrink-0" />
                 <span>30-day money-back guarantee</span>

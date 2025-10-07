@@ -2,38 +2,31 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import StripePaymentForm from "./StripePaymentForm";
 import { useState, useEffect } from "react";
-import { Gift, Star, Zap, Brain, FileText, Phone } from "lucide-react";
+import { Gift, Star, Zap, Brain, FileText, Phone, BadgeDollarSign } from "lucide-react";
 
 const valueItems = [
   {
     icon: Brain,
-    title: "ADHD Identity Reset™ Video Training (3 modules)",
-    description:
-      "Discover who you are, where you stand, and where you want to go",
-    value: "$97",
-  },
-  {
-    icon: Zap,
-    title: "AI Voice Analysis Session (15 personal prompts)",
+    title: "AI Voice Analysis Session (25 personal prompts)",
     description: "The AI asks follow-ups until it truly understands you",
     value: "$147",
   },
   {
     icon: FileText,
-    title: "Your Personal Transformation Report",
-    description: "Your unique roadmap based on your answers",
+    title: "Your Purpose Profile Report",
+    description: "Your unique 15-20 page roadmap based on your answers",
     value: "$197",
   },
   {
-    icon: Star,
-    title: "90-Day ADHD Success Blueprint",
-    description: "Step-by-step what to do (and especially: what not to do)",
+    icon: BadgeDollarSign,
+    title: "30‑Day Money-Back Guarantee",
+    description: "If you don't know what to do next, you don't pay.",
     value: "$97",
   },
   {
     icon: Phone,
-    title: "BONUS: Free 1-on-1 Coaching Call with Jim",
-    description: "30 minutes personal guidance (limited spots)",
+    title: "BONUS: Free 1-on-1 Strategy Session",
+    description: "60 minutes personal guidance from one of our experts (limited spots)",
     value: "$497",
     bonus: true,
   },
@@ -71,7 +64,7 @@ export default function ValueStack() {
   }, 0);
 
   return (
-    <section ref={ref} className="py-20 relative">
+    <section className="py-12 sm:py-16 lg:py-20 relative">
       {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-96 h-96 bg-mpp-yellow/5 rounded-full blur-3xl" />
@@ -90,7 +83,7 @@ export default function ValueStack() {
               Total value: ${totalValue}
             </span>
           </div>
-          <h2 className="text-3xl lg:text-5xl font-black">
+          <h2 className="text-4xl lg:text-5xl">
             Everything You Get Today For{" "}
             <span className="gradient-text">$47</span>
           </h2>
@@ -158,5 +151,6 @@ export default function ValueStack() {
         </motion.div>
       </div>
     </section>
+    
   );
 }

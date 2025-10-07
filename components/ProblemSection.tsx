@@ -17,7 +17,7 @@ export default function ProblemSection() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section ref={ref} className="py-20 relative">
+    <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
       {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-adhd-red/5 rounded-full blur-3xl" />
@@ -37,7 +37,7 @@ export default function ProblemSection() {
               The Weekly Struggle
             </span>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-black mb-4">
+              <h2 className="text-4xl lg:text-5xl mb-4">
             Recognize This <span className="gradient-text">Feeling?</span>
           </h2>
           <p className="text-xl text-gray-600">
@@ -78,7 +78,7 @@ export default function ProblemSection() {
           className="text-center mt-12"
         >
           <div className="inline-block glass-effect px-8 py-4 rounded-full border border-adhd-green/30">
-            <p className="text-xl font-semibold">
+            <p className="text-lg md:text-xl font-semibold">
               You're <span className="text-mpp-green">NOT</span> lazy. You're <span className="text-mpp-green">NOT</span> ungrateful.
               You're exhausted from pretending this is enough.
 

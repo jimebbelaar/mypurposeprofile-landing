@@ -7,28 +7,28 @@ import Image from "next/image"; // Make sure this import is at the top
 
 const testimonials = [
   {
-    title: "$4,500 in 4 days",
+    title: "From confusion to crystal-clear direction in just one assessment",
     content:
-      "When I finally stopped masking and just showed up as myself, everything started to click. In just 4 days I booked 7 calls and closed 6 ($4,500)—after months of overthinking, doubting, and holding myself back.",
-    name: "Garreth Tinker",
+      "I was at a crossroads needing clarity on my values and goals for better decisions about work and personal growth. MyPurposeProfile's thoughtful questions led to a detailed, remarkably accurate report that didn't just give insights—it provided a concrete action plan. The assessment revealed surprising truths about what work suits me and which environments align with who I am. Four months later, I'm still actively pursuing the goals I formulated then without wavering.",
+    name: "Sophie-Anne Onland",
     role: "The Chemistry Coach",
-    image: "/images/garreth.jpg",
+    image: "/images/sophie.jpg",
   },
   {
-    title: "From chaos to clarity",
+    title: "Finally understood who I really am and what I want",
     content:
-      "I thought I'd be fighting ADHD forever after my diagnosis. Jim's program showed me there's nothing wrong with me - I just needed systems that match my brain. The inside-out approach changed everything. No more grinding against myself.",
-    name: "Julian Noriega",
+      "MyPurposeProfile's insightful questions led to a personalized profile that was spot-on and helped me articulate what I knew deep down but couldn't express. The assessment revealed my strengths, showed me my blind spots, and gave me the clarity to make choices that truly fit me. Since completing it, I experience more flow, confidence, and meaning in my daily life—from career decisions to relationships, everything feels more aligned with who I actually am.",
+    name: "Tony van der Zanden",
     role: "Health & Performance Coach",
-    image: "/images/julian.jpg",
+    image: "/images/tony.jpg",
   },
   {
-    title: "Identity-first breakthrough",
+    title: "From unclear direction to building a business that truly fits",
     content:
-      "In our 1:1 session, we dove deep immediately—no surface-level tips. He's walked the ADHD entrepreneur path himself and knows what truly works. What stood out: it's not about another productivity hack but starts with identity.",
-    name: "Marc van Weeren",
-    role: "Founder, Archwork",
-    image: "/images/marc.jpg",
+      "I didn’t know what my sweet spot was or the direction for my business that truly fit me. Because of that, I could never fully commit. I was working hard, but not for something I fully stood behind. During this process, I slowly started to see the patterns, and where my real passion had been all along. What really clicked was connecting my personality to concrete decisions. Suddenly it became obvious which path made sense. Now I’m building something that gives me energy every single day.",
+    name: "Luuk Alleman",
+    role: "Founder, Everyman AI",
+    image: "/images/luuk.png",
   },
 ];
 
@@ -36,16 +36,15 @@ export default function Testimonials() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section ref={ref} className="py-20 relative">
+    <section className="py-12 sm:py-16 lg:py-20 relative">
       <div className="container mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-3xl lg:text-5xl font-black text-center mb-16"
+          className="text-4xl lg:text-5xl text-center font-heading font-medium mb-16"
         >
-          <span className="gradient-text">ADHD Entrepreneurs</span> Who Broke
-          Their Pattern
+          <span className="gradient-text">Entrepreneurs</span> Who Escaped the Corporate Trap
         </motion.h2>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -59,9 +58,9 @@ export default function Testimonials() {
               className="glass-effect rounded-2xl p-8 border border-mpp-yellow/20 hover:shadow-[0_20px_40px_rgba(124,58,237,0.2)] transition-all"
             >
               <div className="mb-6">
-                <div className="text-3xl font-black text-mpp-yellow mb-2">
+                <h3 className="text-3xl font-black text-mpp-yellow mb-2">
                   {testimonial.title}
-                </div>
+                </h3>
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">
                 {testimonial.content}

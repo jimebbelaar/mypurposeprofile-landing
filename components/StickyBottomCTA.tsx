@@ -58,10 +58,10 @@ export default function StickyBottomCTA() {
               <button
                 onClick={handleClick}
                 data-sticky-cta="true"
-                className="text-black w-full bg-gradient-to-r from-mpp-yellow via-mpp-orange to-mpp-yellow bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-300 text-dark-background font-bold text-lg py-4 px-6 rounded-xl flex items-center justify-center gap-3 shadow-lg hover:shadow-mpp-yellow/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="text-white w-full bg-gradient-to-r from-mpp-yellow via-mpp-orange to-mpp-yellow bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-300 font-bold text-lg py-4 px-6 rounded-xl flex items-center justify-center gap-3 shadow-lg hover:shadow-mpp-yellow/30 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <ShoppingCart className="w-5 h-5" />
-                <span>Get Instant Access - $47</span>
+                <span className="text-">Get Instant Access - $47</span>
                 <Zap className="w-5 h-5" />
               </button>
             </div>

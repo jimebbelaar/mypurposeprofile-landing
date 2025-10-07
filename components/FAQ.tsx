@@ -43,7 +43,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section ref={ref} className="py-20 relative">
+    <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
       {/* Background effect */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-mpp-green/5 rounded-full blur-3xl" />
@@ -62,7 +62,7 @@ export default function FAQ() {
               Questions From Corporate Professionals
             </span>
           </div>
-          <h2 className="text-3xl lg:text-5xl font-black">
+          <h2 className="text-3xl lg:text-5xl">
             Questions? <span className="gradient-text">I Get It.</span>
           </h2>
         </motion.div>

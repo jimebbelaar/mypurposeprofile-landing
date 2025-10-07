@@ -119,17 +119,45 @@ export default function Solution() {
             </motion.div>
           ))}
         </div>
-        <div className="flex items-center justify-center gap-3 mt-8">
-          {Array.from({ length: slides }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              aria-label={`Show slide ${i + 1}`}
-              className={`h-2.5 w-8 rounded-full transition-all ${
-                i === active ? "bg-mpp-yellow" : "bg-gray-300 hover:bg-gray-400"
-              }`}
-            />
-          ))}
+        <div className="flex items-center justify-center gap-4 mt-8">
+          {/* Previous/Next arrows */}
+          <button
+            onClick={() => setActive(active > 0 ? active - 1 : slides - 1)}
+            className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
+            aria-label="Previous slide"
+          >
+            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          {/* Slide indicators with numbers */}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: slides }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  i === active 
+                    ? "bg-mpp-yellow text-white shadow-lg" 
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          
+          {/* Next button */}
+          <button
+            onClick={() => setActive(active < slides - 1 ? active + 1 : 0)}
+            className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
+            aria-label="Next slide"
+          >
+            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     );
@@ -138,7 +166,7 @@ export default function Solution() {
   return (
     <>
       {/* Process Section */}
-      <section ref={ref} className="py-20 relative">
+      <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -149,12 +177,12 @@ export default function Solution() {
             <p className="text-adhd-yellow font-semibold mb-4">
             Why You Can’t Think Your Way Into Freedom
             </p>
-            <h2 className="text-3xl lg:text-5xl font-black mb-4">
-            You're Using Corporate Strategy for a Personal Calli
+            <h2 className="text-4xl font-bold lg:text-5xl mb-4">
+            You're Using Corporate Strategy for a Personal Calling
               <br />
               
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg md:text-xl text-gray-600">
             You’ve been trained to analyze, plan, perform, and optimize — but not to trust your inner compass.
             In 60 minutes, you'll discover who you really are underneath all the
             corporate masks and conditioning and what you're meant to do.
@@ -170,7 +198,7 @@ export default function Solution() {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 className="text-center"
               >
-                <div className="w-20 h-20 bg-gradient-to-br from-adhd-yellow to-adhd-orange rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl font-bold text-black">
+                <div className="w-24 h-24 bg-gradient-to-br from-mpp-yellow to-mpp-orange rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl font-black text-white shadow-lg border-2 border-mpp-yellow/20 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-mpp-yellow/30 hover:border-mpp-yellow/40">
                   {step.number}
                 </div>
                 <h3 className="text-2xl font-black mb-2">{step.title}</h3>
@@ -182,13 +210,13 @@ export default function Solution() {
       </section>
 
       {/* What You Get Section */}
-      <section className="py-20 relative">
+      <section className="py-12 sm:py-16 lg:py-20 relative">
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-3xl lg:text-5xl font-black text-center mb-10"
+            className="text-4xl lg:text-5xl text-center mb-10"
           >
             This Is What You Get In Your {" "}
             <span className="gradient-text">Purpose Profile</span>
@@ -200,13 +228,13 @@ export default function Solution() {
       </section>
 
       {/* Comparison Section */}
-      <section className="py-20 relative">
+      <section className="py-12 sm:py-16 lg:py-20 relative">
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl lg:text-5xl font-black text-center mb-16"
+                className="text-4xl lg:text-5xl text-center mb-16"
           >
             Why This <span className="gradient-text">Actually Works</span> (When
             Everything Else Fails)
@@ -222,12 +250,12 @@ export default function Solution() {
                 ❌ Why You're Still You Stuck
               </h3>
           
-              <p className="text-gray-700 mb-4">You've been trained to play it "safe":</p>
+              <p className="text-gray-600 mb-4">You've been trained to play it "safe":</p>
               <div className="space-y-4">
                 {[
                   "Analyze every risk until paralyzed",
                   "Get consensus before acting (but from who?)",
-                  "Get rewarded for follwing the rules and fit the mold",
+                  "Get rewarded to follow the rules and fit the mold",
                   "Perfect the plan before starting (impossible)", 
                   "Never show vulnerability (so you stay hidden)",
                   "Compare yourself to others through titles and benchmarks",
@@ -250,8 +278,9 @@ export default function Solution() {
               transition={{ duration: 0.6 }}
             >
               <h3 className="text-2xl font-black mb-8 text-adhd-green">
-                ✅ Why MyPurposeProfile™ Flips the Script
+                ✅ Why MyPurposeProfile™ works
               </h3>
+              <p className="text-gray-700 mb-4">Build by corporate professionals, for corporate professionals:</p>
               <div className="space-y-4">
                 {[
                   "Rewires corporate caution into entrepreneurial confidence",
@@ -259,7 +288,7 @@ export default function Solution() {
                   "Shows which business truly fits your psychology and values",
                   "Transforms fear into action with a practical 90-day roadmap",
                   "Breaks through safety patterns disguised as preparation",
-                  "Gives you the clarity and conviction to take the next step",
+                  "Enables you to release the masks and show up as yourself",
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <span className="text-adhd-green">✓</span>
@@ -271,7 +300,37 @@ export default function Solution() {
           </div>
         </div>
       </section>
-
+      <section className="py-12 sm:py-16 lg:py-20 relative">
+<div className="container mx-auto px-4">
+  <motion.div 
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    className="max-w-4xl mx-auto glass-effect rounded-3xl p-12 border border-adhd-yellow/30"
+  >
+    <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h3 className="text-3xl font-bold mb-6">From burnout to 7-figure digital agency</h3>
+        <p className="text-gray-300 mb-4">
+          Hey, I'm Jim. At 24 I got my ADHD diagnosis. Finally understood why I'd started 37 projects and finished 0.
+        </p>
+        <p className="text-gray-300 mb-4">
+          I tried everything. Ritalin made me a productive zombie. Time blocking worked for 4 days. Discipline? I had more shame than discipline.
+        </p>
+        <p className="text-gray-300 mb-4">
+          Then I stopped fighting. Instead of 'managing' my ADHD, I started working with it. I built systems that fit my brain. Result? I now run a 7-figure digital agency.
+        </p>
+        <p className="text-adhd-yellow font-semibold">
+          This is what I'm giving you today: The exact method that took me from chronic starter to 7-figure entrepreneur. No BS, no discipline lectures. Just a system that works for ADHD brains.
+        </p>
+      </div>
+      <div className="flex justify-center">
+        <div className="w-64 h-64 bg-gradient-to-br from-adhd-yellow to-adhd-orange rounded-full" />
+      </div>
+    </div>
+  </motion.div>
+</div>
+</section>
       
     </>
   );

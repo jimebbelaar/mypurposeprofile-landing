@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Import Vollkorn Variable Font */
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('/Vollkorn-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Base colors - Light MyPurposeProfile theme */
   --background: #ffffff;
@@ -16,12 +25,17 @@
   --mpp-red: #ef4444; /* keep red for negative indicators */
   --mpp-red-bright: #f87171;
 
+  /* Text palette (primary and muted variants based on #16013e) */
+  --text-primary: #16013e;     /* requested base text color */
+  --text-muted: #4a2c85;       /* lighter variant for secondary text */
+  --text-subtle: #6a59a6;      /* even lighter variant for captions */
+
   /* Light theme surfaces */
   --dark-background: #f6f3ff; /* soft lavender background */
   --dark-background-secondary: #ffffff; /* white */
   --dark-surface: #ffffff; /* cards */
-  --dark-foreground: #1a1a1a; /* main text */
-  --dark-muted: #6b7280; /* muted text */
+  --dark-foreground: var(--text-primary); /* main text uses base purple */
+  --dark-muted: var(--text-muted); /* muted text */
 
   /* Glass effect colors tuned for light background */
   --glass-bg: rgba(255, 255, 255, 0.7);
@@ -52,13 +66,14 @@
   --color-dark-surface: var(--dark-surface);
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono", "Courier New", monospace;
+  --font-serif: "Vollkorn", Georgia, serif;
 }
 
 /* Prefer consistent light theme regardless of system setting */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #ffffff;
-    --foreground: #1a1a1a;
+    --foreground: var(--text-primary);
   }
 }
 
@@ -74,6 +89,25 @@ body {
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+/* Heading styles using Vollkorn font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* Base responsive heading sizes */
+@layer base {
+  h1 { @apply text-4xl sm:text-5xl lg:text-6xl; }
+  h2 { @apply text-3xl sm:text-4xl lg:text-5xl; }
+  h3 { @apply text-2xl sm:text-3xl lg:text-4xl; }
+
+  /* Remap common gray utilities to brand text variants */
+  .text-gray-900, .text-gray-800, .text-gray-700, .text-black { color: var(--text-primary) !important; }
+  .text-gray-600, .text-gray-500 { color: var(--text-muted) !important; }
+  .text-gray-400, .text-gray-400 { color: var(--text-subtle) !important; }
 }
 
 /* Custom utility classes */
@@ -146,7 +180,7 @@ body {
   }
 
   /* Pulse animation for CTAs */
-  .pulse-glow {
+  .pulse-glow {  
     animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 

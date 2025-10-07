@@ -24,6 +24,26 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        heading: ["var(--font-serif)", "Georgia", "serif"],
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            h1: {
+              fontFamily: "var(--font-serif), Georgia, serif",
+              fontWeight: "500",
+            },
+            h2: {
+              fontFamily: "var(--font-serif), Georgia, serif",
+              fontWeight: "500",
+            },
+            h3: {
+              fontFamily: "var(--font-serif), Georgia, serif",
+              fontWeight: "500",
+            },
+          },
+        },
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",

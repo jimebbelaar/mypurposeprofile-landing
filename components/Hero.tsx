@@ -4,11 +4,11 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import StripePaymentForm from "./StripePaymentForm";
-import { CheckCircle, X, Zap, Heart, Clock, Shield } from "lucide-react";
+import { X, Zap, Check } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center pt-14 pb-10 relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center pt-24 pb-10 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-yellow/10 rounded-full blur-3xl float" />
@@ -20,9 +20,9 @@ export default function Hero() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8 order-2 lg:order-1">
+          <div className="space-y-8 order-1 lg:order-1">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -40,7 +40,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-3xl sm:text-4xl lg:text-6xl font-black mb-6"
+                className="text-3xl sm:text-4xl lg:text-6xl mb-4"
               >
                 Stop Overthinking and Finally Start 
                 <span className="gradient-text"> Your Business </span>
@@ -50,30 +50,41 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg sm:text-xl text-gray-700 mb-8 leading-relaxed"
+                className="text-lg sm:text-xl text-gray-700 mb-4 leading-relaxed"
               >
                 <span className="font-extrabold text-gray-900">Your AI-powered Purpose Profile reveals exactly:</span>
               </motion.p>
 
-              <div className="space-y-6 text-gray-700">
-                <div>
-                  <p className="font-bold">✓ "Am I cut out for entrepreneurship?"</p>
-                  <p>Get a clear YES or NO based on your personality, values, and work style — not wishful thinking</p>
-                </div>
-                <div>
-                  <p className="font-bold">✓ "What should I actually do?"</p>
-                  <p>Discover 3–5 specific paths that match your strengths (no more comparing yourself to others)</p>
-                </div>
-                <div>
-                  <p className="font-bold">✓ "Why can't I just START already?"</p>
-                  <p>Finally understand the mental blocks that have kept you trapped— and how to overcome them</p>
-                </div>
-                <div>
-                  <p className="font-bold">✓ "How do I leave without losing everything?"</p>
-                  <p>Get specific steps to test your path while keeping your salary (no burning bridges required)</p>
-                </div>
-          
-              </div>
+              <ul className="space-y-4 text-gray-700">
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
+                  <div>
+                    <p className="font-semibold">Am I cut out for entrepreneurship?</p>
+                    <p className="text-sm sm:text-base">Get a clear YES or NO based on your personality, values, and work style.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
+                  <div>
+                    <p className="font-semibold">What should I actually do?</p>
+                    <p className="text-sm sm:text-base">Discover 3–5 specific paths that match your strengths and motivations.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
+                  <div>
+                    <p className="font-semibold">Why can't I just START already?</p>
+                    <p className="text-sm sm:text-base">Finally understand and overcome the mental blocks that have kept you trapped.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
+                  <div>
+                    <p className="font-semibold">How do I leave without losing everything?</p>
+                    <p className="text-sm sm:text-base">Get specific, low-risk steps to test your path while keeping your salary.</p>
+                  </div>
+                </li>
+              </ul>
             </div>
 
             <motion.div
@@ -115,10 +126,10 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative order-1 lg:order-2 w-full"
+            className="relative order-2 lg:order-2 w-full"
           >
             <div className="glass-effect rounded-2xl p-2 glow-yellow">
-              <div className="relative aspect-[1080/1350] rounded-xl overflow-hidden bg-dark-surface/60">
+              <div className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[1080/1350] rounded-xl overflow-hidden bg-dark-surface/60">
                 <Image
                   src="/images/MPP-hero.jpg"
                   alt="My Purpose Profile — hero"
