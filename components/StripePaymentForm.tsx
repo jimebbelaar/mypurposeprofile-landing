@@ -63,7 +63,7 @@ export default function EmbeddedCheckoutForm() {
     price: "47",
     currency: "USD",
     productName: "MyPurposeProfile",
-    originalPrice: "638",
+    originalPrice: "541",
   });
   const [priceLoading, setPriceLoading] = useState(true);
 
@@ -90,7 +90,7 @@ export default function EmbeddedCheckoutForm() {
             price: parseFloat(data.price).toFixed(0),
             originalPrice: data.originalPrice
               ? parseFloat(data.originalPrice).toFixed(0)
-              : "638",
+              : "541",
           });
         }
       } catch (error) {
@@ -387,7 +387,7 @@ export default function EmbeddedCheckoutForm() {
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-700 mt-4 items-center text-center">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-mpp-green flex-shrink-0" />
-                <span>30-day money-back guarantee</span>
+                <span>100% money-back guarantee</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-mpp-green flex-shrink-0" />

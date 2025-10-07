@@ -28,9 +28,9 @@ const valueItems = [
   },
   {
     icon: BadgeDollarSign,
-    title: "30-Day Money-Back Guarantee",
+    title: "100% Money-Back Guarantee",
     description: "If you don't know what to do next, you don't pay.",
-    value: "$97",
+    value: "",
   },
   {
     icon: Phone,

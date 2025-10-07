@@ -34,7 +34,7 @@ const faqs = [
   {
     question: "What if it doesn't give me clarity?",
     answer:
-      "30-day money-back guarantee. If you don't get valuable insights, email us for a full refund. No questions asked.",
+      "100% Money-Back Guarantee. If you don't get valuable insights, email us for a full refund. No questions asked.",
   },
 ];
 

@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
         currency: "USD",
         productName: "MyPurposeProfile",
         productDescription: null,
-        originalPrice: "638.00",
+        originalPrice: "541.00",
         priceId: null,
         error: error.message,
       },

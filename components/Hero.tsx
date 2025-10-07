@@ -32,7 +32,7 @@ export default function Hero() {
               >
                 <span className="indicator-yellow px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                   <Zap className="w-4 h-4" />
-                  For Corporate Professionals Ready to Escape
+                  For Corporate Professionals
                 </span>
               </motion.div>
 
@@ -42,8 +42,9 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-3xl sm:text-4xl lg:text-6xl mb-4"
               >
-                Stop Overthinking and Finally Start
-                <span className="gradient-text"> YOUR Business </span>
+                Stop overthinking and 
+                <span className="gradient-text"> finally start your business </span>
+                without risking your job
               </motion.h1>
 
               <motion.p
@@ -96,7 +97,7 @@ export default function Hero() {
                   <Check className="w-5 h-5 mt-1 flex-shrink-0 text-current" />
                   <div>
                     <p className="font-semibold">
-                      How do I leave without losing everything?
+                      How do I start without losing everything?
                     </p>
                     <p className="text-sm sm:text-base">
                       Get specific, low-risk steps to test your path while
