@@ -55,7 +55,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased min-h-screen`}>
         {children}
         <div id="modal-root"></div> {/* Add this */}
-        <Analytics />
+        <Analytics /> {/* Analytics */}
       </body>
     </html>
   );
