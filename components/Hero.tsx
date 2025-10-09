@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import StripePaymentForm from "./StripePaymentForm";
-import { Zap, Check, Users, Star, Target, Timer } from "lucide-react";
+import { Zap, Check, Users, Star, Target, Timer, Atom } from "lucide-react";
 
 function CheckItem({
   title,
@@ -58,10 +58,10 @@ export default function Hero() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-4">
                 <div className="flex items-center gap-2 rounded-full px-3 py-2 bg-dark-surface/60 ring-1 ring-white/10 backdrop-blur-sm">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-mpp-yellow/20 ring-1 ring-mpp-yellow/40">
-                    <Users className="h-3.5 w-3.5 text-mpp-yellow" />
+                    <Atom className="h-3.5 w-3.5 text-mpp-yellow" />
                   </span>
                   <span className="text-xs sm:text-sm font-extrabold">
-                    76/100 claimed
+                    Science-based
                   </span>
                 </div>
                 <div className="flex items-center gap-2 rounded-full px-3 py-2 bg-dark-surface/60 ring-1 ring-white/10 backdrop-blur-sm">
