@@ -81,10 +81,11 @@ export default function Home() {
       {/* <StickyBottomCTA /> */}
       <main className="min-h-screen">
         <Hero />
-        <Testimonials />
         <ProblemSection />
         <Solution />
         <ValueStack />
+        <Testimonials />
+
         <FAQ />
         <FinalCTA />
       </main>

@@ -196,21 +196,20 @@ export default function Solution() {
             className="text-center mb-16"
           >
             <p className="text-adhd-yellow font-semibold mb-4">
-              Why You Can’t Think Your Way Into Freedom
+              Why You Can't Think Your Way Into Freedom
             </p>
             <h2 className="text-4xl font-bold lg:text-5xl mb-4">
               You're Using Corporate Strategy for a Personal Calling
-              <br />
             </h2>
-            <p className="text-lg md:text-xl text-gray-600">
-              You’ve been trained to analyze, plan, perform, and optimize — but
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+              You've been trained to analyze, plan, perform, and optimize — but
               not to trust your inner compass. In 60 minutes, you'll discover
               who you really are underneath all the corporate masks and
-              conditioning and what you're meant to do.
+              conditioning and what you're meant to do next.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -222,8 +221,10 @@ export default function Solution() {
                 <div className="w-24 h-24 bg-gradient-to-br from-mpp-yellow to-mpp-orange rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl font-black text-white shadow-lg border-2 border-mpp-yellow/20 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-mpp-yellow/30 hover:border-mpp-yellow/40">
                   {step.number}
                 </div>
-                <h3 className="text-2xl font-black mb-2">{step.title}</h3>
-                <p className="text-gray-700">{step.description}</p>
+                <h3 className="text-2xl font-black mb-3">{step.title}</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {step.description}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -249,76 +250,190 @@ export default function Solution() {
       </section>
 
       {/* Comparison Section */}
-      <section className="py-12 sm:py-16 lg:py-20 relative">
-        <div className="container mx-auto px-4">
-          <motion.h2
+      {/* Comparison Section */}
+      <section className="py-16 sm:py-20 lg:py-28 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-mpp-yellow/5 to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-mpp-orange/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-mpp-yellow/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl lg:text-5xl text-center mb-16"
+            className="text-center mb-16 lg:mb-20"
           >
-            Why This <span className="gradient-text">Actually Works</span> (When
-            Everything Else Fails)
-          </motion.h2>
+            <p className="text-mpp-orange font-bold mb-4 uppercase tracking-wider text-sm">
+              The Real Difference
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight max-w-4xl mx-auto mb-6">
+              Why This{" "}
+              <span className="bg-gradient-to-r from-mpp-yellow to-mpp-orange bg-clip-text text-transparent">
+                Actually Works
+              </span>{" "}
+              <br className="hidden sm:block" />
+              (When Everything Else Fails)
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Most tools give you insights. We give you transformation.
+            </p>
+          </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            {/* Left Side - Problems */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
+              className="relative group"
             >
-              <h3 className="text-2xl font-black mb-8 text-adhd-red">
-                ❌ Why You're Still You Stuck
-              </h3>
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <p className="text-gray-600 mb-4">
-                You've been trained to play it "safe":
-              </p>
-              <div className="space-y-4">
-                {[
-                  "Analyze every risk until paralyzed",
-                  "Get consensus before acting (but from who?)",
-                  "Get rewarded to follow the rules and fit the mold",
-                  "Perfect the plan before starting (impossible)",
-                  "Never show vulnerability (so you stay hidden)",
-                  "Compare yourself to others through titles and benchmarks",
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-4 text-gray-600"
-                  >
-                    <span className="text-adhd-red">✗</span>
-                    <span>{item}</span>
+              <div className="relative bg-white p-8 lg:p-10 rounded-3xl border-2 border-red-100 shadow-xl hover:shadow-2xl transition-all duration-300 h-full">
+                {/* Header with large icon */}
+                <div className="flex items-start gap-4 mb-6">
+                  <div>
+                    <h3 className="text-2xl lg:text-3xl font-black text-red-600 mb-2">
+                      Why You're Still Stuck
+                    </h3>
+                    <p className="text-gray-600 font-medium">
+                      You've been trained to play it "safe"
+                    </p>
                   </div>
-                ))}
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-red-200 via-red-300 to-red-200 mb-6" />
+
+                {/* List items */}
+                <div className="space-y-4">
+                  {[
+                    {
+                      text: "Analyze every risk until paralyzed",
+                      subtext: "Analysis becomes procrastination",
+                    },
+                    {
+                      text: "Get consensus before acting (but from who?)",
+                      subtext: "Waiting for permission that never comes",
+                    },
+                    {
+                      text: "Rewarded to follow the rules and fit the mold",
+                      subtext: "Your uniqueness is seen as a problem",
+                    },
+                    {
+                      text: "Perfect the plan before starting (impossible)",
+                      subtext: "Perfectionism disguised as preparation",
+                    },
+                    {
+                      text: "Never show vulnerability (so you stay hidden)",
+                      subtext: "The mask becomes your prison",
+                    },
+                    {
+                      text: "Compare yourself through titles and benchmarks",
+                      subtext: "Success defined by others, not you",
+                    },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="flex gap-3 group/item"
+                    >
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-sm mt-0.5">
+                        ✗
+                      </span>
+                      <div>
+                        <p className="text-gray-700 font-medium leading-relaxed group-hover/item:text-gray-900 transition-colors">
+                          {item.text}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1 italic">
+                          {item.subtext}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
 
+            {/* Right Side - Solutions */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
+              className="relative group"
             >
-              <h3 className="text-2xl font-black mb-8 text-adhd-green">
-                ✅ Why MyPurposeProfile™ works
-              </h3>
-              <p className="text-gray-700 mb-4">
-                Build by corporate professionals, for corporate professionals:
-              </p>
-              <div className="space-y-4">
-                {[
-                  "Rewires corporate caution into entrepreneurial confidence",
-                  "Builds self-trust by revealing your natural leadership style",
-                  "Shows which business truly fits your psychology and values",
-                  "Transforms fear into action with a practical 90-day roadmap",
-                  "Breaks through safety patterns disguised as preparation",
-                  "Enables you to release the masks and show up as yourself",
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <span className="text-adhd-green">✓</span>
-                    <span>{item}</span>
+              <div className="absolute inset-0 bg-gradient-to-br from-mpp-yellow/30 to-mpp-orange/30 rounded-3xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="relative bg-gradient-to-br from-mpp-yellow/5 via-white to-mpp-orange/5 p-8 lg:p-10 rounded-3xl border-2 border-mpp-yellow/30 shadow-xl hover:shadow-2xl hover:border-mpp-yellow/50 transition-all duration-300 h-full">
+                {/* Header with large icon */}
+                <div className="flex items-start gap-4 mb-6">
+                  <div>
+                    <h3 className="text-2xl lg:text-3xl font-black bg-gradient-to-r from-mpp-yellow to-mpp-orange bg-clip-text text-transparent mb-2">
+                      Why MyPurposeProfile™ Works
+                    </h3>
+                    <p className="text-gray-700 font-medium">
+                      Built by (ex) corporate professionals, for you
+                    </p>
                   </div>
-                ))}
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-mpp-yellow/50 via-mpp-orange/50 to-mpp-yellow/50 mb-6" />
+
+                {/* List items */}
+                <div className="space-y-4">
+                  {[
+                    {
+                      text: "Rewires corporate caution into entrepreneurial confidence",
+                      subtext: "Turn your analytical mind into your superpower",
+                    },
+                    {
+                      text: "Builds self-trust by revealing your natural leadership style",
+                      subtext:
+                        "Stop seeking permission, start making decisions",
+                    },
+                    {
+                      text: "Shows which business truly fits your psychology",
+                      subtext: "Not what sounds good, but what works for YOU",
+                    },
+                    {
+                      text: "Transforms fear into action with a 90-day roadmap",
+                      subtext: "Concrete steps, not vague inspiration",
+                    },
+                    {
+                      text: "Breaks through safety patterns disguised as preparation",
+                      subtext: "Move from planning mode to building mode",
+                    },
+                    {
+                      text: "Enables you to release the masks and show up as yourself",
+                      subtext:
+                        "Your authenticity becomes your competitive advantage",
+                    },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="flex gap-3 group/item"
+                    >
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center text-white font-bold text-sm mt-0.5 shadow-md">
+                        ✓
+                      </span>
+                      <div>
+                        <p className="text-gray-800 font-semibold leading-relaxed group-hover/item:bg-gradient-to-r group-hover/item:from-mpp-yellow group-hover/item:to-mpp-orange group-hover/item:bg-clip-text group-hover/item:text-transparent transition-all">
+                          {item.text}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1 italic">
+                          {item.subtext}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>

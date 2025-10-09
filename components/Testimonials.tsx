@@ -5,25 +5,25 @@ import Image from "next/image";
 
 const testimonials = [
   {
-    title: "From confusion to crystal-clear direction in just one assessment",
+    title: "I needed clarity on my values and direction.",
     content:
-      "I was at a crossroads needing clarity on my values and goals for better decisions about work and personal growth. MyPurposeProfile's thoughtful questions led to a detailed, remarkably accurate report that didn't just give insights—it provided a concrete action plan. The assessment revealed surprising truths about what work suits me and which environments align with who I am. Four months later, I'm still actively pursuing the goals I formulated then without wavering.",
+      "The report was remarkably accurate and gave me a concrete action plan. Four months later, I’m still executing without wavering.",
     name: "Sophie-Anne Onland",
     role: "The Chemistry Coach",
     image: "/images/sophie.jpg",
   },
   {
-    title: "Finally understood who I really am and what I want",
+    title: "It articulated what I knew deep down but couldn’t express.",
     content:
-      "MyPurposeProfile's insightful questions led to a personalized profile that was spot-on and helped me articulate what I knew deep down but couldn't express. The assessment revealed my strengths, showed me my blind spots, and gave me the clarity to make choices that truly fit me. Since completing it, I experience more flow, confidence, and meaning in my daily life—from career decisions to relationships, everything feels more aligned with who I actually am.",
+      "More flow, confidence, and meaning — decisions now fit who I actually am.",
     name: "Tony van der Zanden",
     role: "Health & Performance Coach",
     image: "/images/tony.jpg",
   },
   {
-    title: "From unclear direction to building a business that truly fits",
+    title: "I finally saw the patterns and where my real passion had been all along.",
     content:
-      "I didn’t know what my sweet spot was or the direction for my business that truly fit me. Because of that, I could never fully commit. I was working hard, but not for something I fully stood behind. During this process, I slowly started to see the patterns, and where my real passion had been all along. What really clicked was connecting my personality to concrete decisions. Suddenly it became obvious which path made sense. Now I’m building something that gives me energy every single day.",
+      " Now I’m building something that gives me energy every day.",
     name: "Luuk Alleman",
     role: "Founder, Everyman AI",
     image: "/images/luuk.png",
