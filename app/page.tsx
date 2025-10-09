@@ -92,7 +92,15 @@ export default function Home() {
       </main>
       <footer className="py-12 border-t border-gray-200 pb-30">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p className="mb-4">© 2025 MyPurposeProfile</p>
+          <p className="mb-2">© 2025 MyPurposeProfile</p>
+          <p className="mb-4 text-sm">
+            <a
+              href="mailto:info@mypurposeprofile.com"
+              className="hover:text-mpp-yellow transition"
+            >
+              info@mypurposeprofile.com
+            </a>
+          </p>
           <div className="flex justify-center gap-6 text-sm">
             <a
               href="https://www.mypurposeprofile.com/legal/terms-of-use"
