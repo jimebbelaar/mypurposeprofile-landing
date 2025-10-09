@@ -1,20 +1,14 @@
-// ================
-// components/Solution.tsx
-// ================
-"use client"; // Add this if you're using app router
+"use client";
+
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-// Add this import at the top of your existing Solution.tsx file:
-import Image from "next/image";
-import { AlertCircle, Sparkle, Sparkles } from "lucide-react";
+import { AlertCircle, Sparkle } from "lucide-react";
 
 const steps = [
   {
     number: "1",
     title: "25 Questions",
     description:
-      "No vague personality or careertest. Each question is designed to bypass your defenses and surface your real drivers.",
+      "No vague personality or career test. Each question is designed to bypass your defenses and surface your real drivers.",
   },
   {
     number: "2",
@@ -26,7 +20,7 @@ const steps = [
     number: "3",
     title: "Personal Report",
     description:
-      "No labels or generic advice. An 360° breakdown of who you are, how you work best, and what business to build.",
+      "No labels or generic advice. A 360° breakdown of who you are, how you work best, and what business to build.",
   },
   {
     number: "4",
@@ -41,7 +35,7 @@ const whatYouGet = [
     icon: "🧭",
     title: "Your Core Direction",
     description:
-      "Find out what you’re truly built for — and whether entrepreneurship is the path that fits your wiring, values, and motivation.",
+      "Find out what you're truly built for — and whether entrepreneurship is the path that fits your wiring, values, and motivation.",
   },
   {
     icon: "🚀",
@@ -53,13 +47,13 @@ const whatYouGet = [
     icon: "💡",
     title: "Your Monetizable Strengths",
     description:
-      "See what you’re naturally good at, what others would pay for, and how to turn your skills into real offers that create impact (and income).",
+      "See what you're naturally good at, what others would pay for, and how to turn your skills into real offers that create impact (and income).",
   },
   {
     icon: "💭",
     title: "Your Hidden Blockers",
     description:
-      "Finally see what’s been holding you back — the fears, patterns, and beliefs that kept you stuck — and how to move past them for good.",
+      "Finally see what's been holding you back — the fears, patterns, and beliefs that kept you stuck — and how to move past them for good.",
   },
   {
     icon: "⚙️",
@@ -67,14 +61,12 @@ const whatYouGet = [
     description:
       "Learn how you work best — how you make decisions, stay energized, and which business models match your natural rhythm.",
   },
-
   {
     icon: "🧩",
     title: "Your Growth Edge",
     description:
       "Identify the skills, mindset shifts, and experiences you still need to grow into your next chapter with confidence.",
   },
-
   {
     icon: "🗺️",
     title: "Your 90-Day Exit Roadmap",
@@ -90,114 +82,17 @@ const whatYouGet = [
 ];
 
 export default function Solution() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-  // Local carousel component used for the 8-item "What You Get" slider
-  const Carousel = ({
-    items,
-    itemsPerSlide = 4,
-  }: {
-    items: typeof whatYouGet;
-    itemsPerSlide?: number;
-  }) => {
-    const [active, setActive] = useState(0);
-    const slides = Math.ceil(items.length / itemsPerSlide);
-    const start = active * itemsPerSlide;
-    const visible = items.slice(start, start + itemsPerSlide);
-
-    return (
-      <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8">
-          {visible.map((item, index) => (
-            <motion.div
-              key={`${active}-${index}-${item.title}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="glass-effect p-8 rounded-2xl border border-mpp-yellow/20"
-            >
-              <div className="text-3xl mb-4">{item.icon}</div>
-              <h3 className="text-2xl font-black mb-3 text-mpp-yellow">
-                {item.title}
-              </h3>
-              <p className="text-gray-700">{item.description}</p>
-            </motion.div>
-          ))}
-        </div>
-        <div className="flex items-center justify-center gap-4 mt-8">
-          {/* Previous/Next arrows */}
-          <button
-            onClick={() => setActive(active > 0 ? active - 1 : slides - 1)}
-            className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
-            aria-label="Previous slide"
-          >
-            <svg
-              className="w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          {/* Slide indicators with numbers */}
-          <div className="flex items-center gap-2">
-            {Array.from({ length: slides }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  i === active
-                    ? "bg-mpp-yellow text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-
-          {/* Next button */}
-          <button
-            onClick={() => setActive(active < slides - 1 ? active + 1 : 0)}
-            className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
-            aria-label="Next slide"
-          >
-            <svg
-              className="w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
-  };
+  const [active, setActive] = useState(0);
+  const slides = Math.ceil(whatYouGet.length / 4);
+  const start = active * 4;
+  const visible = whatYouGet.slice(start, start + 4);
 
   return (
     <>
       {/* Process Section */}
-      <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
+      <section className="py-12 sm:py-16 lg:py-20 relative">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="indicator-red px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" />
@@ -213,17 +108,11 @@ export default function Solution() {
               who you really are underneath all the corporate masks and
               conditioning and what you're meant to do next.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="text-center"
-              >
+              <div key={index} className="text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-mpp-yellow to-mpp-orange rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl font-black text-white shadow-lg border-2 border-mpp-yellow/20 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-mpp-yellow/30 hover:border-mpp-yellow/40">
                   {step.number}
                 </div>
@@ -231,7 +120,7 @@ export default function Solution() {
                 <p className="text-gray-700 leading-relaxed">
                   {step.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -240,36 +129,95 @@ export default function Solution() {
       {/* What You Get Section */}
       <section className="py-12 sm:py-16 lg:py-20 relative">
         <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-4xl lg:text-5xl text-center mb-10"
-          >
+          <h2 className="text-4xl lg:text-5xl text-center mb-10">
             This is what you get in your{" "}
             <span className="gradient-text">Purpose Profile</span>
-          </motion.h2>
+          </h2>
 
-          {/* Simple 2-slide carousel: 4 items per slide */}
-          <Carousel items={whatYouGet} itemsPerSlide={4} />
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              {visible.map((item, index) => (
+                <div
+                  key={`${active}-${index}-${item.title}`}
+                  className="glass-effect p-8 rounded-2xl border border-mpp-yellow/20"
+                >
+                  <div className="text-3xl mb-4">{item.icon}</div>
+                  <h3 className="text-2xl font-black mb-3 text-mpp-yellow">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-700">{item.description}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <button
+                onClick={() => setActive(active > 0 ? active - 1 : slides - 1)}
+                className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
+                aria-label="Previous slide"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              <div className="flex items-center gap-2">
+                {Array.from({ length: slides }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActive(i)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      i === active
+                        ? "bg-mpp-yellow text-white shadow-lg"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setActive(active < slides - 1 ? active + 1 : 0)}
+                className="p-2 rounded-full bg-white/80 hover:bg-white border border-gray-200 hover:border-mpp-yellow/30 transition-all"
+                aria-label="Next slide"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Comparison Section */}
-      {/* Comparison Section */}
       <section className="py-16 sm:py-20 lg:py-28 relative overflow-hidden">
-        {/* Background decorative elements */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-mpp-yellow/5 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-mpp-orange/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-mpp-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16 lg:mb-20"
-          >
+          <div className="text-center mb-16 lg:mb-20">
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ring-1 ring-green-200">
                 <Sparkle className="w-4 h-4 text-green-600" />
@@ -285,20 +233,14 @@ export default function Solution() {
               <br className="hidden sm:block" />
               (When everything else fails)
             </h2>
-          </motion.div>
+          </div>
 
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
             {/* Left Side - Problems */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="relative group"
-            >
+            <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative bg-white p-8 lg:p-10 rounded-3xl border-2 border-red-100 shadow-xl hover:shadow-2xl transition-all duration-300 h-full">
-                {/* Header with large icon */}
                 <div className="flex items-start gap-4 mb-6">
                   <div>
                     <h3 className="text-2xl lg:text-3xl font-black text-red-600 mb-2">
@@ -310,10 +252,8 @@ export default function Solution() {
                   </div>
                 </div>
 
-                {/* Divider */}
                 <div className="h-px bg-gradient-to-r from-red-200 via-red-300 to-red-200 mb-6" />
 
-                {/* List items */}
                 <div className="space-y-4">
                   {[
                     {
@@ -341,13 +281,7 @@ export default function Solution() {
                       subtext: "Success defined by others, not you",
                     },
                   ].map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="flex gap-3 group/item"
-                    >
+                    <div key={index} className="flex gap-3 group/item">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-sm mt-0.5">
                         ✗
                       </span>
@@ -359,23 +293,17 @@ export default function Solution() {
                           {item.subtext}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Right Side - Solutions */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="relative group"
-            >
+            <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-mpp-yellow/30 to-mpp-orange/30 rounded-3xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative bg-gradient-to-br from-mpp-yellow/5 via-white to-mpp-orange/5 p-8 lg:p-10 rounded-3xl border-2 border-mpp-yellow/30 shadow-xl hover:shadow-2xl hover:border-mpp-yellow/50 transition-all duration-300 h-full">
-                {/* Header with large icon */}
                 <div className="flex items-start gap-4 mb-6">
                   <div>
                     <h3 className="text-2xl lg:text-3xl font-black bg-gradient-to-r from-mpp-yellow to-mpp-orange bg-clip-text text-transparent mb-2">
@@ -387,10 +315,8 @@ export default function Solution() {
                   </div>
                 </div>
 
-                {/* Divider */}
                 <div className="h-px bg-gradient-to-r from-mpp-yellow/50 via-mpp-orange/50 to-mpp-yellow/50 mb-6" />
 
-                {/* List items */}
                 <div className="space-y-4">
                   {[
                     {
@@ -420,13 +346,7 @@ export default function Solution() {
                         "Your authenticity becomes your competitive advantage",
                     },
                   ].map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="flex gap-3 group/item"
-                    >
+                    <div key={index} className="flex gap-3 group/item">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center text-white font-bold text-sm mt-0.5 shadow-md">
                         ✓
                       </span>
@@ -438,11 +358,11 @@ export default function Solution() {
                           {item.subtext}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

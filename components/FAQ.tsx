@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { useState } from "react";
 import { ChevronDown, HelpCircle, MessageCircle } from "lucide-react";
 
@@ -39,23 +37,17 @@ const faqs = [
 ];
 
 export default function FAQ() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section ref={ref} className="py-12 sm:py-16 lg:py-20 relative">
+    <section className="py-12 sm:py-16 lg:py-20 relative">
       {/* Background effect */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-mpp-green/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-6">
             <span className="indicator-yellow px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
@@ -65,19 +57,14 @@ export default function FAQ() {
           <h2 className="text-3xl lg:text-5xl">
             Questions? <span className="gradient-text">We Get It.</span>
           </h2>
-        </motion.div>
+        </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
+            <div key={index}>
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full glass-effect rounded-xl overflow-hidden text-left hover:border-mpp-yellow/30 transition-all duration-300 group"
+                className="w-full glass-effect rounded-xl overflow-hidden text-left hover:border-mpp-yellow/30 transition-all duration-300 group border border-gray-200/50"
               >
                 <div className="p-6 flex justify-between items-center">
                   <div className="flex items-start gap-3 flex-1">
@@ -93,17 +80,12 @@ export default function FAQ() {
                   />
                 </div>
                 {openIndex === index && (
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: "auto" }}
-                    transition={{ duration: 0.3 }}
-                    className="px-6 pb-6 text-gray-700"
-                  >
+                  <div className="px-6 pb-6 text-gray-700">
                     <div className="pl-8">{faq.answer}</div>
-                  </motion.div>
+                  </div>
                 )}
               </button>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

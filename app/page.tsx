@@ -10,6 +10,7 @@ import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import CountdownTimer from "@/components/CountdownTimer";
 import { trackEvent } from "@/lib/meta-pixel";
+import Founders from "@/components/Founders";
 
 export default function Home() {
   useEffect(() => {
@@ -85,8 +86,8 @@ export default function Home() {
         <Solution />
         <ValueStack />
         <Testimonials />
-
         <FAQ />
+        <Founders />
         <FinalCTA />
       </main>
       <footer className="py-12 border-t border-gray-200 pb-30">

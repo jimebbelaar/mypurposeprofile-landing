@@ -1,17 +1,7 @@
-// components/ValueStack.tsx
 "use client";
 
 import StripePaymentForm from "./StripePaymentForm";
-import { useState, useEffect } from "react";
-import {
-  Gift,
-  Star,
-  Zap,
-  Brain,
-  FileText,
-  Phone,
-  BadgeDollarSign,
-} from "lucide-react";
+import { Gift, Brain, FileText, Phone, BadgeDollarSign } from "lucide-react";
 
 const valueItems = [
   {
@@ -43,31 +33,6 @@ const valueItems = [
 ];
 
 export default function ValueStack() {
-  const [spotsLeft, setSpotsLeft] = useState(7);
-
-  useEffect(() => {
-    const calculateSpotsLeft = () => {
-      const now = new Date();
-      const amsterdamTime = new Date(
-        now.toLocaleString("en-US", { timeZone: "Europe/Amsterdam" })
-      );
-      const midnight = new Date(amsterdamTime);
-      midnight.setHours(24, 0, 0, 0);
-      const difference = midnight.getTime() - amsterdamTime.getTime();
-      const hoursUntilMidnight = difference / (1000 * 60 * 60);
-      const hoursPassed = 24 - hoursUntilMidnight;
-      const spots = Math.max(3, Math.round(7 - (hoursPassed / 24) * 4));
-      return spots;
-    };
-
-    setSpotsLeft(calculateSpotsLeft());
-    const timer = setInterval(() => {
-      setSpotsLeft(calculateSpotsLeft());
-    }, 30 * 60 * 1000); // every 30 minutes
-
-    return () => clearInterval(timer);
-  }, []);
-
   const totalValue = valueItems.reduce((sum, item) => {
     return sum + parseInt(item.value.replace("$", ""));
   }, 0);
@@ -91,8 +56,6 @@ export default function ValueStack() {
             Everything You Get Today For{" "}
             <span className="gradient-text">$47</span>
           </h2>
-          {/* Optional: show spotsLeft if you want */}
-          {/* <p className="mt-2 text-sm text-gray-600">Founding spots left today: {spotsLeft}</p> */}
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
@@ -104,12 +67,12 @@ export default function ValueStack() {
                 className={`glass-effect p-6 rounded-xl flex items-center gap-6 transition-all ${
                   item.bonus
                     ? "border-2 border-mpp-yellow/30 glow-yellow relative overflow-hidden"
-                    : "border border-glass-border"
+                    : "border border-gray-200/50"
                 }`}
               >
                 <div
                   className={`p-3 rounded-lg ${
-                    item.bonus ? "bg-mpp-yellow/10" : "bg-dark-surface"
+                    item.bonus ? "bg-mpp-yellow/10" : "bg-mpp-green/10"
                   }`}
                 >
                   <Icon
@@ -134,7 +97,7 @@ export default function ValueStack() {
                   className={`text-2xl font-bold ${
                     item.bonus
                       ? "text-mpp-yellow"
-                      : "text-gray-500 line-through"
+                      : "text-gray-400 line-through"
                   }`}
                 >
                   {item.value}
