@@ -92,7 +92,7 @@ export default function Hero() {
 
               <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
                 <span className="font-bold text-gray-900">
-                  This science-based AI assessment analyzes your unique
+                  This AI assessment analyzes your unique
                   psychology and tells you if entrepreneurship is YOUR path —
                   plus a personalized 90-day roadmap to start safely (or what to
                   do instead).
