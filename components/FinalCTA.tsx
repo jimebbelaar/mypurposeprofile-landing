@@ -19,8 +19,8 @@ export default function FinalCTA() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl lg:text-5xl font-black mb-12">
-            You Have Two Paths.{" "}
-            <span className="gradient-text">One Choice.</span>
+            You have two paths.{" "}
+            <span className="gradient-text">One choice.</span>
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">

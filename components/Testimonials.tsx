@@ -34,8 +34,7 @@ export default function Testimonials() {
     <section className="py-12 sm:py-16 lg:py-20 relative">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl lg:text-5xl text-center mb-16">
-          <span className="gradient-text">Entrepreneurs</span> Who Escaped the
-          Corporate Trap
+          <span className="gradient-text">Entrepreneurs</span> who escaped the corporate trap
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
