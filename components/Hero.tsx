@@ -60,7 +60,7 @@ export default function Hero() {
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-mpp-yellow/20 ring-1 ring-mpp-yellow/40">
                     <Users className="h-3.5 w-3.5 text-mpp-yellow" />
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold">
+                  <span className="text-xs sm:text-sm font-extrabold">
                     76/100 claimed
                   </span>
                 </div>
@@ -68,7 +68,7 @@ export default function Hero() {
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-mpp-yellow/20 ring-1 ring-mpp-yellow/40">
                     <Star className="h-3.5 w-3.5 text-mpp-yellow" />
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold">
+                  <span className="text-xs sm:text-sm font-extrabold">
                     4.9/5 satisfaction
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export default function Hero() {
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-mpp-yellow/20 ring-1 ring-mpp-yellow/40">
                     <Target className="h-3.5 w-3.5 text-mpp-yellow" />
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold">
+                  <span className="text-xs sm:text-sm font-extrabold">
                     94% gained clarity
                   </span>
                 </div>
@@ -84,24 +84,31 @@ export default function Hero() {
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-mpp-yellow/20 ring-1 ring-mpp-yellow/40">
                     <Timer className="h-3.5 w-3.5 text-mpp-yellow" />
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold">
+                  <span className="text-xs sm:text-sm font-extrabold">
                     Start in 2 minutes
                   </span>
                 </div>
               </div>
 
               <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
-                <span className="font-extrabold text-gray-900">
-                  This science-based AI assessment analyzes your unique psychology and gives
-                  you a clear answer in 60 minutes plus a 90-day roadmap to
-                  start safely.
+                <span className="font-bold text-gray-900">
+                  This science-based AI assessment analyzes your unique
+                  psychology and tells you if entrepreneurship is YOUR path —
+                  plus a personalized 90-day roadmap to start safely (or what to
+                  do instead).
+                </span>
+              </p>
+
+              <p className="text-lg sm:text-xl text-gray-700 leading-relaxed mt-6">
+                <span className="font-bold text-gray-900">
+                  Get instant clarity on:
                 </span>
               </p>
 
               {/* Check list */}
-              <ul className="space-y-4 text-gray-700 mt-6">
+              <ul className="space-y-4 text-gray-700 mt-4">
                 <CheckItem
-                  title="Am I cut out for entrepreneurship?"
+                  title="Am I really meant to be an entrepreneur?"
                   description="Yes, No or Hybrid - based on your personality, values, and work style."
                 />
                 <CheckItem
@@ -109,7 +116,7 @@ export default function Hero() {
                   description="Discover 3–5 specific paths that match your strengths and motivations."
                 />
                 <CheckItem
-                  title="Why can't I just START already?"
+                  title="Why do I keep getting stuck?"
                   description="Finally understand and overcome the mental blocks that have kept you trapped."
                 />
                 <CheckItem

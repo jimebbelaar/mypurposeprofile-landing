@@ -38,7 +38,7 @@ export default function ProblemSection() {
             </span>
           </div>
               <h2 className="text-4xl lg:text-5xl mb-4">
-            Recognize This <span className="gradient-text">Feeling?</span>
+            Recognize this <span className="gradient-text">feeling?</span>
           </h2>
           <p className="text-xl text-gray-600">
             It's Sunday Night. Again.

@@ -5,11 +5,19 @@ import Image from "next/image";
 
 const testimonials = [
   {
+    title:
+      "I finally saw the patterns and where my real passion had been all along.",
+    content: " Now I’m building something that gives me energy every day.",
+    name: "Luuk Alleman",
+    role: "Founder, Everyman AI",
+    image: "/images/luuk.png",
+  },
+  {
     title: "I needed clarity on my values and direction.",
     content:
       "The report was remarkably accurate and gave me a concrete action plan. Four months later, I’m still executing without wavering.",
     name: "Sophie-Anne Onland",
-    role: "The Chemistry Coach",
+    role: "SOOPH",
     image: "/images/sophie.jpg",
   },
   {
@@ -17,16 +25,8 @@ const testimonials = [
     content:
       "More flow, confidence, and meaning — decisions now fit who I actually am.",
     name: "Tony van der Zanden",
-    role: "Health & Performance Coach",
+    role: "Rol?",
     image: "/images/tony.jpg",
-  },
-  {
-    title: "I finally saw the patterns and where my real passion had been all along.",
-    content:
-      " Now I’m building something that gives me energy every day.",
-    name: "Luuk Alleman",
-    role: "Founder, Everyman AI",
-    image: "/images/luuk.png",
   },
 ];
 

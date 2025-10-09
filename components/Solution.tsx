@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 // Add this import at the top of your existing Solution.tsx file:
 import Image from "next/image";
+import { AlertCircle, Sparkle, Sparkles } from "lucide-react";
 
 const steps = [
   {
@@ -43,28 +44,16 @@ const whatYouGet = [
       "Find out what you’re truly built for — and whether entrepreneurship is the path that fits your wiring, values, and motivation.",
   },
   {
-    icon: "💡",
-    title: "Your Monetizable Strengths",
-    description:
-      "See what you’re naturally good at, what others would pay for, and how to turn your skills into real offers that create impact (and income).",
-  },
-  {
-    icon: "⚙️",
-    title: "Your Optimal Work Style",
-    description:
-      "Learn how you work best — how you make decisions, stay energized, and which business models match your natural rhythm.",
-  },
-  {
     icon: "🚀",
     title: "Your Entrepreneurial Fit",
     description:
       "Discover the type of business or career path that aligns with your personality — from solo creator to strategic founder — and what to avoid.",
   },
   {
-    icon: "🧩",
-    title: "Your Growth Edge",
+    icon: "💡",
+    title: "Your Monetizable Strengths",
     description:
-      "Identify the skills, mindset shifts, and experiences you still need to grow into your next chapter with confidence.",
+      "See what you’re naturally good at, what others would pay for, and how to turn your skills into real offers that create impact (and income).",
   },
   {
     icon: "💭",
@@ -72,6 +61,20 @@ const whatYouGet = [
     description:
       "Finally see what’s been holding you back — the fears, patterns, and beliefs that kept you stuck — and how to move past them for good.",
   },
+  {
+    icon: "⚙️",
+    title: "Your Optimal Work Style",
+    description:
+      "Learn how you work best — how you make decisions, stay energized, and which business models match your natural rhythm.",
+  },
+
+  {
+    icon: "🧩",
+    title: "Your Growth Edge",
+    description:
+      "Identify the skills, mindset shifts, and experiences you still need to grow into your next chapter with confidence.",
+  },
+
   {
     icon: "🗺️",
     title: "Your 90-Day Exit Roadmap",
@@ -195,11 +198,14 @@ export default function Solution() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <p className="text-adhd-yellow font-semibold mb-4">
-              Why You Can't Think Your Way Into Freedom
-            </p>
+            <div className="inline-flex items-center gap-2 mb-6">
+              <span className="indicator-red px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                Why You're Stuck
+              </span>
+            </div>
             <h2 className="text-4xl font-bold lg:text-5xl mb-4">
-              You're Using Corporate Strategy for a Personal Calling
+              You're using corporate strategy for a personal calling
             </h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               You've been trained to analyze, plan, perform, and optimize — but
@@ -240,7 +246,7 @@ export default function Solution() {
             transition={{ duration: 0.6 }}
             className="text-4xl lg:text-5xl text-center mb-10"
           >
-            This Is What You Get In Your{" "}
+            This is what you get in your{" "}
             <span className="gradient-text">Purpose Profile</span>
           </motion.h2>
 
@@ -264,20 +270,21 @@ export default function Solution() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16 lg:mb-20"
           >
-            <p className="text-mpp-orange font-bold mb-4 uppercase tracking-wider text-sm">
-              The Real Difference
-            </p>
+            <div className="inline-flex items-center gap-2 mb-6">
+              <span className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ring-1 ring-green-200">
+                <Sparkle className="w-4 h-4 text-green-600" />
+                The Real Difference
+              </span>
+            </div>
+
             <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight max-w-4xl mx-auto mb-6">
-              Why This{" "}
+              Why this{" "}
               <span className="bg-gradient-to-r from-mpp-yellow to-mpp-orange bg-clip-text text-transparent">
-                Actually Works
+                actually works
               </span>{" "}
               <br className="hidden sm:block" />
-              (When Everything Else Fails)
+              (When everything else fails)
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Most tools give you insights. We give you transformation.
-            </p>
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
