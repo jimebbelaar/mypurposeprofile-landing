@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "How is this different from career coaching?",
     answer:
-      "Career coaches cost $200-500/hour and take weeks to get clarity. This uses AI to analyze patterns in 60 minutes for $47. Plus, no required vulnerability with a stranger.",
+      "Career coaches cost $200-500/hour and take weeks to get clarity. This uses AI to analyze patterns in 60 minutes for $27. Plus, no required vulnerability with a stranger.",
   },
   {
     question: "Do I need a business idea first?",

@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     // Return a fallback response if there's an error
     return NextResponse.json(
       {
-        price: "47.00",
+        price: "27.00",
         currency: "USD",
         productName: "MyPurposeProfile",
         productDescription: null,

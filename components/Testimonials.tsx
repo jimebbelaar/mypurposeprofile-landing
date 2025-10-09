@@ -16,7 +16,7 @@ const testimonials = [
     content:
       "The report was remarkably accurate and gave me a concrete action plan. Four months later, I'm still executing without wavering.",
     name: "Sophie-Anne Onland",
-    role: "SOOPH",
+    role: "Founder, SOOPH",
     image: "/images/sophie.jpg",
   },
   {
@@ -24,7 +24,7 @@ const testimonials = [
     content:
       "More flow, confidence, and meaning — decisions now fit who I actually am.",
     name: "Tony van der Zanden",
-    role: "Rol?",
+    role: "Founder, Hiking Platform",
     image: "/images/tony.jpg",
   },
 ];

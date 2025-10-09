@@ -53,7 +53,7 @@ export default function FinalCTA() {
                 Take the Leap
               </h3>
               <p className="text-gray-700">
-                Invest $47 (less than a night out). Discover who you are beneath
+                Invest $27 (less than a night out). Discover who you are beneath
                 the title. Finally build that business.
               </p>
             </div>
