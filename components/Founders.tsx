@@ -12,7 +12,7 @@ const founders = [
   },
   {
     name: "Anouk Hooijschuur",
-    role: "Ex Deloitte Turned Purpose Guide",
+    role: "Ex Big Four Turned Purpose Guide",
     image: "/images/anouk.jpeg",
     bio: "Digital business consultant and software developer who helps you discover what makes you unique — and turn it into a business that provides both financial freedom and deep fulfillment. Specializes in bringing mind, body, and business into harmony.",
   },

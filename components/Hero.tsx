@@ -17,8 +17,8 @@ function CheckItem({
         <Check className="h-3.5 w-3.5 text-mpp-green" aria-hidden="true" />
       </span>
       <div>
-        <p className="font-semibold">{title}</p>
-        <p className="text-sm sm:text-base text-gray-700">{description}</p>
+        <p className="">{title}</p>
+        {/* <p className="text-sm sm:text-base text-gray-700">{description}</p> */}
       </div>
     </li>
   );
@@ -108,15 +108,15 @@ export default function Hero() {
               {/* Check list */}
               <ul className="space-y-4 text-gray-700 mt-4">
                 <CheckItem
-                  title="Am I really meant to be an entrepreneur?"
+                  title="Am I really meant to be an entrepreneur? Yes/No/Hybrid"
                   description="Yes, No or Hybrid - based on your personality, values, and work style."
                 />
                 <CheckItem
-                  title="What should I actually do?"
+                  title="What should I actually do? 3-5 specific paths"
                   description="Discover 3–5 specific paths that match your strengths and motivations."
                 />
                 <CheckItem
-                  title="Why do I keep getting stuck?"
+                  title="Why do I keep getting stuck? Limiting beliefs & mental blocks"
                   description="Finally understand and overcome the mental blocks that have kept you trapped."
                 />
                 <CheckItem
