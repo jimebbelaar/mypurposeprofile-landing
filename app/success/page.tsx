@@ -203,7 +203,7 @@ function SuccessContent() {
           {sessionData && sessionData.amount_total && (
             <p className="text-lg text-gray-600 mb-8">
               <span className="text-mpp-yellow font-semibold">
-                ADHD Identity Method
+                MyPurposeProfile
               </span>
               {" • "}
               <span className="text-mpp-green font-semibold">
@@ -349,10 +349,10 @@ function SuccessContent() {
           <p className="text-sm text-gray-600">
             Need help? Contact support at{" "}
             <a
-              href="mailto:info@adhdharmony.com"
+              href="mailto:info@mypurposeprofile.com"
               className="text-mpp-yellow hover:underline font-semibold"
             >
-              info@adhdharmony.com
+              info@mypurposeprofile.com
             </a>
           </p>
         </motion.div>
