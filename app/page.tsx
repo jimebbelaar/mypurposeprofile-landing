@@ -49,7 +49,7 @@ export default function Home() {
 
     const viewContentTimeout = setTimeout(() => {
       trackEvent("ViewContent", {
-        content_name: "ADHD Harmony Landing Page",
+        content_name: "MyPurposeProfile",
         content_category: "Landing Page",
       });
     }, 3000);

@@ -115,10 +115,10 @@ function SuccessContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-mpp-yellow mx-auto mb-4" />
-          <p className="text-gray-400">Verifying your payment...</p>
+          <p className="text-gray-600">Verifying your payment...</p>
         </div>
       </div>
     );
@@ -129,22 +129,28 @@ function SuccessContent() {
     (sessionData && sessionData.payment_status !== "paid")
   ) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+        {/* Background blobs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-red/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-mpp-orange/10 rounded-full blur-3xl" />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-md"
+          className="text-center max-w-md relative z-10"
         >
           <div className="text-mpp-red text-6xl mb-4">⚠️</div>
-          <h1 className="text-3xl mb-4">Payment Not Completed</h1>
-          <p className="text-gray-400 mb-8">
+          <h1 className="text-3xl mb-4 text-gray-900">Payment Not Completed</h1>
+          <p className="text-gray-600 mb-8">
             Your payment was not completed. Please try again.
           </p>
           <Link href="/">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-mpp-yellow to-mpp-orange text-black font-bold px-8 py-4 rounded-xl"
+              className="bg-gradient-to-r from-mpp-yellow to-mpp-orange text-white font-bold px-8 py-4 rounded-xl shadow-lg"
             >
               Return to Homepage
             </motion.button>
@@ -155,29 +161,33 @@ function SuccessContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-yellow/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-mpp-green/20 rounded-full blur-3xl animate-pulse" />
+    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden py-12 px-4">
+      {/* Background blobs (static, matching hero) */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-mpp-yellow/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-mpp-green/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-mpp-orange/5 rounded-full blur-3xl" />
       </div>
 
       <motion.div
-        initial={{ scale: 0.5, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, type: "spring" }}
-        className="relative z-10 text-center max-w-2xl px-4"
+        transition={{ duration: 0.4 }}
+        className="relative z-10 text-center max-w-2xl w-full"
       >
+        {/* Success icon */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           className="mb-8"
         >
-          <div className="w-24 h-24 bg-mpp-green rounded-full flex items-center justify-center mx-auto">
+          <div className="w-24 h-24 bg-mpp-green rounded-full flex items-center justify-center mx-auto ring-4 ring-mpp-green/20 shadow-lg">
             <CheckCircle className="w-16 h-16 text-white" />
           </div>
         </motion.div>
 
+        {/* Success heading */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -186,12 +196,12 @@ function SuccessContent() {
           <h1 className="text-5xl mb-4">
             <span className="gradient-text">Success!</span>
           </h1>
-          <p className="text-2xl text-gray-300 mb-8">
+          <p className="text-2xl text-gray-700 mb-8">
             Your purchase was completed successfully
           </p>
 
           {sessionData && sessionData.amount_total && (
-            <p className="text-lg text-gray-400 mb-8">
+            <p className="text-lg text-gray-600 mb-8">
               <span className="text-mpp-yellow font-semibold">
                 ADHD Identity Method
               </span>
@@ -204,60 +214,62 @@ function SuccessContent() {
           )}
         </motion.div>
 
+        {/* Email card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="glass-effect rounded-2xl p-8 mb-8"
+          className="glass-effect rounded-2xl p-8 mb-8 glow-yellow"
         >
-          <div className="w-16 h-16 bg-mpp-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 bg-mpp-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6 ring-2 ring-mpp-yellow/30">
             <Mail className="w-8 h-8 text-mpp-yellow" />
           </div>
 
-          <h2 className="text-3xl mb-4 text-mpp-yellow">
-            Check Your Email!
-          </h2>
+          <h2 className="text-3xl mb-4 text-mpp-yellow">Check Your Email!</h2>
 
-          <p className="text-lg text-gray-300 mb-4">
+          <p className="text-lg text-gray-700 mb-4">
             We've sent everything you need to get started to:
           </p>
 
           {customerEmail ? (
-            <div className="bg-black/50 rounded-lg px-4 py-3 mb-6">
-              <p className="text-xl font-mono font-semibold text-white">
+            <div className="bg-white/60 ring-1 ring-gray-200/50 rounded-lg px-4 py-3 mb-6">
+              <p className="text-xl font-mono font-semibold text-gray-900">
                 {customerEmail}
               </p>
             </div>
           ) : (
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-sm text-gray-600 mb-6">
               (The email you used for payment)
             </p>
           )}
 
           {sessionData?.customer_name && (
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-600 mb-4">
               Thank you for your purchase,{" "}
-              <span className="text-mpp-yellow">
+              <span className="text-mpp-yellow font-semibold">
                 {sessionData.customer_name}
               </span>
               !
             </p>
           )}
 
-          <div className="bg-mpp-green/10 border border-mpp-green/30 rounded-lg p-3">
-            <p className="text-sm text-mpp-green">
+          <div className="bg-mpp-green/10 ring-1 ring-mpp-green/30 rounded-lg p-3">
+            <p className="text-sm text-mpp-green font-semibold">
               ✓ Access details sent to your email
             </p>
           </div>
         </motion.div>
 
+        {/* Email provider buttons */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="space-y-4"
         >
-          <p className="text-gray-400 mb-4">Open your email provider:</p>
+          <p className="text-gray-600 mb-4 font-medium">
+            Open your email provider:
+          </p>
 
           <div className="flex justify-center gap-4 flex-wrap">
             {[
@@ -296,10 +308,10 @@ function SuccessContent() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-3 rounded-lg transition flex items-center gap-2 ${
+                  className={`px-6 py-3 rounded-lg transition flex items-center gap-2 font-medium shadow-sm ${
                     isUserProvider
-                      ? "bg-mpp-yellow/20 border border-mpp-yellow/50 text-mpp-yellow"
-                      : "bg-white/10 hover:bg-white/20 text-white"
+                      ? "bg-mpp-yellow/20 ring-2 ring-mpp-yellow/50 text-mpp-yellow"
+                      : "bg-white/60 hover:bg-white/80 ring-1 ring-gray-200/50 text-gray-700"
                   }`}
                 >
                   <Inbox className="w-5 h-5" />
@@ -311,16 +323,20 @@ function SuccessContent() {
           </div>
         </motion.div>
 
+        {/* Help section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
           className="mt-12 space-y-4"
         >
-          <div className="p-4 bg-mpp-yellow/10 rounded-xl border border-mpp-yellow/30">
-            <p className="text-sm text-mpp-yellow">
-              <strong>Didn't receive the email?</strong> Check your spam folder
-              or wait a few minutes. Emails typically arrive within 5 minutes.
+          <div className="p-4 bg-mpp-yellow/10 rounded-xl ring-1 ring-mpp-yellow/30">
+            <p className="text-sm text-gray-700">
+              <strong className="text-mpp-yellow">
+                Didn't receive the email?
+              </strong>{" "}
+              Check your spam folder or wait a few minutes. Emails typically
+              arrive within 5 minutes.
             </p>
           </div>
 
@@ -330,11 +346,11 @@ function SuccessContent() {
               {(sessionId || paymentIntent || "").substring(0, 20)}...
             </p>
           )}
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-600">
             Need help? Contact support at{" "}
             <a
               href="mailto:info@adhdharmony.com"
-              className="text-mpp-yellow hover:underline"
+              className="text-mpp-yellow hover:underline font-semibold"
             >
               info@adhdharmony.com
             </a>
@@ -349,7 +365,7 @@ export default function Success() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mpp-yellow"></div>
         </div>
       }

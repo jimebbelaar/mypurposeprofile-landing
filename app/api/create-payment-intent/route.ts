@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       description: productDetails.description || productDetails.name,
 
       // Add statement descriptor for better merchant identification
-      statement_descriptor_suffix: "ADHD Method",
+      statement_descriptor_suffix: "MyPurposeProfile",
 
       // Configure payment method options
       payment_method_options: {
